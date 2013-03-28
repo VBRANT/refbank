@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!-- manages the directory structure for the build process.
+
+	This means it creates all the temporary directories and copies files between them.
+	It is also responsible for cleaning up the whole mess afterwards. -->
+
+<project name="dir">
+	
+	<!-- create the required directories -->
+	<target name="mkdirs">
+		<mkdir dir="${build.home}" />
+		<mkdir dir="${build.home}/classes" />
+		<mkdir dir="${build.home}/WEB-INF" />
+		<mkdir dir="${build.home}/WEB-INF/lib" />
+		<mkdir dir="${dist.home}" />
+	</target>
+	
+	<!-- more or less the reverse of it, delete all the directories again -->
+	<target name="clean" description="remove all auto-generated files" >
+		<delete dir="${build.home}" />
+		<delete dir="${dist.home}" />
+	</target>
+
+	<!-- copy everything that needs to be in the .war -->
+	<target name="copy" depends="mkdirs" >
+		<!-- Copy static content of this web application -->
+    	<copy todir="${build.home}" overwrite="true" verbose="false">
+			<fileset dir="${web.home}" />
+		</copy>
+		<!-- copy required libraries -->
+		<copy todir="${build.home}/WEB-INF/lib">
+			<fileset dir="${lib.home}" />
+		</copy>
+	</target>
+</project>

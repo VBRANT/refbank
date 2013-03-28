@@ -1,0 +1,164 @@
+body {
+    font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+}
+
+a {
+    padding: 0.5em;
+    text-decoration:none;
+}
+
+a:hover {
+    background: #ececec;
+    color: #363636;
+}
+
+img {
+    border: 0;
+}
+
+#euro-logos {
+    display: inline;
+    float: right;
+}
+
+#vbrant-img {
+	background:  #974e55;
+    margin: 0.5em;
+    padding-bottom: 1em;
+    height: 93px;
+    width: 216px;
+    -moz-border-radius:: 0.5em;
+    -webkit-border-radius: 0.5em;
+    border-radius: 0.5em;
+}
+
+#vbrant-logo {
+    float: left;
+}
+
+#strapline {
+    font-size: large;
+    font-weight: bold;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+    width: 1000px;
+
+}
+
+#plazi-logo {
+    height: 51px;
+    width: 150px;
+}
+
+.page {
+    margin-left: auto;
+    margin-right: auto;
+    width: 1000px;
+} 
+
+.pageContent {
+    clear: both;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.mainTable {
+	border-spacing: 1em;
+	border-width: 0px;
+	border-style: none;
+	border-color: #000000;
+	padding: 0px;
+	margin: 0px;
+}
+
+.mainTableCell {
+	border-spacing: 0px;
+	border-width: 0px;
+	border-style: none;
+	border-color: #000000;
+	margin: 0px;
+}
+
+.urlInput {
+	size: 25;
+	width: 200px;
+}
+
+.messageTable {
+	background:  #974e55;
+    color: #ececec;
+    -moz-border-radius: 0.5em;
+    -webkit-border-radius: 0.5em;
+    border-radius: 0.5em;
+	padding: 0.5em;
+	margin: 0em;
+	border-spacing: 0px;
+}
+
+.messageTableHead {
+	background: #BBBBBB;
+	color: #363636;
+}
+
+.messageTableBody  {}
+
+.messageTableCell {
+	border-spacing: 0px;
+	border-width: 1px;
+	border-style: solid;
+	border-color: #000000;
+	padding: 3px;
+	text-align: left;
+	white-space: nowrap;
+}
+
+.nodesTable {
+	background:  #974e55;
+    color: #ececec;
+    text-align: center;
+    -moz-border-radius: 0.5em;
+    -webkit-border-radius: 0.5em;
+    border-radius: 0.5em;
+	padding: 0.5em;
+	margin: 0em;
+	border-spacing: 0px;
+}
+
+.nodesTableHead {
+	background: #BBBBBB;
+	color: #363636;
+}
+
+.nodesTableBody {
+
+}
+
+.nodesTableCell {
+	border-spacing: 0px;
+	border-width: 1px;
+	border-style: solid;
+	border-color: #000000;
+	padding: 3px;
+	text-align: left;
+	white-space: nowrap;
+}
+
+.footer {
+	margin: 2em auto 2em auto;
+	padding: 1em;
+    width: 750px;
+}
+
+.footerText {
+	text-align: center;
+}
+
+.footerNavigation {
+	text-align: right;
+}
+
+.footerNavigationLink {
+	font-size: 80%;
+	color: #363636;
+}

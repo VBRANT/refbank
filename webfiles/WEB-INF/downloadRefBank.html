@@ -1,0 +1,94 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<title>RefBank WebApp Download</title>
+<style>
+li {
+  margin-top: 6px;
+}
+.installRefBankInstructions {
+  text-align: left;
+}
+</style>
+</head>
+<body>
+<div class="installRefBankInstructions">
+<h3>SYSTEM REQUIREMENTS</h3>
+<ul>
+<li>Java Runtime Environment 1.5 or higher, Sun/Oracle JRE recommended</li>
+<li>Apache Tomcat 5.5 or higher</li>
+<li>A database server, e.g. PostgreSQL (drivers included for version 8.2) or Microsoft SQL Server (drivers included)<br/>
+Instead, you can also use Apache Derby embedded database (included)</li>
+</ul>
+<h3>SETTING UP A RefBank NODE</h3>
+<ul>
+<li>Download <a href="/RefBank.zip">RefBank.zip</a></li>
+<li>Create a folder for the RefBank web application in Tomcat's <code>webapps</code> folder, preferably named </code>RefBank</code></li>
+<li>Un-zip the content of <code>RefBank.zip</code> into this folder</li>
+<li>Rename the file <code>web.refBank.example.xml</code> in the <code>WEB-INF</code> folder to <code>web.xml</code></li>
+<li>Put your own institution logo in the <code>images</code> folder</li>
+<li>Rename the files <code>footer.example.html</code> and <code>popupFooter.example.html</code> in the <code>WEB-INF</code> folder to <code>footer.html</code> and <code>popupFooter.html</code>, respectively, and customize them to include your institution name and logo</li>
+<li>If not using an embedded database, create a database for RefBank in your database server, e.g. </code>RefBankDB</code></li>
+<li>Adjust the <code>config.refBank.Example.cnfg</code> files in the <code>WEB-INF/&lt;xyz&gt;Data</code> folders as described there<ul>
+	<li>In the config file in <code>WEB-INF/rbkData/</code>, enter a (presumably) globally unique RefBank domain name, which should identify the institution the RefBank node runs in and, if the institution runs multiple RefBank nodes, also distingish the node being set up from the other ones already running</li>
+	<li>In the same file, enter the prefered access URL for the node, i.e., the (prefered) URL for accessing the node from the WWW</li>
+	<li>In the same file, enter the administration passcode for the RefBank node being set up</li>
+	<li>To secure reference upload with ReCAPTCHA to avoid spamming, obtain a ReCAPTCHA API key pair and put it in the config file in the <code>WEB-INF/uploadData/</code> folder</li>
+</ul></li>
+<li>Adjust the <code>web.refBank.Example.cnfg</code> file in the <code>WEB-INF</code> folder as described there<ul>
+	<li>Adjust the JDBC settings to access the database created for RefBank</li>
+	<li>Set the <code>stringPoolNodeName</code> setting to the name assigned to the RefBank servlet in the web.xml (which is <code>RefBank</code> if you did not change it) so dependent local servlets can connect to it directly (Java method invocations) instead of the local network loopback adapter (better performance)</li>
+	<li>Set the <code>stringPoolNodeUrl</code> setting to the access URL you configured above, or to a <code>localhost</code> URL; in any case, the URL used should point to the RefBank servlet directly (better performance), even if the prefered external access URL is one proxied through a local Apache web server or the like</li>
+</ul></li>
+<li>Note that integrated reference parsing is deactivated in this setup; this functionality requires a GoldenGATE Web Service web application to be available somewhere</li>
+<li>To enable the RefBank node to store parsed references in the file system and connect to other RefBank nodes, give the web application the permission to create and manipulate files and folders within its deployment folder and to establish outgoing network connections (there are two ways to achieve this):<ul>
+	<li>The simple, but very coarse way is to disable Tomcat's security manager altogether (not recommended)</li>
+	<li>More finegrained way is to add the permission statement below to Tomcat's security configuration (recommended); the security configuration resides inside Tomcat's <code>conf</code> folder, which is located on the same level as the <code>webapps</code> folder; the actual configuration file to add the permission to is either <code>catalina.policy</code> directly in the <code>conf</code> folder, or <code>04webapps.policy</code> in the <code>conf/policy.d</code> folder, whichever is present; if both files are present, either will do:<br/>
+<pre>grant codeBase &quot;file:${catalina.base}/webapps/RefBank/WEB-INF/lib/-&quot; {
+	permission java.net.SocketPermission &quot;*.*&quot;, &quot;connect&quot;;
+	permission java.io.FilePermission &quot;WEB-INF/-&quot;, &quot;read,write,delete,execute&quot;;
+}</pre>
+</ul></li>
+</ul>
+<h3>LINKING THE RefBank NODE TO THE NETWORK</h3>
+<ul>
+<li>Access the web application through a browser (the search form should show up)</li>
+<li>Follow the <em>Administer This Node</em> link at the bottom of the page</li>
+<li>Enter the passcode configured above to access the administration page</li>
+<li>Enter the access URL of another RefBank node (maybe the one the zip file was downloaded from, simply by replacing the <code>RefBank.zip</code> file name with <code>rbk</code>, resulting in <code>http://&lt;refBankHostDownloadedFromIncludingPort&gt;/RefBank/rbk</code>, for instance) into the <em>Connect to other Nodes</em> form and click the <em>Add Node</em> button<br/>
+	==&gt; A list of other nodes shows up, labeled <em>Connected Nodes</em></li>
+<li>Configure replication of data in the <em>Connected Nodes</em> table and click the <em>Update Nodes</em> button to submit it<br/>
+	==&gt; afterwards, the web application might be busy for a while importing the references from the other nodes via the replication mechanism</li>
+</ul></li>
+<h3>CUSTOMIZING THE LAYOUT</h3>
+<p>The servlets generate the search and upload forms as well as the search results and reference detail views dynamically from multiple files residing in the </code>WEB-INF</code> folder or one of its sub folders:<ul>
+<li><code>refBank.html</code> is the template for the main pages</li>
+<li>The bodies of <code>header.html</code>, <code>navigation.html</code>, and <code>footer.html</code> are inserted in the template where the <code>&lt;includeFile file=&quot;&lt;filename&gt;.html&quot;&gt;</code> tags are in the template</li>
+<li>The CSS styles for all these files are in </code>refBank.css</code></li>
+<li></code>refBankPopup.html</code> is the template for the reference detail views</li>
+<li>The bodies of </code>popupHeader.html</code>, </code>popupNavigation.html</code>, and </code>popupFooter.html</code> are inserted in the template where the <code>&lt;includeFile file=&quot;&lt;filename&gt;.html&quot;&gt;</code> tags are in the template</li>
+<li>The CSS styles for all these files are also in </code>refBank.css</code></li>
+<li>The search or upload form is inserted where the <code>&lt;includeForm/&gt;</code> tag is in the template</li>
+<li>The search or upload result is inserted where the <code>&lt;includeResult/&gt;</code> tag is in the template<ul>
+	<li>The search form content comes from <code>WEB-INF/searchData/searchFields.html</code>; the actual form tag is created by the servlet</li>
+	<li>The CSS styles for the search form and results are in <code>WEB-INF/searchData/refBankSearch.css</code></li>
+	<li>The upload form comes from <code>WEB-INF/searchData/uploadFields.html</code>; the actual form tag is created by the servlet</li>
+	<li>The reCAPTCHA widget is inserted where the <code>&lt;includeReCAPTCHA/&gt;</code> tag is in <code>uploadFields.html</code></li>
+	<li>The CSS styles for the upload form and results are in <code>WEB-INF/uploadData/refBankUpload.css</code></li>
+</ul></li>
+<li></code>onnNodeAdminPage.html</code> is the template for the administration page</li>
+<li>The respective CSS styles are in <code>onnNodeAdminPage.css</code></li>
+<li>To customize general page layout, change the <code>refBank.html</code> and <code>refBankPopup.html</code> files and the respective stylesheets<ul>
+	<li>This can be as simple customizing respective CSS styles (can be tested on statically saved post-generation HTML pages)</li>
+	<li>This can include changing the file names or the placement of the <code>&lt;includeFile .../&gt;</code> tags; when changing the file names or adding <code>&lt;includeFile .../&gt;</code> tags, make sure that the references files exist (requires the web application to run for testing)</li>
+	<li>This can include changing the placement of the <code>&lt;includeForm/&gt;</code> and <code>&lt;includeResult/&gt;</code> tags; make sure, however, that these tags remain in the template page, as otherwise the functional parts of the pages cannot be inserted (requires the web application to run for testing)</li>
+</ul></li>
+<li>To customize page header, navigation, or footer, customize the respective HTML files and the respective stylesheets<ul>
+	<li>This can be as simple customizing respective CSS styles (can be tested on statically saved post-generation HTML pages)</li>
+	<li>This can include adding new <code>&lt;includeFile .../&gt;</code> tags; when doing this, make sure that the references files exist (requires the web application to run for testing)</li>
+</ul></li>
+<li>Do not add header, navigation, or footer content to the <code>refBank.html</code> or <code>refBankPopup.html</code> files directly, but use the respective inserted files insted (requires the web application to run for testing)</li>
+</p>
+</div>
+</body>
+</html>

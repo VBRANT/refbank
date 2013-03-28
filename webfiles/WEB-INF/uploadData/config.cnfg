@@ -1,0 +1,9 @@
+// Stylesheet file required for upload form
+cssNames = "refBankUpload.3.css";
+
+// JavaScript file required for search results (none for now)
+javaScriptNames = "";
+
+// settings for ReCAPTCHA vased verification of uploads (to activate ReCAPTCHA verification, remove the double slashes from the start of the two lines below and fill in the angle-bracketed parts with your actual data)
+//reCaptchaPublicKey = "<ReCAPTCHA public key>";
+//reCaptchaPrivateKey = "<ReCAPTCHA private key>";

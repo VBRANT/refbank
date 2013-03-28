@@ -1,0 +1,72 @@
+.uploadTable {
+	background:  #974e55;
+    color: #ececec;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+    width: 750px;
+    -moz-border-radius: 0.5em;
+    -webkit-border-radius: 0.5em;
+    border-radius: 0.5em;
+}
+
+.uploadTableRow {}
+
+.uploadTableCell {
+	padding: 0.5em 1em 0.5em;
+}
+
+.uploadButton {
+	padding: 0.25em 1em 0.25em;
+    margin: 0.5em;
+    background: #959595;
+    color: #ececec;
+    font-size: large;
+	font-weight: bold;
+    -moz-border-radius:: 0.5em;
+    -webkit-border-radius: 0.5em;
+    border-radius: 0.5em;
+}
+
+#statusDisplayProgressBar {
+  border-width: 1px;
+  border-style: solid;
+  border-color: #ececec;
+  -moz-border-radius: 0.25em;
+  -webkit-border-radius: 0.25em;
+  border-radius: 0.25em;
+}
+
+#statusDisplayProgressIndicator {
+  background-color: #ececec;
+  -moz-border-radius: 0.25em;
+  -webkit-border-radius: 0.25em;
+  border-radius: 0.25em;
+}
+
+.resultTable {
+	background:  #974e55;
+    color: #ececec;
+	margin: 2em auto 2em auto;
+    text-align: center;
+    width: 750px;
+    -moz-border-radius: 0.5em;
+    -webkit-border-radius: 0.5em;
+    border-radius: 0.5em;
+}
+
+.resultTableRow {}
+
+.resultTableCell {
+	padding: 0.5em 1em 0.5em;
+}
+
+.resultString {
+	padding: 0.25em 1em 0.25em;
+    color: #ececec;
+    font-size: large;
+	font-weight: bold;
+    -moz-border-radius:: 0.5em;
+    -webkit-border-radius: 0.5em;
+    border-radius: 0.5em;
+}

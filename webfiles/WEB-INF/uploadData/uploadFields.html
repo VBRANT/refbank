@@ -1,0 +1,42 @@
+<html>
+<body>
+	<includeUploadFormScript/>
+	<table class="uploadTable">
+		<tr class="uploadTableHead">
+			<td class="uploadTableCell" colspan="3">
+				<includeUploadFormatLabels/>
+				<br>You can also upload a file of references using the file selector below.<br>Do not forget to give your name, as RefBank wants to credit your work.
+			</td>
+		</tr>
+		<tr class="uploadTableBody">
+			<td class="uploadTableCell" colspan="3">
+				<input type="hidden" name="action" value="update">
+				<input type="hidden" name="responseFormat" value="html">
+				<textarea name="refStrings" rows="14" cols="80"></textarea>
+			</td>
+		</tr>
+		<tr class="uploadTableBody">
+			<td class="uploadTableCell" rowspan="2">
+				<includeReCAPTCHA/>
+			</td>
+			<td class="uploadTableCell">
+				Data Format:<br>
+				<includeUploadFormatSelector/>
+			</td>
+			<td class="uploadTableCell">
+				Upload File:<br>
+				<input type="file" class="uploadField" name="refFile">
+			</td>
+		</tr>
+		<tr class="uploadTableBody">
+			<td class="uploadTableCell">
+				Your Name:<br>
+				<input type="text" class="uploadField" name="user" id="userNameField" value="">
+			</td>
+			<td class="uploadTableCell">
+				<input type="submit" class="uploadButton" value="Upload References">
+			</td>
+		</tr>
+	</table>
+</body>
+</html>

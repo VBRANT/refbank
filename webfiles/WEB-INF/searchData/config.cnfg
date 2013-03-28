@@ -1,0 +1,23 @@
+// relative URL of the parser and editor servlets
+refParserUrl = "/RefBank/parser";
+refEditorUrl = "/RefBank/editor";
+
+// Stylesheet file required for search results
+cssNames = "refBankSearch.3.css";
+
+// JavaScript file required for search results (none for now)
+javaScriptNames = "";
+
+// reference formats linked to in search results
+format.MODS = "ModsToMods.xslt";
+format.RIS = "ModsToRIS.xslt";
+format.BibTeX = "ModsToBibTeX.xslt";
+format.DC = "ModsToDC.xslt";
+
+// reference string styles linked to in search results
+style.Chicago = "Chicago.refStringStyle.xslt";
+style.Harvard = "Harvard.refStringStyle.xslt";
+style.Pensoft = "Pensoft.refStringStyle.xslt";
+
+// css style for reference strings formatted according to some style guide
+styledRefLayout = "font-face: Times; font-size: 12pt;";

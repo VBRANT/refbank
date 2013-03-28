@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!-- The main build file. It merely imports the other files in the 'ant' directory. -->
+
+<project name="RefBank" default="all" basedir="." >
+	<include file="ant/config.ant" />
+	<include file="ant/dir.ant" />
+	<include file="ant/javac.ant" />
+	<include file="ant/dist.ant" />
+	
+	<target name="all" depends="clean,compile,war">
+		<!--<input message="Press Enter to start Tomcat.." />-->
+	</target>
+	
+	<target name="clean" description="remove all auto generated files" >
+		<antcall target="dir.clean" />
+	</target>
+	
+	<target name="compile" description="do the compilation" >
+		<antcall target="dir.copy" />
+		<antcall target="javac.compile" />
+	</target>
+	
+	<target name="war" depends="compile" description="create the war file">
+		<antcall target="dist.war" />
+	</target>
+</project>

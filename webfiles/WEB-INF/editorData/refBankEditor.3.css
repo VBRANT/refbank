@@ -1,0 +1,55 @@
+.editTable {
+    background-color: aliceblue;
+    color: navy;
+    margin: 2em auto 2em auto;
+    opacity: 0.8;
+    border: 1px navy solid;
+    text-align: center;
+    width: 750px;
+    -moz-border-radius: 0.5em;
+    -webkit-border-radius: 0.5em;
+    border-radius: 0.5em;
+}
+
+.editTableRow {}
+
+.editTableCell {
+    padding: 0.25em 1em 0.25em;
+    text-align: justify;
+}
+
+#refEditorField {
+    width: 100%;
+    height: 10em;
+}
+
+.resultOptions {}
+
+.referenceString {
+    background-color: white;
+    color: navy;
+    padding: 0.5em 1em 0.5em;
+    margin-bottom: 0;
+    border: 1px navy solid;
+    opacity: 1;
+    -moz-border-radius: 0.5em;
+    -webkit-border-radius: 0.5em;
+    border-radius: 0.5em;
+}
+
+.referenceFormatLinkLabel {
+    font-size: 60%;
+    color: navy;
+}
+
+.referenceFormatLink {
+    font-size: 60%;
+    font-weight: bold;
+    background: silver;
+    color: navy;
+    padding: 0;
+    margin: 0.2em 0em 0.2em;
+    -moz-border-radius: 0.5em;
+    -webkit-border-radius: 0.5em;
+    border-radius: 0.5em;
+}

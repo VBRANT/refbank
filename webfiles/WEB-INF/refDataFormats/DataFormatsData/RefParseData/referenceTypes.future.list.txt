@@ -1,0 +1,12 @@
+bookChapter.label = "Book Chapter";
+bookChapter.name = "book chapter";
+book.label = "Book / Monograph / Thesis";
+book.name = "book";
+journalArticle.label = "Journal Article";
+journalArticle.name = "journal article";
+journal.label = "Journal Volume";
+journal.name = "journal volume";
+proceedingsPaper.label = "Proceedings Paper";
+proceedingsPaper.name = "proceedings paper";
+proceedings.label = "Conference Proceedings";
+proceedings.name = "proceedings";

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!--
+	Does all the packing. That is, creates the files that live in dist/
+-->
+
+<project name="dist">
+	<target name="war" depends="jar,dataformats">
+		<delete file="${war.file}" />
+		<war warfile="${war.file}" webxml="${web.home}/WEB-INF/web.xml">
+			<fileset dir="${build.home}">
+				<!-- Don't put the classes and the web.xml into this twice -->
+				<exclude name="classes/*" />
+				<exclude name="WEB-INF/web.xml" />
+			</fileset>
+		</war>
+	</target>
+	
+	<target name="jar">
+		<delete file="${jar.file}" />
+		<jar destfile="${jar.file}" basedir="${build.home}/classes" excludes="**/dataFormats/*.class" />
+	</target>
+	
+	<target name="dataformats">
+		<delete file="${jar.dataformats.file}" />
+		<jar destfile="${jar.dataformats.file}" basedir="${build.home}/classes" includes="**/dataFormats/*.class" />
+	</target>
+</project>

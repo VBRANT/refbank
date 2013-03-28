@@ -1,0 +1,6 @@
+Book
+Book Chapter
+Journal Article
+Journal Volume
+Proceedings
+Proceedings Paper

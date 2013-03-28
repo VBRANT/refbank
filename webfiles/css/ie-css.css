@@ -1,0 +1,27 @@
+.searchButton, .uploadButton {
+    font-size: medium !important;
+    padding: 0 !important;
+}
+
+#queryField {
+    width: 400px !important;
+}
+#typeField {
+    width: 150px !important;
+}
+#authorField {
+    width: 150px !important;
+}
+#titleField {
+    width: 150px !important;
+}
+#yearField {
+    width: 150px !important;
+}
+#originField {
+    width: 150px !important;
+}
+
+#strapline {
+    font-size: medium !important;
+}

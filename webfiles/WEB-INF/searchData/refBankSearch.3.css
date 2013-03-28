@@ -1,0 +1,112 @@
+.searchFieldTable {
+    background-color: aliceblue;
+    border: 1px navy solid;
+    color: navy;
+    font-weight: bold;
+    margin-left: auto;
+    margin-right: auto;
+    opacity: 0.8;
+    text-align: center;
+    width: 900px;
+    -moz-border-radius: 0.5em;
+    -webkit-border-radius: 0.5em;
+    border-radius: 0.5em;
+}
+
+.searchFieldRow {
+}
+
+.searchFieldCell {
+    margin: 0.25 em;
+    padding: 0.5em;
+}
+
+.searchButton {
+    padding: 0.25em 1em 0.25em;
+    margin: 0.5em;
+    background-color: silver;
+    border: 1px navy solid;
+    opacity: 0.7;
+    color: navy;
+    font-size: large;
+    /* font-weight: bold; */
+    -moz-border-radius:: 0.5em;
+    -webkit-border-radius: 0.5em;
+    border-radius: 0.5em;
+}
+
+#queryField {
+    width: 100%;
+}
+#typeField {
+    width: 100%;
+}
+#authorField {
+    width: 100%;
+}
+#titleField {
+    width: 100%;
+}
+#yearField {
+    width: 100%;
+}
+#originField {
+    width: 100%;
+}
+#refCodeFrame {
+    background-color: silver;
+    color: navy;
+    width: 100%;
+    height: 200px;
+}
+
+.resultTable {
+    background-color: aliceblue;
+    color: navy;
+    margin: 2em auto 2em auto;
+    opacity: 0.8;
+    border: 1px navy solid;
+    text-align: center;
+    width: 750px;
+    -moz-border-radius: 0.5em;
+    -webkit-border-radius: 0.5em;
+    border-radius: 0.5em;
+}
+
+.resultTableRow {}
+
+.resultTableCell {
+    padding: 0.25em 1em 0.25em;
+    text-align: justify;
+}
+
+.resultOptions {}
+
+.referenceString {
+    background-color: white;
+    color: navy;
+    padding: 0.5em 1em 0.5em;
+    margin-bottom: 0;
+    border: 1px navy solid;
+    opacity: 1;
+    -moz-border-radius: 0.5em;
+    -webkit-border-radius: 0.5em;
+    border-radius: 0.5em;
+}
+
+.referenceFormatLinkLabel {
+    font-size: 60%;
+    color: navy;
+}
+
+.referenceFormatLink {
+    font-size: 60%;
+    font-weight: bold;
+    background: silver;
+    color: navy;
+    padding: 0;
+    margin: 0.2em 0em 0.2em;
+    -moz-border-radius: 0.5em;
+    -webkit-border-radius: 0.5em;
+    border-radius: 0.5em;
+}

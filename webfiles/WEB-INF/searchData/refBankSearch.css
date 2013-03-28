@@ -1,0 +1,99 @@
+.searchFieldTable {
+	background:  #974e55;
+    color: #ececec;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+    width: 750px;
+    -moz-border-radius: 0.5em;
+    -webkit-border-radius: 0.5em;
+    border-radius: 0.5em;
+}
+
+.searchFieldRow {}
+
+.searchFieldCell {
+    margin: 0.25 em;
+	padding: 0.5em;
+}
+
+.searchButton {
+	padding: 0.25em 1em 0.25em;
+    margin: 0.5em;
+    background: #959595;
+    color: #ececec;
+    font-size: large;
+	font-weight: bold;
+    -moz-border-radius:: 0.5em;
+    -webkit-border-radius: 0.5em;
+    border-radius: 0.5em;
+}
+
+#queryField {
+	width: 100%;
+}
+#typeField {
+	width: 100%;
+}
+#authorField {
+	width: 100%;
+}
+#titleField {
+	width: 100%;
+}
+#yearField {
+	width: 100%;
+}
+#originField {
+	width: 100%;
+}
+#refCodeFrame {
+    background: #ececec;
+    color: #363636;
+	width: 100%;
+	height: 200px;
+}
+
+.resultTable {
+	background:  #974e55;
+    color: #ececec;
+	margin: 2em auto 2em auto;
+    text-align: center;
+    width: 750px;
+    -moz-border-radius: 0.5em;
+    -webkit-border-radius: 0.5em;
+    border-radius: 0.5em;
+}
+
+.resultTableRow {}
+
+.resultTableCell {
+	padding: 0.5em 1em 0.5em;
+	text-align: justify;
+}
+
+.referenceString {
+    background: #ececec;
+    color: #363636;
+	padding: 0.5em 1em 0.5em;
+    -moz-border-radius: 0.5em;
+    -webkit-border-radius: 0.5em;
+    border-radius: 0.5em;
+}
+
+.referenceFormatLinkLabel {
+	font-size: 80%;
+	color: #ececec;
+}
+
+.referenceFormatLink {
+	font-size: 80%;
+	font-weight: bold;
+    background: #ececec;
+    color: #363636;
+	padding: 0;
+	margin: 0.2em 0em 0.2em;
+    -moz-border-radius: 0.5em;
+    -webkit-border-radius: 0.5em;
+    border-radius: 0.5em;
+}

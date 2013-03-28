@@ -1,0 +1,35 @@
+// database access settings (configured to use Apache Derby in embedded mode, see examples below for other database servers)
+EasyIO.JDBC.DriverClassName = "org.apache.derby.jdbc.EmbeddedDriver";
+EasyIO.JDBC.DriverClassPath = "./WEB-INF/lib/derby.jar";
+EasyIO.JDBC.TerminalSemicolon = "NO";
+EasyIO.JDBC.Url = "jdbc:derby:DerbyDB/RefBankDB;create=true";
+
+// EXAMPLE for Apache Derby embedded database (to activate, remove the double slashes from the start of the four lines below)
+//EasyIO.JDBC.DriverClassName = "org.apache.derby.jdbc.EmbeddedDriver";
+//EasyIO.JDBC.DriverClassPath = "./WEB-INF/lib/derby.jar";
+//EasyIO.JDBC.TerminalSemicolon = "NO";
+//EasyIO.JDBC.Url = "jdbc:derby:DerbyDB/RefBankDB;create=true";
+
+// EXAMPLE for Microsoft SQL Server (to activate, remove the double slashes from the start of the eight lines below and fill in the angle-bracketed parts with your actual data)
+//EasyIO.JDBC.AuthMode = "HUP";
+//EasyIO.JDBC.DefaultDB = ";DatabaseName=<DataBaseName>";
+//EasyIO.JDBC.Driver = "jdbc:microsoft:sqlserver";
+//EasyIO.JDBC.DriverClassName = "com.microsoft.jdbc.sqlserver.SQLServerDriver";
+//EasyIO.JDBC.DriverClassPath = "./msbase.jar ./msutil.jar ./mssqlserver.jar";
+//EasyIO.JDBC.Host = "//<databaseServerName>";
+//EasyIO.JDBC.User = "<databaseUser>";
+//EasyIO.JDBC.Password = "<databasePassword>";
+
+// EXAMPLE for PostgreSQL (to activate, remove the double slashes from the start of the three lines below and fill in the angle-bracketed parts in the EasyIO.JDBC.Url line with your actual data)
+//EasyIO.JDBC.DriverClassName = "org.postgresql.Driver";
+//EasyIO.JDBC.DriverClassPath = "./postgresql-8.2-505.jdbc3.jar";
+//EasyIO.JDBC.Url = "jdbc:postgresql:<DatabaseNameInLowerCase>?user=<PostgreSqlUser>&password=<PostgreSqlPassword>";
+
+
+// HTML template pages for main and popup pages
+basePage = "refBank.html";
+popupBasePage = "refBankPopup.html";
+
+// connection for dependent servlets to actual RefBank node servlet (stringPoolNodeName is the name of the RefBank servlet in web.xml, stringPoolNodeUrl is that very servlet's URL seen from localhost)
+stringPoolNodeName = "RefBank";
+stringPoolNodeUrl = "http://localhost:8080/RefBank/rbk";

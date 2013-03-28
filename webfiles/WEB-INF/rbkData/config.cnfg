@@ -1,0 +1,12 @@
+// other settings (fill in the angle-bracketed parts with your actual data)
+accessUrl = "http://<serverName>:<portOfTomcat>/<RefBank webapp name>/rbk";
+adminPasscode = "<yourNodePasscode>";
+domainName = "<yourRefBankDomainName>";
+
+// EXAMPLE for other settings
+//domainName = "RefBank-Boston-Dev";
+//accessUrl = "http://plazi2.cs.umb.edu:8080/RefBank/rbk";
+//adminPasscode = "<noneOfYourBusiness>";
+
+// Stylesheet file required for admin page
+cssNames = "onnNodeAdminPage.3.css";

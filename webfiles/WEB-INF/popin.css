@@ -1,0 +1,25 @@
+.popinScreen {
+  background-color: #888888;
+  opacity: 0.3;
+}
+.popinBox {
+  border-color: #888888;
+  border-style: solid;
+  border-width: 10px;
+  -moz-border-radius:: 10px;
+  -webkit-border-radius: 10px;
+  border-radius: 10px;
+  background-color: #FFFFFF;
+}
+.popinFrame {
+  border: none;
+}
+.popinClose {
+  background-color: #888888;
+  text-align: center;
+  font-size: 8px;
+  font-weight: bold;
+  color: #000000;
+  padding: 2px;
+  border: none;
+}

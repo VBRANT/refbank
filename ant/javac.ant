@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+	Handles the compilation step itself. Especially the classpath is set up
+	here.
+-->
+
+<project name="javac">
+	<property name="srs.sns" value="${server.src.home}/edu.kit.sns" />
+	<property name="jaxb.path" value="edu/kit/sns/rest/jaxb" />
+	
+	<!-- set up the classpath for compilation, this should always match the
+	     Eclipse configuration. -->
+	<path id="compile.classpath">
+		<!-- include all .jar in the lib/ directory -->
+	    <fileset dir="${lib.home}">
+	        <include name="*.jar" />
+	    </fileset>
+		
+	    <!-- Include data formats -->
+	    <fileset dir="webfiles/WEB-INF/refDataFormats">
+	      <include name="*.jar"/>
+	    </fileset>
+		
+	    <!-- Include servlet API -->
+	    <fileset dir="tomcatLib">
+	      <include name="*.jar"/>
+	    </fileset>
+	</path>
+	
+	<!-- The task off all tasks -->
+	<target name="compile" description="Compile RefBank Java sources">
+
+	    <!-- Compile Java classes as necessary -->
+	    <javac  destdir="${build.home}/classes"
+				includeantruntime="false" >
+	    	<src path="${src.home}" />
+	        <classpath refid="compile.classpath" />
+	    	<!--compilerarg value="-encoding" />
+	    	<compilerarg value="utf-8" /-->
+	    </javac>
+	</target>
+</project>

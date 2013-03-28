@@ -1,0 +1,64 @@
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<title>RefBank Web Portal</title>
+	<link rel="stylesheet" type="text/css" href="/RefBank/resources/refBank.css" />
+	<link rel="stylesheet" type="text/css" href="/RefBank/resources/parserData/refBankParser.css" />
+	<link rel="shortcut icon" href="/RefBank/images/logo.ico" />
+	<link rel="icon" type="image/ico" href="/RefBank/images/logo.ico" />
+	<script type="text/javascript">
+		function getDocWidth() {
+			var D = document;
+			return Math.max(
+				Math.max(D.body.scrollWidth, D.documentElement.scrollWidth),
+				Math.max(D.body.offsetWidth, D.documentElement.offsetWidth),
+				Math.max(D.body.clientWidth, D.documentElement.clientWidth)
+			);
+		}	
+		function getDocHeight() {
+			var D = document;
+			return Math.max(
+				Math.max(D.body.scrollHeight, D.documentElement.scrollHeight),
+				Math.max(D.body.offsetHeight, D.documentElement.offsetHeight),
+				Math.max(D.body.clientHeight, D.documentElement.clientHeight)
+			);
+		}
+		function adjustWindowSize() {
+			var docWidth = getDocWidth();
+			var docHeight = getDocHeight();
+			var dspWidth = 0;
+			var dspHeight = 0;
+			if (document.body && document.body.offsetWidth) {
+				dspWidth = document.body.offsetWidth;
+				dspHeight = document.body.offsetHeight;
+			}
+			if (document.compatMode=='CSS1Compat' && document.documentElement && document.documentElement.offsetWidth ) {
+				dspWidth = document.documentElement.offsetWidth;
+				dspHeight = document.documentElement.offsetHeight;
+			}
+			if (window.innerWidth && window.innerHeight) {
+				dspWidth = window.innerWidth;
+				dspHeight = window.innerHeight;
+			}
+			if ((dspWidth * dspHeight) < 1)
+				return;
+			window.outerWidth = Math.min((window.outerWidth + docWidth - dspWidth), 1024);
+			window.outerHeight = Math.min((window.outerHeight + docHeight - dspHeight), 768);
+		}
+	</script>
+</head>
+<body>
+<div class="popupPage">
+	<includeFile file="popupHeader.html"/>
+	<div class="pageContent">
+	<div class="feedback">
+	<includeBody/>
+	</div>
+	</div> <!-- end of pageContent -->
+	<includeFile file="popupFooter.html"/>
+</div> <!-- end of page -->
+<script type="text/javascript">
+adjustWindowSize();
+</script>
+</body>
+</html>
