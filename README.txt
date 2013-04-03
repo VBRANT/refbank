@@ -1,4 +1,9 @@
-RefBank, the distributed platform for biliographic references.
+The repository hosts RefBank, the platfor for buiding the Bibliography of
+Life for taxonomists. RefBank is developed by David King and Guido Sautter
+on behalf of The Open University and Karlsruhe Institute of Technology (KIT)
+under the ViBRANT project (EU Grant FP7/2007-2013, Virtual Biodiversity 
+Research and Access Network for Taxonomy).
+
 Copyright (C) 2011-2013 ViBRANT (FP7/2007-2013, GA 261532), by D. King & G. Sautter
 
 This program is free software; you can redistribute it and/or
@@ -29,9 +34,10 @@ Instead, you can also use Apache Derby embedded database (included)
 
 
 
-SETTING UP A RefBank NODE (you likely have already done the first two steps when you open this file)
+SETTING UP A RefBank NODE
 
 Download RefBank.war into Tomcat's webapps folder
+Insetad, you can also check out the project from GIT, build the WAR file using Ant, and then deploy RefBank.war to your Tomcat
 
 Call http://localhost:8080/RefBank/rbk to make Tomcat extract RefBank.war
 (you might have to re-start Tomcat for it to recognize the WAR file)
