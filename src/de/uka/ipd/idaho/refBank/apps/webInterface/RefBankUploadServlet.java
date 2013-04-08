@@ -63,6 +63,8 @@ public class RefBankUploadServlet extends RefBankWiServlet {
 	
 	private AsynchronousRequestHandler uploadHandler;
 	
+	private String putAccessKey = "";
+	
 	/* (non-Javadoc)
 	 * @see de.uka.ipd.idaho.onn.stringPool.StringPoolAppServlet#doInit()
 	 */
@@ -80,6 +82,9 @@ public class RefBankUploadServlet extends RefBankWiServlet {
 		
 		//	create upload handler
 		this.uploadHandler = new AsynchronousUploadHandler();
+		
+		//	read access key for PUT uploads
+		this.putAccessKey = this.getSetting("putAccessKey", this.putAccessKey);
 	}
 	
 	/* (non-Javadoc)
@@ -206,6 +211,11 @@ public class RefBankUploadServlet extends RefBankWiServlet {
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST, error.toString().trim());
 			return;
 		}
+		String accessKey = request.getHeader("Access-Key");
+		if ((this.putAccessKey != null) && (this.putAccessKey.length() != 0) && !this.putAccessKey.equals(accessKey)) {
+			response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid API access key.");
+			return;
+		}
 		
 		//	set up parsing
 		String dataEncoding = request.getCharacterEncoding();
@@ -223,7 +233,7 @@ public class RefBankUploadServlet extends RefBankWiServlet {
 			UploadString us = usit.nextUploadString();
 			
 			//	retrieve RefBank client on the fly to use local bridge if possible
-			RefBankClient rbc = getRefBankClient();
+			RefBankClient rbc = this.getRefBankClient();
 			
 			//	parsed version user approved, store plain string and parsed version rigth away
 			if (dataFormat.isInputParseUserApproved()) {

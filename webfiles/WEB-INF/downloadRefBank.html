@@ -50,7 +50,8 @@ Instead, you can also use Apache Derby embedded database (included)<br/>
 	<li>In the config file in <code>WEB-INF/rbkData/</code>, enter a (presumably) globally unique RefBank domain name, which should identify the institution the RefBank node runs in and, if the institution runs multiple RefBank nodes, also distingish the node being set up from the other ones already running</li>
 	<li>In the same file, enter the prefered access URL for the node, i.e., the (prefered) URL for accessing the node from the WWW</li>
 	<li>In the same file, enter the administration passcode for the RefBank node being set up</li>
-	<li>To secure reference upload with ReCAPTCHA to avoid spamming, obtain a ReCAPTCHA API key pair and put it in the config file in the <code>WEB-INF/uploadData/</code> folder</li>
+	<li>To secure form based reference upload with ReCAPTCHA to avoid spamming, obtain a ReCAPTCHA API key pair and put it in the config file in the <code>WEB-INF/uploadData/</code> folder</li>
+	<li>To secure script based reference upload with an access key to avoid spamming, specify a n access key in the config file in the <code>WEB-INF/uploadData/</code> folder</li>
 </ul></li>
 <li>If not using an embedded database, create a database for RefBank in your database server, e.g. </code>RefBankDB</code></li>
 <li>Adjust the <code>web.cnfg</code> file in the <code>WEB-INF</code> folder:<ul>
@@ -83,13 +84,13 @@ Instead, you can also use Apache Derby embedded database (included)<br/>
 	==&gt; afterwards, the web application might be busy for a while importing the references from the other nodes via the replication mechanism</li>
 </ul></li>
 <h3>CUSTOMIZING THE LAYOUT</h3>
-<p>The servlets generate the search and upload forms as well as the search results and reference detail views dynamically from multiple files residing in the </code>WEB-INF</code> folder or one of its sub folders:<ul>
+<p>The servlets generate the search and upload forms as well as the search results and reference detail views dynamically from multiple files residing in the <code>WEB-INF</code> folder or one of its sub folders:<ul>
 <li><code>refBank.html</code> is the template for the main pages</li>
-<li>The bodies of <code>header.html</code>, <code>navigation.html</code>, and <code>footer.html</code> are inserted in the template where the <code>&lt;includeFile file=&quot;&lt;filename&gt;.html&quot;&gt;</code> tags are in the template</li>
+<li>The bodies of <code>header.html</code>, <code>navigation.html</code>, and <code>footer.html</code> are inserted in the template where the <code>&lt;includeFile file=&quot;<i>filename</i>.html&quot;&gt;</code> tags are in the template</li>
 <li>The CSS styles for all these files are in <code>refBank.css</code>, <code>refBank.2.css</code>, and <code>refBank.3.css</code>, each representing a different layout variant<br/>
 (the <code>refBank.3.css</code> layout is active in the default configuration)</li>
 <li><code>refBankPopup.html</code> is the template for the reference detail views</li>
-<li>The bodies of <code>popupHeader.html</code>, <code>popupNavigation.html</code>, and <code>popupFooter.html</code> are inserted in the template where the <code>&lt;includeFile file=&quot;&lt;filename&gt;.html&quot;&gt;</code> tags are in the template</li>
+<li>The bodies of <code>popupHeader.html</code>, <code>popupNavigation.html</code>, and <code>popupFooter.html</code> are inserted in the template where the <code>&lt;includeFile file=&quot;<i>filename</i>.html&quot;&gt;</code> tags are in the template</li>
 <li>The CSS styles for all these files are also in <code>refBank.css</code>, <code>refBank.2.css</code>, and <code>refBank.3.css</code></li>
 <li>The search or upload form is inserted where the <code>&lt;includeForm/&gt;</code> tag is in the template</li>
 <li>The search or upload result is inserted where the <code>&lt;includeResult/&gt;</code> tag is in the template<ul>
@@ -111,7 +112,192 @@ Instead, you can also use Apache Derby embedded database (included)<br/>
 	<li>This can include adding new <code>&lt;includeFile .../&gt;</code> tags; when doing this, make sure that the references files exist (requires the web application to run for testing)</li>
 </ul></li>
 <li>Do not add header, navigation, or footer content to the <code>refBank.html</code> or <code>refBankPopup.html</code> files directly, but use the respective inserted files insted (requires the web application to run for testing)</li>
-</p>
+</ul></p>
+<h3>THE RefBank NODE API</h3>
+<p>RefBank data servlet (<code>/RefBank/rbk</code>):<ul>
+<li><code>GET</code> (response content depends on <code>action</code> parameter):<ul>
+  <li><code>action=admin</code> (also as <code>/refBank/rbk/admin</code>): retrieve login form for the RefBank node administration HTML page (used in browser, not part of API)</li>
+  <li><code>action=nodes</code> (also as <code>/refBank/rbk/nodes</code>): retrieve list of other RefBank nodes known to this one<ul>
+    <li>additional parameters: none</li>
+    <li>response (MIME type <code>text/xml</code>, encoding <code>UTF-8</code>):
+      <code><pre>&lt;nodes&gt;
+  &lt;node name=&quot;<i>name of RefBank node</i>&quot; accessUrl=&quot;<i>prefered access URL of node</i>&quot; /&gt;
+  &lt;node ... /&gt;
+&lt;/nodes&gt;</code></pre></li></ul></li>
+  <li><code>action=ping</code> (also as <code>/refBank/rbk/ping</code>): ping node<ul>
+    <li>additional parameters: none</li>
+    <li>response (MIME type text/xml, encoding UTF-8):
+      <code><pre>&lt;nodes /&gt;</pre></code></li></ul></li>
+  <li><code>action=name</code> (also as <code>/refBank/rbk/name</code>): retrieve data of this RefBank node<ul>
+    <li>additional parameters: none</li>
+    <li>response (MIME type <code>text/xml</code>, encoding <code>UTF-8</code>):
+      <code><pre>&lt;nodes&gt;
+  &lt;node name=&qout;&lt;name of RefBank node&gt;&qout; accessUrl=&quot;<i>prefered access URL of node</i>&quot; /&gt;
+&lt;/nodes&gt;</pre></code></li></ul></li>
+  <li><code>action=feed</code>: retrieve the reference update feed, ordered by increasing update time<ul>
+    <li>additional parameters:<ul>
+      <li><code>updatedSince</code>: minimum update time for references to include in the feed, formatted as UTC HTTP timestamp</li></ul></li>
+    <li>response: compact feed of references updated since the specified timestamp (MIME type <code>text/xml</code>, encoding <code>UTF-8</code>
+      <code><pre>&lt;refSet&gt;
+  &lt;ref id=&quot;<i>reference ID</i>&quot; canonicalId=&quot;<i>ID of canonical reference to set</i>&quot; deleted=&quot;<i>deleted flag, true or false</i>&quot; createTime=&quot;<i>UTC timestamp reference was first added to RefBank</i>&quot; updateTime=&quot;<i>UTC timestamp reference was last updated</i>&quot; localUpdateTime=&quot;<i>UTC timestamp reference was last updated on this RefBank node</i>&quot; parseChecksum=&quot;<i>MD5 hash of parsed version, if available</i>&quot; /&gt;
+  &lt;ref ... /&gt;
+&lt;/refSet&gt;</pre></code></li></ul></li>
+  <li><code>action=get</code>: resolve RefBank internal identifiers<ul>
+    <li>additional parameters:<ul>
+      <li>id: the identifier(s) to resolve, can be multi-valued</li>
+      <li>format: the format to represent the parsed versions of references in (optional, defaults to the native MODS XML representation if omitted)</li></ul></li>
+    <li>response: the reference(s) with the speciefied identifier(s) (MIME type <code>text/xml</code>, encoding <code>UTF-8</code>)
+      <code><pre>&lt;refSet&gt;
+  &lt;ref id=&quot;<i>reference ID</i>&quot; canonicalId=&quot;<i>ID of canonical reference to set</i>&quot; deleted=&quot;<i>deleted flag, true or false</i>&quot; createTime=&quot;<i>UTC timestamp reference was first added to RefBank</i>&quot; createUser=&quot;<i>name of the user to first add reference to RefBank</i>&quot; createDomain=&quot;<i>name of RefBank node reference was first added to</i>&quot; updateTime=&quot;<i>UTC timestamp reference was last updated</i>&quot; updateUser=&quot;<i>name of the user to last update reference</i>&quot; updateDomain=&quot;<i>name of RefBank node reference was last updated at</i>&quot;&gt;
+    &lt;refString&gt;&lt;plain reference string&gt;&lt;/refString&gt;
+    &lt;refParsed&gt;&lt;parsed version of reference (if available), as MODS XML or in format specified by format parameter&gt;&lt;/refParsed&gt;
+  &lt;/ref&gt;
+  &lt;ref&gt;...&lt;/ref&gt;
+&lt;/refSet&gt;</pre></code></li></ul></li>
+  <li><code>action=find</code>: search references<ul>
+    <li>additional parameters:<ul>
+      <li><code>query</code>: full text query against reference strings, can be multi-valued</li>
+      <li><code>combine</code>: <code>or</code> or <code>and</code>, controls if multiple full text queries are combined conjunctively (the default) or disjunctively</li>
+      <li><code>type</code>: type of reference, only finds references with parsed version available</li>
+      <li><code>user</code>: contributing user</li>
+      <li><code>author</code>: query against author attribute of references, only finds references with parsed version available</li>
+      <li><code>title</code>: query against title attribute of references, only finds references with parsed version available</li>
+      <li><code>date</code>: query against year of publication attribute of references, only finds references with parsed version available</li>
+      <li><code>origin</code>: query against origin of references (journal + volume number, publisher or location, as well as volume title), only finds references with parsed version available</li>
+      <li><code>format=concise</code>: exclude parsed verion of references from response</li>
+      <li><code>format</code>: the name of the format for representing the parsed verion of the references (defaults to the native MODS XML if not specified)</li></ul></li>
+    <li>response: the reference matching the specified search criteria (MIME type <code>text/xml</code>, encoding <code>UTF-8</code>)
+      <code><pre>&lt;refSet&gt;
+  &lt;ref id=&quot;<i><i>reference ID</i></i>&quot; canonicalId=&quot;<i>ID of canonical reference to set</i>&quot; deleted=&quot;<i>deleted flag, true or false</i>&quot; createTime=&quot;<i>UTC timestamp reference was first added to RefBank</i>&quot; createUser=&quot;<i>name of the user to first add reference to RefBank</i>&quot; createDomain=&quot;<i>name of RefBank node reference was first added to</i>&quot; updateTime=&quot;<i>UTC timestamp reference was last updated</i>&quot; updateUser=&quot;<i>name of the user to last update reference</i>&quot; updateDomain=&quot;<i>name of RefBank node reference was last updated at</i>&quot; parseChecksum=&quot;<i>MD5 hash of parsed version, if available and format set to concise</i>&quot;&gt;
+    &lt;refString&gt;&lt;plain reference string&gt;&lt;/refString&gt;
+    &lt;refParsed&gt;&lt;parsed version of reference (if available), as MODS XML or in format specified by format parameter&gt;&lt;/refParsed&gt;
+  &lt;/ref&gt;
+  &lt;ref ...&gt;...&lt;/ref&gt;
+&lt;/refSet&gt;</pre></code></li></ul></li>
+</ul></li>
+<li><code>POST</code>: requests from RefBank node adminstration HTML page, infrastructure replication, or meta data updates for existing references:<ul>
+  <li><code>/RefBank/rbk/update</code>: for deleting or un-deleting existing references or updating canonical reference ID<ul>
+    <li>request headers to set:<ul>
+      <li><code>user</code>: the user to credit for the update</li></ul></li>
+    <li>request body:
+      <code><pre>&lt;refSet&gt;
+  &lt;ref id=&quot;<i>reference ID</i>&quot; canonicalId=&quot;<i>ID of canonical reference to set</i>&quot; deleted=&quot;<i>deleted flag to set, true or false</i>&quot;/&gt;
+&lt;/refSet&gt;</pre></code></li>
+    <li>response (MIME type <code>text/xml</code>, encoding <code>UTF-8</code>):
+      <code><pre>&lt;refSet&gt;
+  &lt;ref id=&quot;<i>reference ID</i>&quot; canonicalId=&quot;<i>ID of canonical reference</i>&quot; deleted=&quot;<i>deleted flag, true or false</i>&quot; createTime=&quot;<i>UTC timestamp reference was first added to RefBank</i>&quot; createUser=&quot;<i>name of the user to first add reference to RefBank</i>&quot; createDomain=&quot;<i>name of RefBank node reference was first added to</i>&quot; updateTime=&quot;<i>UTC timestamp reference was last updated</i>&quot; updateUser=&quot;<i>name of the user to last update reference</i>&quot; updateDomain=&quot;<i>name of RefBank node reference was last updated at</i>&quot; parseChecksum=&quot;<i>MD5 hash of parsed version, if available</i>&quot;&gt;
+    &lt;refString&gt;&lt;plain reference string&gt;&lt;/refString&gt;
+  &lt;/ref&gt;
+&lt;/refSet&gt;</pre></code></li></ul></li>
+  <li><code>/RefBank/rbk/admin</code>: process input from the RefBank node administration HTML page (used in browser, not part of API)</li>
+  <li><code>/refBank/rbk/nodes</code>: retrieve list of other RefBank nodes known to this one<ul>
+    <li>request body: none</li>
+    <li>response (MIME type <code>text/xml</code>, encoding <code>UTF-8</code>):
+      <code><pre>&lt;nodes&gt;
+  &lt;node name=&quot;<i>name of RefBank node</i>&quot; accessUrl=&quot;<i>prefered access URL of node</i>&quot; /&gt;
+  &lt;node ... /&gt;
+&lt;/nodes&gt;</pre></code></li></ul></li>
+  <li><code>/refBank/rbk/ping</code>: ping node<ul>
+    <li>request body: none</li>
+    <li>response (MIME type <code>text/xml</code>, encoding <code>UTF-8</code>):
+      <code><pre>&lt;nodes /&gt;</pre></code></li></ul></li>
+  <li><code>/refBank/rbk/name</code>: retrieve data of this RefBank node<ul>
+    <li>request body: none</li>
+    <li>response (MIME type <code>text/xml</code>, encoding <code>UTF-8</code>):
+      <code><pre>&lt;nodes&gt;
+  &lt;node name=&quot;<i>name of RefBank node</i>&quot; accessUrl=&quot;<i>prefered access URL of node</i>&quot; /&gt;
+&lt;/nodes&gt;</pre></code></li></ul></li>
+  <li><code>/refBank/rbk/introduce</code>: introduce a new RefBank node to this one, retrieve list of other known RefBank nodes<ul>
+    <li>request body (parameters):<ul>
+      <li><code>name</code>: the name of the RefBank node introducing itself</li>
+      <li><code>accessUrl</code>: the prefered access URL of the RefBank node introducing itself</li></ul></li>
+    <li>response (MIME type <code>text/xml</code>, encoding <code>UTF-8</code>):
+      <code><pre>&lt;nodes&gt;
+  &lt;node name=&quot;<i>name of RefBank node</i>&quot; accessUrl=&quot;<i>prefered access URL of node</i>&quot; /&gt;
+  &lt;node ... /&gt;
+&lt;/nodes&gt;</pre></code></li></ul></li>
+</ul></li>
+<li><code>PUT</code>: upload new or update existing references:<ul>
+  <li>request headers to set:<ul>
+    <li><code>Data-Format</code>: the upload data format, xml or txt (tried to auto-detect if not specified)</li>
+    <li><code>User-Name</code>: the user to credit for uploaded references (defaults to 'Anonymous' if not specified)</li></ul></li>
+  <li>request body: the references as plain text or wrapped in XML, corresponding to the format specified in the header; to be encoded in <code>UTF-8</code><ul>
+    <li><code>Data-Format=txt</code>: one plain reference string per line, adds new references, un-deletes ones that are re-added and were flagged as deleted</li>
+    <li><code>Data-Format=xml</code>:
+      <code><pre>&lt;refSet&gt;
+  &lt;ref&gt;
+    &lt;refString&gt;&lt;plain reference string&gt;&lt;/refString&gt;
+    &lt;refParsed&gt;&lt;parsed reference in MODS XML, if available&gt;&lt;/refParsed&gt;
+  &lt;/ref&gt;
+  &lt;ref&gt;...&lt;/ref&gt;
+&lt;/refSet&gt;</pre></code></li></ul></li>
+  <li>response: update statistice (MIME type <code>text/xml</code>, encoding <code>UTF-8</code>), in particular the uploaded or otherwise updated references, with attributes indicating whether they were updated or alltogether newly added to RefBank:
+    <code><pre>&lt;refSet created=&quot;<i>number of references newly added to RefBank</i>&quot; updated=&quot;<i>number of references updated, less newly created ones</i>&quot;&gt;
+  &lt;ref id=&quot;<i>reference ID</i>&quot; canonicalId=&quot;<i>ID of canonical reference</i>&quot; deleted=&quot;<i>deleted flag, true or false</i>&quot; createTime=&quot;<i>UTC timestamp reference was first added to RefBank</i>&quot; updateTime=&quot;<i>UTC timestamp reference was last updated</i>&quot; parseChecksum=&quot;<i>MD5 hash of parsed version, if available</i>&quot; parseError=&quot;<i>explanation why parsed version was rejected, if any</i>&quot; created=&quot;<i>true or false, indicating whether reference was newly added to RefBank</i>&quot; updated=&quot;<i>true or false, indicating whether reference existed and was updated</i>&quot;&gt;
+    &lt;refString&gt;&lt;plain reference string, as stored in RefBank&gt;&lt;/refString&gt;
+  &lt;/ref&gt;
+  &lt;ref ...&gt;...&lt;/ref&gt;
+&lt;/refSet&gt;</pre></code></li></ul></li>
+</ul></p>
+<p>RefBank search servlet (<code>/RefBank/search</code>):<ul>
+<li><code>GET</code>: retrieve search form, perform search, or retrieve styled or formatted reference, depending on parameters:<ul>
+  <li><code>id</code>: identifier of reference, yields reference specific response if set, depending on several other parameters:<ul>
+    <li><code>format</code>: reference format, for use with other software</li>
+    <li><code>style</code>: reference string style, for use in bibliography of a publication</li>
+    <li><code>isFramePage</code>: send reference specific pupup page instead of reference proper?</li>
+    <li>combinations of the id and style and format parameters return different results:<ul>
+      <li><code>id</code> + <code>format=PaRsEtHeReF</code> + <code>isFramePage=true</code>: reference specific popup page, with reference opened for manual parsing in embedded IFrame (used in browser, not part of API)</li>
+      <li><code>id</code> + <code>format=EdItReFsTrInG</code> + <code>isFramePage=true</code>: reference specific popup page, with reference string opened for manual editing in embedded IFrame (used in browser, not part of API)</li>
+      <li><code>id</code> + <code>style</code> or <code>format</code> + <code>isFramePage=true</code>: reference specific popup page, with reference in speciefied style or format showing in embedded IFrame (used in browser, not part of API)</li>
+      <li><code>id</code> + <code>style</code>: return the reference with specified ID in the specified style (MIME type <code>text/html</code>, encoding <code>UTF-8</code>)</li>
+      <li><code>id</code> + <code>format</code>: return the reference with specified ID in the specified data format (MIME type <code>text/plain</code>, encoding <code>UTF-8</code>)</li>
+      <li><code>id=MiNoRuPdATe</code>, no style or format: return HTML form for <code>POST</code> callbacks from search result page (used in browser, not part of API)</ul></li></ul></li>
+  <li><code>canonicalStrinId</code>: identifier of canonical representation, if set returns HTML page listing duplicate references (used in browser, not part of API)</li>
+  <li><code>query</code>: full text query against reference strings</li>
+  <li><code>type</code>: type of reference, only finds references with parsed version available</li>
+  <li><code>user</code>: contributing user</li>
+  <li><code>author</code>: query against author attribute of references, only finds references with parsed version available</li>
+  <li><code>title</code>: query against title attribute of references, only finds references with parsed version available</li>
+  <li><code>date</code> / <code>year</code>: query against year of publication attribute of references, only finds references with parsed version available (used synonymously)</li>
+  <li><code>origin</code>: query against origin of references (journal + volume number, publisher or location, as well as volume title), only finds references with parsed version available</li>
+  <li><code>idType</code> + <code>idValue</code>: query against some external identifier attribute of references (e.g. DOI or ISBN), only finds references with parsed version available</li>
+  <li>any of query, author, title, date/year, origin, or idType + idValue set: response is HTML page listing matching references (used in browser, not part of API)</li>
+  <li>no parameters at all: response is HTML page with search form (used in browser, not part of API)</li>
+</ul></li>
+<li><code>POST</code> (used in browser, not part of API): receive update callbacks from search result page</li>
+</ul></p>
+<p>RefBank upload servlet (<code>/RefBank/upload</code>):<ul>
+<li><code>GET</code> (used in browser, not part of API):<ul>
+  <li><code>/RefBank/upload</code>: retrieve upload form</li>
+  <li><code>/RefBank/upload/&lt;upload-ID&gt;/action</code>: status info for running uploads</li>
+</ul></li>
+<li><code>POST</code> (used in browser, not part of API):<ul>
+  <li><code>/RefBank/upload</code>: receive text area or file upload from browser</li>
+</ul></li>
+<li><code>PUT</code>: receive upload via script:<ul>
+  <li>request headers to set:<ul>
+    <li><code>Data-Format</code>: name of the reference data format used in request body (one of the formats selectable in the upload form)</li>
+    <li><code>User-Name</code>: the name of the user to credit for the contributed references</li>
+    <li><code>Access-Key</code>: the upload access key; needs to match configured key for servlet to accept the upload, ignored if no key is configured</li></ul></li>
+  <li>request body: references in format inidcated in header</li>
+  <li>response: upload result statistics (MIME type <code>text/plain</code>, encoding <code>UTF-8</code>)
+    <code><pre>RECEIVED: &lt;number of references received&gt;
+ERRORS: &lt;number of references that contain errors&gt;
+CREATED: &lt;number of references newly added to RefBank&gt;
+UPDATED: &lt;number of references that were not newly added, but had their parsed version updated&gt;</pre></code></li>
+</ul></li>
+</ul></p>
+<p>RefBank data index servlet (<code>/RefBank/data</code>):<ul>
+<li><code>GET</code>: retrieve a list of reference attribute values present from parsed references in RefBank, for use as a gazetteer<ul>
+  <li>parameters:<ul>
+    <li><code>type</code>: the type of data to retrieve</li></ul></li>
+  <li>response: list of data element values of requested type (MIME type <code>text/plain</code>, encoding <code>UTF-8</code>)<ul>
+    <li><code>type=persons</code>: names of persons, i.e., authors and editors</li>
+    <li><code>type=journals</code>: names of journals</li>
+    <li><code>type=publishers</code>: names of publishers</li>
+    <li><code>type=origins</code>: names of journals and publishers</li></ul></li>
+</ul></li>
+</ul></p>
 </div>
 </body>
 </html>
