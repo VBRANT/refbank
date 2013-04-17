@@ -1,1 +1,0 @@
-(((<<referenceNumber>>)\s+)?<<authorLastNameUpperCaseFirst>>(<<authorListSeparator>>\s(<<authorLastNameUpperCaseFirst>>|<<authorLastNameUpperCaseLast>>|<<authorLastNameFirst>>|<<authorLastNameLast>>))*(\s\(Ed(s)?(\.)?\))?(\,|\.|\:))

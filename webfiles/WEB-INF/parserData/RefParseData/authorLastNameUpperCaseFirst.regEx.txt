@@ -1,1 +1,0 @@
-(<<authorLastNameUpperCase>>\,?(\s[A-Z]++\.?+)((\s|\-)[A-Z]++\.?+)*+)
