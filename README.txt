@@ -45,6 +45,8 @@ In addition, the Ant build script checks if these projects are present in your w
 
 - openstringpool (https://git.scratchpads.eu/v/openstringpool.git)
 
+- refparse (https://git.scratchpads.eu/v/refparse.git)
+
 
 
 SETTING UP A RefBank NODE
