@@ -8,7 +8,7 @@ EasyIO.JDBC.Url = "jdbc:derby:DerbyDB/RefBankDB;create=true";
 //EasyIO.JDBC.DriverClassName = "org.apache.derby.jdbc.EmbeddedDriver";
 //EasyIO.JDBC.DriverClassPath = "./WEB-INF/lib/derby.jar";
 //EasyIO.JDBC.TerminalSemicolon = "NO";
-//EasyIO.JDBC.Url = "jdbc:derby:DerbyDB/RefBankDB;create=true";
+//EasyIO.JDBC.Url = "jdbc:derby:DerbyDB/<DataBaseName>;create=true";
 
 // EXAMPLE for Microsoft SQL Server (to activate, remove the double slashes from the start of the eight lines below and fill in the angle-bracketed parts with your actual data)
 //EasyIO.JDBC.AuthMode = "HUP";

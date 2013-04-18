@@ -2,9 +2,9 @@ RefBank data servlet (/RefBank/rbk):
 
     GET (response content depends on action parameter):
 
-        action=admin (also as /refBank/rbk/admin): retrieve login form for the RefBank node administration HTML page (used in browser, not part of API)
+        action=admin (also as /RefBank/rbk/admin): retrieve login form for the RefBank node administration HTML page (used in browser, not part of API)
 
-        action=nodes (also as /refBank/rbk/nodes): retrieve list of other RefBank nodes known to this one
+        action=nodes (also as /RefBank/rbk/nodes): retrieve list of other RefBank nodes known to this one
             additional parameters: none
             response (MIME type text/xml, encoding UTF-8):
 
@@ -13,13 +13,13 @@ RefBank data servlet (/RefBank/rbk):
               <node ... />
             </nodes>
 
-        action=ping (also as /refBank/rbk/ping): ping node
+        action=ping (also as /RefBank/rbk/ping): ping node
             additional parameters: none
             response (MIME type text/xml, encoding UTF-8):
 
             <nodes />
 
-        action=name (also as /refBank/rbk/name): retrieve data of this RefBank node
+        action=name (also as /RefBank/rbk/name): retrieve data of this RefBank node
             additional parameters: none
             response (MIME type text/xml, encoding UTF-8):
 
@@ -30,10 +30,10 @@ RefBank data servlet (/RefBank/rbk):
         action=feed: retrieve the reference update feed, ordered by increasing update time
             additional parameters:
                 updatedSince: minimum update time for references to include in the feed, formatted as UTC HTTP timestamp
-            response: compact feed of references updated since the specified timestamp (MIME type text/xml, encoding UTF-8
+            response: compact feed of references updated since the specified timestamp (MIME type text/xml, encoding UTF-8)
 
             <refSet>
-              <ref id="reference ID" canonicalId="ID of canonical reference to set" deleted="deleted flag, true or false" createTime="UTC timestamp reference was first added to RefBank" updateTime="UTC timestamp reference was last updated" localUpdateTime="UTC timestamp reference was last updated on this RefBank node" parseChecksum="MD5 hash of parsed version, if available" />
+              <ref id="reference ID" canonicalId="ID of canonical reference" deleted="deleted flag, true or false" createTime="UTC timestamp reference was first added to RefBank" updateTime="UTC timestamp reference was last updated" localUpdateTime="UTC timestamp reference was last updated on this RefBank node" parseChecksum="MD5 hash of parsed version, if available" />
               <ref ... />
             </refSet>
 
@@ -44,7 +44,7 @@ RefBank data servlet (/RefBank/rbk):
             response: the reference(s) with the speciefied identifier(s) (MIME type text/xml, encoding UTF-8)
 
             <refSet>
-              <ref id="reference ID" canonicalId="ID of canonical reference to set" deleted="deleted flag, true or false" createTime="UTC timestamp reference was first added to RefBank" createUser="name of the user to first add reference to RefBank" createDomain="name of RefBank node reference was first added to" updateTime="UTC timestamp reference was last updated" updateUser="name of the user to last update reference" updateDomain="name of RefBank node reference was last updated at">
+              <ref id="reference ID" canonicalId="ID of canonical reference" deleted="deleted flag, true or false" createTime="UTC timestamp reference was first added to RefBank" createUser="name of the user to first add reference to RefBank" createDomain="name of RefBank node reference was first added to" updateTime="UTC timestamp reference was last updated" updateUser="name of the user to last update reference" updateDomain="name of RefBank node reference was last updated at">
                 <refString><plain reference string></refString>
                 <refParsed><parsed version of reference (if available), as MODS XML or in format specified by format parameter></refParsed>
               </ref>
@@ -66,7 +66,7 @@ RefBank data servlet (/RefBank/rbk):
             response: the reference matching the specified search criteria (MIME type text/xml, encoding UTF-8)
 
             <refSet>
-              <ref id="reference ID" canonicalId="ID of canonical reference to set" deleted="deleted flag, true or false" createTime="UTC timestamp reference was first added to RefBank" createUser="name of the user to first add reference to RefBank" createDomain="name of RefBank node reference was first added to" updateTime="UTC timestamp reference was last updated" updateUser="name of the user to last update reference" updateDomain="name of RefBank node reference was last updated at" parseChecksum="MD5 hash of parsed version, if available and format set to concise">
+              <ref id="reference ID" canonicalId="ID of canonical reference" deleted="deleted flag, true or false" createTime="UTC timestamp reference was first added to RefBank" createUser="name of the user to first add reference to RefBank" createDomain="name of RefBank node reference was first added to" updateTime="UTC timestamp reference was last updated" updateUser="name of the user to last update reference" updateDomain="name of RefBank node reference was last updated at" parseChecksum="MD5 hash of parsed version, if available and format set to concise">
                 <refString><plain reference string></refString>
                 <refParsed><parsed version of reference (if available), as MODS XML or in format specified by format parameter></refParsed>
               </ref>
@@ -94,7 +94,7 @@ RefBank data servlet (/RefBank/rbk):
 
         /RefBank/rbk/admin: process input from the RefBank node administration HTML page (used in browser, not part of API)
 
-        /refBank/rbk/nodes: retrieve list of other RefBank nodes known to this one
+        /RefBank/rbk/nodes: retrieve list of other RefBank nodes known to this one
             request body: none
             response (MIME type text/xml, encoding UTF-8):
 
@@ -103,13 +103,13 @@ RefBank data servlet (/RefBank/rbk):
               <node ... />
             </nodes>
 
-        /refBank/rbk/ping: ping node
+        /RefBank/rbk/ping: ping node
             request body: none
             response (MIME type text/xml, encoding UTF-8):
 
             <nodes />
 
-        /refBank/rbk/name: retrieve data of this RefBank node
+        /RefBank/rbk/name: retrieve data of this RefBank node
             request body: none
             response (MIME type text/xml, encoding UTF-8):
 
@@ -117,7 +117,7 @@ RefBank data servlet (/RefBank/rbk):
               <node name="name of RefBank node" accessUrl="prefered access URL of node" />
             </nodes>
 
-        /refBank/rbk/introduce: introduce a new RefBank node to this one, retrieve list of other known RefBank nodes
+        /RefBank/rbk/introduce: introduce a new RefBank node to this one, retrieve list of other known RefBank nodes
             request body (parameters):
                 name: the name of the RefBank node introducing itself
                 accessUrl: the prefered access URL of the RefBank node introducing itself

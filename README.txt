@@ -1,4 +1,4 @@
-The repository hosts RefBank, the platfor for buiding the Bibliography of
+The repository hosts RefBank, the platform for buiding the Bibliography of
 Life for taxonomists. RefBank is developed by David King and Guido Sautter
 on behalf of The Open University and Karlsruhe Institute of Technology (KIT)
 under the ViBRANT project (EU Grant FP7/2007-2013, Virtual Biodiversity 
@@ -31,6 +31,19 @@ Apache Tomcat 5.5 or higher (other servlet containers should work as well, but h
 A database server, e.g. PostgreSQL (drivers included for version 8.2) or Microsoft SQL Server (drivers included)
 Instead, you can also use Apache Derby embedded database (included)
 (using Apache Derby is the default configuration, so you can test RefBank without setting up a database)
+
+
+
+DEPENDENCIES
+
+RefBank builds on other open source projects; the JAR files these projects build into are included in the "lib" folder for convenience.
+In addition, the Ant build script checks if these projects are present in your workspace, and if so, uses the recent builds found in their "dist" folders.
+
+- idaho-core (http://code.google.com/p/idaho-core/)
+
+- idaho-extensions (http://code.google.com/p/idaho-extensions/)
+
+- openstringpool (https://git.scratchpads.eu/v/openstringpool.git)
 
 
 

@@ -351,7 +351,7 @@ public class RefBankUploadServlet extends RefBankWiServlet {
 								token = (token.substring(0, token.indexOf("value=\"\"")) + token.substring(token.indexOf("value=\"\"") + "value=\"\"".length()));
 							while (token.endsWith("/") || token.endsWith(">"))
 								token = token.substring(0, (token.length() - 1));
-							token = (token + " value=\"" + value + "\"/>");
+							token = (token + " value=\"" + value + "\" />");
 						}
 					}
 				}

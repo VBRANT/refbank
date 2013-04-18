@@ -5,7 +5,7 @@
 -->
 
 <project name="dist">
-	<target name="war" depends="jar,dataformats">
+	<target name="war" depends="jar,dataparsers,dataformats">
 		<delete file="${war.file}" />
 		<war warfile="${war.file}" webxml="${web.home}/WEB-INF/web.xml">
 			<fileset dir="${build.home}">
@@ -18,7 +18,12 @@
 	
 	<target name="jar">
 		<delete file="${jar.file}" />
-		<jar destfile="${jar.file}" basedir="${build.home}/classes" excludes="**/dataFormats/*.class" />
+		<jar destfile="${jar.file}" basedir="${build.home}/classes" excludes="**/dataParsers/*.class **/dataFormats/*.class" />
+	</target>
+	
+	<target name="dataparsers">
+		<delete file="${jar.dataparsers.file}" />
+		<jar destfile="${jar.dataparsers.file}" basedir="${build.home}/classes" includes="**/dataParsers/*.class" />
 	</target>
 	
 	<target name="dataformats">

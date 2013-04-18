@@ -13,24 +13,41 @@
 		<mkdir dir="${build.home}/classes" />
 		<mkdir dir="${build.home}/WEB-INF" />
 		<mkdir dir="${build.home}/WEB-INF/lib" />
+		<mkdir dir="${build.home}/WEB-INF/refDataFormats" />
+		<mkdir dir="${build.home}/WEB-INF/refDataFormats/DataFormatsData" />
+		<mkdir dir="${build.home}/WEB-INF/refDataFormats/DataFormatsData/RefParseData" />
 		<mkdir dir="${dist.home}" />
 	</target>
 	
 	<!-- more or less the reverse of it, delete all the directories again -->
 	<target name="clean" description="remove all auto-generated files" >
-		<delete dir="${build.home}" />
-		<delete dir="${dist.home}" />
+		<delete>
+			<fileset dir="${build.home}" includes="**/*.*" />
+		</delete>
+		<delete>
+			<fileset dir="${dist.home}" includes="**/*.*" />
+		</delete>
 	</target>
-
+	
 	<!-- copy everything that needs to be in the .war -->
 	<target name="copy" depends="mkdirs" >
+		
 		<!-- Copy static content of this web application -->
     	<copy todir="${build.home}" overwrite="true" verbose="false">
 			<fileset dir="${web.home}" />
 		</copy>
+		
 		<!-- copy required libraries -->
 		<copy todir="${build.home}/WEB-INF/lib">
 			<fileset dir="${lib.home}" />
+		</copy>
+		
+		<!-- copy RefParse base data to both data formats and parser -->
+		<copy todir="${build.home}/WEB-INF/refDataFormats/DataFormatsData/RefParseData">
+			<fileset dir="${res.home}/refParse/RefParseData" />
+		</copy>
+		<copy todir="${build.home}/WEB-INF/parserData/RefParseData">
+			<fileset dir="${res.home}/refParse/RefParseData" />
 		</copy>
 	</target>
 </project>

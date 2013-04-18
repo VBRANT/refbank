@@ -331,10 +331,10 @@ public class RefBankSearchServlet extends RefBankWiServlet {
 		bw.write("<html><head></head><body>");
 		bw.newLine();
 		bw.write("<form id=\"minorUpdateForm\" method=\"POST\" action=\"" + request.getContextPath() + request.getServletPath() + "\">");
-		bw.write("<input type=\"hidden\" name=\"" + CANONICAL_STRING_ID_ATTRIBUTE + "\" value=\"\" id=\"" + CANONICAL_STRING_ID_ATTRIBUTE + "\">");
-		bw.write("<input type=\"hidden\" name=\"" + STRING_ID_ATTRIBUTE + "\" value=\"\" id=\"" + STRING_ID_ATTRIBUTE + "\">");
-		bw.write("<input type=\"hidden\" name=\"" + DELETED_PARAMETER + "\" value=\"\" id=\"" + DELETED_PARAMETER + "\">");
-		bw.write("<input type=\"hidden\" name=\"" + USER_PARAMETER + "\" value=\"\" id=\"" + USER_PARAMETER + "\">");
+		bw.write("<input type=\"hidden\" name=\"" + CANONICAL_STRING_ID_ATTRIBUTE + "\" value=\"\" id=\"" + CANONICAL_STRING_ID_ATTRIBUTE + "\" />");
+		bw.write("<input type=\"hidden\" name=\"" + STRING_ID_ATTRIBUTE + "\" value=\"\" id=\"" + STRING_ID_ATTRIBUTE + "\" />");
+		bw.write("<input type=\"hidden\" name=\"" + DELETED_PARAMETER + "\" value=\"\" id=\"" + DELETED_PARAMETER + "\" />");
+		bw.write("<input type=\"hidden\" name=\"" + USER_PARAMETER + "\" value=\"\" id=\"" + USER_PARAMETER + "\" />");
 		bw.write("</form>");
 		bw.newLine();
 		bw.write("</body></html>");
@@ -495,7 +495,7 @@ public class RefBankSearchServlet extends RefBankWiServlet {
 									" value=\"" + format + "\"" + 
 									" title=\"Get this reference formatted as " + format + "\"" + 
 									" onclick=\"return setFormat('" + format + "');\"" + 
-									">");
+									" />");
 						}
 						this.writeLine("</td>");
 						this.writeLine("</tr>");
@@ -511,7 +511,7 @@ public class RefBankSearchServlet extends RefBankWiServlet {
 									" value=\"" + styles[s] + "\"" + 
 									" title=\"Get this reference formatted in " + styles[s] + " style\"" + 
 									" onclick=\"return setStyle('" + styles[s] + "');\"" + 
-									">");
+									" />");
 						}
 						this.writeLine("</td>");
 						this.writeLine("</tr>");
@@ -527,7 +527,7 @@ public class RefBankSearchServlet extends RefBankWiServlet {
 							" value=\"" + ((ps.getStringParsed() == null) ? "Parse Reference" : "Refine Parsed Reference") + "\"" +
 							" title=\"" + ((ps.getStringParsed() == null) ? "Parse this bibliographic reference so formatted versions become available" : "Refine or correct the parsed version of this bibliographic reference") + "\"" +
 							" onclick=\"return parseRef();\"" + 
-							">");
+							" />");
 				}
 				if (refEditorUrl != null) {
 					this.writeLine("<input" + 
@@ -536,7 +536,7 @@ public class RefBankSearchServlet extends RefBankWiServlet {
 							" value=\"Edit Reference\"" +
 							" title=\"" + "Correct this bibliographic reference string, e.g. to eliminate typos or punctuation errors" + "\"" +
 							" onclick=\"return editRef();\"" + 
-							">");
+							" />");
 				}
 				this.writeLine("<input type=\"button\" id=\"delete" + ps.id + "\" class=\"referenceFormatLink\"" + (ps.isDeleted() ? " style=\"display: none;\"" : "") + " onclick=\"return setDeleted('" + ps.id + "', true);\" value=\"Delete\">");
 				this.writeLine("<input type=\"button\" id=\"unDelete" + ps.id + "\" class=\"referenceFormatLink\"" + (ps.isDeleted() ? "" : " style=\"display: none;\"") + " onclick=\"return setDeleted('" + ps.id + "', false);\" value=\"Un-Delete\">");
@@ -676,91 +676,6 @@ public class RefBankSearchServlet extends RefBankWiServlet {
 		this.sendPopupHtmlPage(pageBuilder);
 	}
 	
-//	/* (non-Javadoc)
-//	 * @see de.uka.ipd.idaho.easyIO.web.HtmlServlet#getOnloadCalls()
-//	 */
-//	public String[] getOnloadCalls() {
-//		String[] olcs = {"showUserMenu();"};
-//		return olcs;
-//	}
-//	
-//	public void writePageHeadExtensions(HtmlPageBuilder out) throws IOException {
-//		out.writeLine("<script type=\"text/javascript\">");
-//		
-//		out.writeLine("var user = '';");
-//		
-//		out.writeLine("function getUser(silent) {");
-//		out.writeLine("  if (user.length == 0) {");
-//		out.writeLine("    var cUser = document.cookie;");
-//		out.writeLine("    if ((cUser != null) && (cUser.indexOf('user=') != -1)) {");
-//		out.writeLine("      cUser = cUser.substring(cUser.indexOf('user=') + 'user='.length);");
-//		out.writeLine("      if (cUser.indexOf(';') != -1)");
-//		out.writeLine("        cUser = cUser.substring(0, cUser.indexOf(';'));");
-//		out.writeLine("      user = unescape(cUser);");
-//		out.writeLine("    }");
-//		out.writeLine("    if ((silent == null) && (user.length == 0))");
-//		out.writeLine("      editUserName();");
-//		out.writeLine("  }");
-//		out.writeLine("  return (user.length != 0);");
-//		out.writeLine("}");
-//		
-//		out.writeLine("function editUserName() {");
-//		out.writeLine("  var pUser = window.prompt('Please enter a user name so RefBank can credit your contribution', ((user == null) ? '' : user));");
-//		out.writeLine("  if (pUser == null)");
-//		out.writeLine("    return false;");
-//		out.writeLine("  else user = pUser.replace(/^\\s+|\\s+$/g,'');");
-//		out.writeLine("  document.cookie = ('user=' + user + ';domain=' + escape(window.location.hostname) + ';expires=' + new Date(1509211565944).toGMTString());");
-//		out.writeLine("  var undl = document.getElementById('userNameDisplayLabel');");
-//		out.writeLine("  if (undl != null) {");
-//		out.writeLine("    if (undl.firstChild)");
-//		out.writeLine("      undl.firstChild.nodeValue = ((user.length != 0) ? 'Current screen name:' : 'No screen name specified');");
-//		out.writeLine("    else undl.appendChild(document.createTextNode((user.length != 0) ? 'Current screen name:' : 'No screen name specified'));");
-//		out.writeLine("  }");
-//		out.writeLine("  var unds = document.getElementById('userNameDisplaySpan');");
-//		out.writeLine("  if (unds != null) {");
-//		out.writeLine("    if (unds.firstChild)");
-//		out.writeLine("      unds.firstChild.nodeValue = user;");
-//		out.writeLine("    else unds.appendChild(document.createTextNode(user));");
-//		out.writeLine("  }");
-//		out.writeLine("  return false;");
-//		out.writeLine("}");
-//		
-//		out.writeLine("function showUserMenu() {");
-//		out.writeLine("  var bodyRoot = document.getElementsByTagName('body')[0];");
-//		out.writeLine("  if (bodyRoot == null)");
-//		out.writeLine("    return;");
-//		out.writeLine("  var umRoot = document.createElement('div');");
-//		out.writeLine("  setAttribute(umRoot, 'width', '100%');");
-//		out.writeLine("  setAttribute(umRoot, 'align', 'right');");
-//		out.writeLine("  var undl = document.createElement('span');");
-//		out.writeLine("  setAttribute(undl, 'id', 'userNameDisplayLabel');");
-//		out.writeLine("  undl.appendChild(document.createTextNode(getUser('silent') ? 'Current screen name:' : 'No screen name specified'));");
-//		out.writeLine("  umRoot.appendChild(undl);");
-//		out.writeLine("  var unds = document.createElement('span');");
-//		out.writeLine("  setAttribute(unds, 'id', 'userNameDisplaySpan');");
-//		out.writeLine("  setAttribute(unds, 'style', 'margin-left: 5px; font-weight: bold;');");
-//		out.writeLine("  unds.appendChild(document.createTextNode(user));");
-//		out.writeLine("  umRoot.appendChild(unds);");
-//		out.writeLine("  var uneb = document.createElement('a');");
-//		out.writeLine("  setAttribute(uneb, 'href', '#');");
-//		out.writeLine("  setAttribute(uneb, 'class', 'footerNavigationLink');");
-//		out.writeLine("  setAttribute(uneb, 'onclick', 'return editUserName();');");
-//		out.writeLine("  setAttribute(uneb, 'style', 'margin-left: 10px;');");
-//		out.writeLine("  uneb.appendChild(document.createTextNode('Enter / Edit'));");
-//		out.writeLine("  umRoot.appendChild(uneb);");
-//		out.writeLine("  bodyRoot.insertBefore(umRoot, bodyRoot.firstChild);");
-//		out.writeLine("}");
-//		
-//		out.writeLine("function setAttribute(node, name, value) {");
-//		out.writeLine("  if (!node.setAttributeNode)");
-//		out.writeLine("    return;");
-//		out.writeLine("  var attribute = document.createAttribute(name);");
-//		out.writeLine("  attribute.nodeValue = value;");
-//		out.writeLine("  node.setAttributeNode(attribute);");
-//		out.writeLine("}");
-//		out.writeLine("</script>");
-//	}
-//	
 	private static class CharSequenceReader extends Reader {
 		private CharSequence chars;
 		private int length;
@@ -923,8 +838,8 @@ public class RefBankSearchServlet extends RefBankWiServlet {
 					this.writeLine("<p class=\"referenceString\" style=\"font-size: 60%;\">Hover&nbsp;references&nbsp;for&nbsp;further&nbsp;options</p>");
 					this.writeLine("</td>");
 					this.writeLine("<td class=\"resultTableCell\" style=\"text-align: right;\">");
-					this.writeLine("<input type=\"button\" id=\"showDeleted\" class=\"referenceFormatLink\" onclick=\"return toggleDeleted(true);\" value=\"Show references flagged as deleted\">");
-					this.writeLine("<input type=\"button\" id=\"hideDeleted\" class=\"referenceFormatLink\" style=\"display: none;\" onclick=\"return toggleDeleted(false);\" value=\"Hide references flagged as deleted\">");
+					this.writeLine("<input type=\"button\" id=\"showDeleted\" class=\"referenceFormatLink\" onclick=\"return toggleDeleted(true);\" value=\"Show references flagged as deleted\" />");
+					this.writeLine("<input type=\"button\" id=\"hideDeleted\" class=\"referenceFormatLink\" style=\"display: none;\" onclick=\"return toggleDeleted(false);\" value=\"Hide references flagged as deleted\" />");
 					this.writeLine("</td>");
 					this.writeLine("</tr>");
 					
@@ -974,7 +889,7 @@ public class RefBankSearchServlet extends RefBankWiServlet {
 												"'width=500,height=400,top=100,left=100,resizable=yes,scrollbar=yes,scrollbars=yes'" +
 											");" +
 											" return false;\"" + 
-										">");
+										" />");
 							}
 							if ((formats.size() != 0) && (styles.length != 0))
 								this.writeLine("&nbsp;");
@@ -998,7 +913,7 @@ public class RefBankSearchServlet extends RefBankWiServlet {
 												"'width=500,height=400,top=100,left=100,resizable=yes,scrollbar=yes,scrollbars=yes'" +
 											");" +
 											" return false;\"" + 
-										">");
+										" />");
 							}
 						}
 						if ((ps.getParseChecksum() != null) && ((formats.size() + styles.length) != 0))
@@ -1023,7 +938,7 @@ public class RefBankSearchServlet extends RefBankWiServlet {
 											"'width=500,height=400,top=100,left=100,resizable=yes,scrollbar=yes,scrollbars=yes'" +
 										");" +
 										" return false;\"" + 
-									">");
+									" />");
 						}
 						if (refEditorUrl != null) {
 							String editorLink = (this.request.getContextPath() + this.request.getServletPath() + "?" + 
@@ -1044,16 +959,16 @@ public class RefBankSearchServlet extends RefBankWiServlet {
 											"'width=500,height=400,top=100,left=100,resizable=yes,scrollbar=yes,scrollbars=yes'" +
 										");" +
 										" return false;\"" + 
-									">");
+									" />");
 						}
 						
-						this.writeLine("<input type=\"button\" id=\"delete" + ps.id + "\" class=\"referenceFormatLink\"" + ((ps.isDeleted() && (canonicalStringId == null)) ? " style=\"display: none;\"" : "") + " onclick=\"return setDeleted('" + ps.id + "', true);\" value=\"Delete\">");
-						this.writeLine("<input type=\"button\" id=\"unDelete" + ps.id + "\" class=\"referenceFormatLink\"" + ((ps.isDeleted() && (canonicalStringId == null)) ? "" : " style=\"display: none;\"") + " onclick=\"return setDeleted('" + ps.id + "', false);\" value=\"Un-Delete\">");
+						this.writeLine("<input type=\"button\" id=\"delete" + ps.id + "\" class=\"referenceFormatLink\"" + ((ps.isDeleted() && (canonicalStringId == null)) ? " style=\"display: none;\"" : "") + " onclick=\"return setDeleted('" + ps.id + "', true);\" value=\"Delete\" />");
+						this.writeLine("<input type=\"button\" id=\"unDelete" + ps.id + "\" class=\"referenceFormatLink\"" + ((ps.isDeleted() && (canonicalStringId == null)) ? "" : " style=\"display: none;\"") + " onclick=\"return setDeleted('" + ps.id + "', false);\" value=\"Un-Delete\" />");
 						
 						if (canonicalStringId == null)
-							this.writeLine("<input type=\"button\" id=\"showVersions" + ps.id + "\" class=\"referenceFormatLink\" onclick=\"showVersions('" + ps.id + "');\" value=\"Show All Versions\">");
+							this.writeLine("<input type=\"button\" id=\"showVersions" + ps.id + "\" class=\"referenceFormatLink\" onclick=\"showVersions('" + ps.id + "');\" value=\"Show All Versions\" />");
 						else if (!ps.id.equals(canonicalStringId))
-							this.writeLine("<input type=\"button\" id=\"makeRepresentative" + ps.id + "\" class=\"referenceFormatLink\" onclick=\"return makeRepresentative('" + ps.id + "');\" value=\"Make Representative\">");
+							this.writeLine("<input type=\"button\" id=\"makeRepresentative" + ps.id + "\" class=\"referenceFormatLink\" onclick=\"return makeRepresentative('" + ps.id + "');\" value=\"Make Representative\" />");
 						
 						this.writeLine("</div>");
 						this.writeLine("</td>");

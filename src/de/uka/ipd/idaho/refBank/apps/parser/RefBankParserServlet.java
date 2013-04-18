@@ -557,6 +557,8 @@ public class RefBankParserServlet extends RefBankAppServlet {
 	}
 	
 	private String getParsedReference(MutableAnnotation bibRef, MutableAnnotation existingParsedReference, Properties storedDetails) {
+//		TODO switch back to using BibRefUtils
+//		
 //		RefData rd = BibRefUtils.genericXmlToRefData(bibRef);
 //		if (!rd.hasAttribute(BibRefUtils.AUTHOR_ANNOTATION_TYPE)) {
 //			String author = ((String) bibRef.getAttribute(RefParse.AUTHOR_ANNOTATION_TYPE));

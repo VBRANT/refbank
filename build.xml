@@ -4,11 +4,12 @@
 
 <project name="RefBank" default="all" basedir="." >
 	<include file="ant/config.ant" />
+	<include file="ant/import.ant" />
 	<include file="ant/dir.ant" />
 	<include file="ant/javac.ant" />
 	<include file="ant/dist.ant" />
 	
-	<target name="all" depends="clean,compile,war">
+	<target name="all" depends="import,clean,compile,war">
 		<!--<input message="Press Enter to start Tomcat.." />-->
 	</target>
 	
@@ -19,6 +20,10 @@
 	<target name="compile" description="do the compilation" >
 		<antcall target="dir.copy" />
 		<antcall target="javac.compile" />
+	</target>
+	
+	<target name="import" description="fetch stuff from other projects if present">
+		<antcall target="import.fetch" />
 	</target>
 	
 	<target name="war" depends="compile" description="create the war file">

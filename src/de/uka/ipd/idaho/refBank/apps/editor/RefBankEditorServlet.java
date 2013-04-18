@@ -98,9 +98,9 @@ public class RefBankEditorServlet extends RefBankAppServlet {
 				this.writeLine("<form id=\"refEditorForm\" method=\"POST\" action=\"" + this.request.getContextPath() + this.request.getServletPath() + "\" accept-charset=\"utf8\" encrypt=\"application/x-www-form-urlencoded; charset=utf8\">");
 				this.writeLine("<table class=\"editTable\">");
 				
-				this.writeLine("<input type=\"hidden\" name=\"sourceRefId\" value=\"" + refId + "\">");
-				this.writeLine("<input type=\"hidden\" name=\"resultUrlPrefix\" value=\"" + resultUrlPrefix + "\">");
-				this.writeLine("<input type=\"hidden\" name=\"" + USER_PARAMETER + "\" value=\"" + user + "\">");
+				this.writeLine("<input type=\"hidden\" name=\"sourceRefId\" value=\"" + refId + "\" />");
+				this.writeLine("<input type=\"hidden\" name=\"resultUrlPrefix\" value=\"" + resultUrlPrefix + "\" />");
+				this.writeLine("<input type=\"hidden\" name=\"" + USER_PARAMETER + "\" value=\"" + user + "\" />");
 				
 				this.writeLine("<tr class=\"editTableRow\">");
 				this.writeLine("<td class=\"editTableCell\">");
@@ -118,7 +118,7 @@ public class RefBankEditorServlet extends RefBankAppServlet {
 				
 				this.writeLine("<tr class=\"resultTableRow\">");
 				this.writeLine("<td class=\"resultTableCell\">");
-				this.writeLine("<input type=\"button\" id=\"edit\" class=\"referenceFormatLink\" onclick=\"document.getElementById('refEditorForm').submit();\" value=\"Edit\">");
+				this.writeLine("<input type=\"button\" id=\"edit\" class=\"referenceFormatLink\" onclick=\"document.getElementById('refEditorForm').submit();\" value=\"Confirm Edit\" />");
 				this.writeLine("</td>");
 				this.writeLine("</tr>");
 				
