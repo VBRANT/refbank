@@ -5,7 +5,7 @@
 -->
 
 <project name="import">
-	<target name="fetch" depends="fetch-osp,fetch-rp,fetch-su,fetch-hxu,fetch-gamta,fetch-eio,fetch-gia,fetch-gfa,fetch-bru,fetch-bolo" />
+	<target name="fetch" depends="fetch-osp,fetch-rp,fetch-su,fetch-hxu,fetch-gamta,fetch-eio,fetch-gia,fetch-gfa,fetch-bru,fetch-icmlib" />
 	
 	<target name="check-fetch-osp" unless="osp.exists">
 		<available property="osp.exists" file="../openstringpool/dist/OpenStringPool.jar"/>
@@ -87,5 +87,12 @@
 	</target>
 	<target name="fetch-bru" depends="check-fetch-bru" if="${bru.exists}">
     	<copy file="../idaho-extensions/dist/BibRefUtils.jar" todir="${lib.home}" overwrite="true" verbose="false" />
+	</target>
+	
+	<target name="check-fetch-icmlib" unless="icmlib.exists">
+		<available property="icmlib.exists" file="../idaho-core/lib/mail.jar"/>
+	</target>
+	<target name="fetch-icmlib" depends="check-fetch-icmlib" if="${icmlib.exists}">
+    	<copy file="../idaho-core/lib/mail.jar" todir="${lib.home}" overwrite="true" verbose="false" />
 	</target>
 </project>
