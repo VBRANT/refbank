@@ -52,7 +52,7 @@ In addition, the Ant build script checks if these projects are present in your w
 SETTING UP A RefBank NODE
 
 Download RefBank.war into Tomcat's webapps folder
-Insetad, you can also check out the project from GIT, build the WAR file using Ant, and then deploy RefBank.war to your Tomcat
+Instead, you can also check out the project from GIT, build the WAR file using Ant, and then deploy RefBank.war to your Tomcat
 
 Call http://localhost:8080/RefBank/rbk to make Tomcat extract RefBank.war
 (you might have to re-start Tomcat for it to recognize the WAR file)
