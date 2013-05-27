@@ -15,14 +15,14 @@ EasyIO.JDBC.Url = "jdbc:derby:DerbyDB/RefBankDB;create=true";
 //EasyIO.JDBC.DefaultDB = ";DatabaseName=<DataBaseName>";
 //EasyIO.JDBC.Driver = "jdbc:microsoft:sqlserver";
 //EasyIO.JDBC.DriverClassName = "com.microsoft.jdbc.sqlserver.SQLServerDriver";
-//EasyIO.JDBC.DriverClassPath = "./msbase.jar ./msutil.jar ./mssqlserver.jar";
+//EasyIO.JDBC.DriverClassPath = "./WEB-INF/lib/msbase.jar ./WEB-INF/lib/msutil.jar ./WEB-INF/lib/mssqlserver.jar";
 //EasyIO.JDBC.Host = "//<databaseServerName>";
 //EasyIO.JDBC.User = "<databaseUser>";
 //EasyIO.JDBC.Password = "<databasePassword>";
 
 // EXAMPLE for PostgreSQL (to activate, remove the double slashes from the start of the three lines below and fill in the angle-bracketed parts in the EasyIO.JDBC.Url line with your actual data)
 //EasyIO.JDBC.DriverClassName = "org.postgresql.Driver";
-//EasyIO.JDBC.DriverClassPath = "./postgresql-8.2-505.jdbc3.jar";
+//EasyIO.JDBC.DriverClassPath = "./WEB-INF/lib/postgresql-8.2-505.jdbc3.jar";
 //EasyIO.JDBC.Url = "jdbc:postgresql:<DatabaseNameInLowerCase>?user=<PostgreSqlUser>&password=<PostgreSqlPassword>";
 
 
