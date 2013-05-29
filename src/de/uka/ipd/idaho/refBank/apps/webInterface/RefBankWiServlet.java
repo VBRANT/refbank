@@ -203,14 +203,6 @@ public abstract class RefBankWiServlet extends RefBankAppServlet implements RefB
 		out.writeLine("  umRoot.appendChild(uneb);");
 		out.writeLine("  bodyRoot.insertBefore(umRoot, bodyRoot.firstChild);");
 		out.writeLine("}");
-		
-		out.writeLine("function setAttribute(node, name, value) {");
-		out.writeLine("  if (!node.setAttributeNode)");
-		out.writeLine("    return;");
-		out.writeLine("  var attribute = document.createAttribute(name);");
-		out.writeLine("  attribute.nodeValue = value;");
-		out.writeLine("  node.setAttributeNode(attribute);");
-		out.writeLine("}");
 		out.writeLine("</script>");
 	}
 }
