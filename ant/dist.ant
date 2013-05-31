@@ -18,16 +18,42 @@
 	
 	<target name="jar">
 		<delete file="${jar.file}" />
-		<jar destfile="${jar.file}" basedir="${build.home}/classes" excludes="**/dataParsers/*.class **/dataFormats/*.class" />
+		<!--jar destfile="${jar.file}" basedir="${build.home}/classes" excludes="**/dataParsers/*.class **/dataFormats/*.class" /-->
+		<jar destfile="${jar.file}">
+			<fileset dir="${build.home}/classes">
+				<exclude name="**/dataParsers/*.class" />
+				<exclude name="**/dataFormats/*.class" />
+			</fileset>
+			<fileset dir="${src.home}">
+				<exclude name="**/dataParsers/*.java" />
+				<exclude name="**/dataFormats/*.java" />
+			</fileset>
+		</jar>
 	</target>
 	
 	<target name="dataparsers">
 		<delete file="${jar.dataparsers.file}" />
-		<jar destfile="${jar.dataparsers.file}" basedir="${build.home}/classes" includes="**/dataParsers/*.class" />
+		<!--jar destfile="${jar.dataparsers.file}" basedir="${build.home}/classes" includes="**/dataParsers/*.class" /-->
+		<jar destfile="${jar.dataparsers.file}">
+			<fileset dir="${build.home}/classes">
+				<include name="**/dataParsers/*.class" />
+			</fileset>
+			<fileset dir="${src.home}">
+				<include name="**/dataParsers/*.java" />
+			</fileset>
+		</jar>
 	</target>
 	
 	<target name="dataformats">
 		<delete file="${jar.dataformats.file}" />
-		<jar destfile="${jar.dataformats.file}" basedir="${build.home}/classes" includes="**/dataFormats/*.class" />
+		<!--jar destfile="${jar.dataformats.file}" basedir="${build.home}/classes" includes="**/dataFormats/*.class" /-->
+		<jar destfile="${jar.dataformats.file}">
+			<fileset dir="${build.home}/classes">
+				<include name="**/dataFormats/*.class" />
+			</fileset>
+			<fileset dir="${src.home}">
+				<include name="**/dataFormats/*.java" />
+			</fileset>
+		</jar>
 	</target>
 </project>

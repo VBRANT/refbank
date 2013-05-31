@@ -10,7 +10,7 @@ EasyIO.JDBC.Url = "jdbc:derby:DerbyDB/RefBankDB;create=true";
 //EasyIO.JDBC.TerminalSemicolon = "NO";
 //EasyIO.JDBC.Url = "jdbc:derby:DerbyDB/<DataBaseName>;create=true";
 
-// EXAMPLE for Microsoft SQL Server (to activate, remove the double slashes from the start of the eight lines below and fill in the angle-bracketed parts with your actual data)
+// EXAMPLE for Microsoft SQL Server 2000 (to activate, remove the double slashes from the start of the eight lines below and fill in the angle-bracketed parts with your actual data)
 //EasyIO.JDBC.AuthMode = "HUP";
 //EasyIO.JDBC.DefaultDB = ";DatabaseName=<DataBaseName>";
 //EasyIO.JDBC.Driver = "jdbc:microsoft:sqlserver";
@@ -19,6 +19,11 @@ EasyIO.JDBC.Url = "jdbc:derby:DerbyDB/RefBankDB;create=true";
 //EasyIO.JDBC.Host = "//<databaseServerName>";
 //EasyIO.JDBC.User = "<databaseUser>";
 //EasyIO.JDBC.Password = "<databasePassword>";
+
+// EXAMPLE for Microsoft SQL Server in general (to activate, remove the double slashes from the start of the eight lines below and fill in the angle-bracketed parts with your actual data)
+//EasyIO.JDBC.DriverClassName = "com.microsoft.sqlserver.jdbc.SQLServerDriver";
+//EasyIO.JDBC.DriverClassPath = "./WEB-INF/lib/sqljdbc4.jar";
+//EasyIO.JDBC.Url = "jdbc:sqlserver://<ServerNameWithInstanceNameAndPortIfNonDefault>;databaseName=<DatabaseName>;user=<MsSqlUser>;password=<MsSqlUserPassword>;"
 
 // EXAMPLE for PostgreSQL (to activate, remove the double slashes from the start of the three lines below and fill in the angle-bracketed parts in the EasyIO.JDBC.Url line with your actual data)
 //EasyIO.JDBC.DriverClassName = "org.postgresql.Driver";
