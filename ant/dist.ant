@@ -9,8 +9,11 @@
 		<delete file="${war.file}" />
 		<war warfile="${war.file}" webxml="${web.home}/WEB-INF/web.xml">
 			<fileset dir="${build.home}">
-				<!-- Don't put the classes and the web.xml into this twice -->
-				<exclude name="classes/*" />
+				<!-- Don't put the classes into this twice -->
+				<exclude name="classes/**" />
+			</fileset>
+			<fileset dir="${web.home}">
+				<!-- Don't put the web.xml into this twice -->
 				<exclude name="WEB-INF/web.xml" />
 			</fileset>
 		</war>
@@ -21,12 +24,12 @@
 		<!--jar destfile="${jar.file}" basedir="${build.home}/classes" excludes="**/dataParsers/*.class **/dataFormats/*.class" /-->
 		<jar destfile="${jar.file}">
 			<fileset dir="${build.home}/classes">
-				<exclude name="**/dataParsers/*.class" />
-				<exclude name="**/dataFormats/*.class" />
+				<exclude name="**/dataParsers/**" />
+				<exclude name="**/dataFormats/**" />
 			</fileset>
 			<fileset dir="${src.home}">
-				<exclude name="**/dataParsers/*.java" />
-				<exclude name="**/dataFormats/*.java" />
+				<exclude name="**/dataParsers/**" />
+				<exclude name="**/dataFormats/**" />
 			</fileset>
 		</jar>
 	</target>

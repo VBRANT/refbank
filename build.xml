@@ -9,7 +9,7 @@
 	<include file="ant/javac.ant" />
 	<include file="ant/dist.ant" />
 	
-	<target name="all" depends="import,clean,compile,war">
+	<target name="all" depends="clean,import,compile,war">
 		<!--<input message="Press Enter to start Tomcat.." />-->
 	</target>
 	

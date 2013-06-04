@@ -26,8 +26,8 @@
 	</target>
 	<target name="fetch-rp" depends="check-fetch-rp" if="${rp.exists}">
     	<copy file="../refparse/dist/RefParse.zip" todir="${res.home}" overwrite="true" verbose="false" />
-		<mkdir dir="${res.home}/refParse" />
-		<delete dir="$res.home}/refParse/**/**.*" />
+		<!--mkdir dir="${res.home}/refParse" />
+		<delete dir="${res.home}/refParse/**/**.*" />
 		<unzip src="${res.home}/RefParse.zip" dest="${res.home}/refParse">
 			<patternset>
 				<include name="**/**.*"/>
@@ -35,7 +35,30 @@
 				<exclude name="README.txt"/>
 			</patternset>
 		</unzip>
-	   	<copy file="${res.home}/refParse/RefParse.jar" todir="${lib.home}" overwrite="true" verbose="false" />
+	   	<copy file="${res.home}/refParse/RefParse.jar" todir="${lib.home}" overwrite="true" verbose="false" /-->
+		<delete dir="${build.home}/WEB-INF/refDataFormats/DataFormatsData/RefParseData/**.*" />
+		<unzip src="${res.home}/RefParse.zip" dest="${build.home}/WEB-INF/refDataFormats/DataFormatsData">
+			<patternset>
+				<include name="**/**.*"/>
+				<exclude name="RefParse.jar"/>
+				<exclude name="LICENSE.txt"/>
+				<exclude name="README.txt"/>
+			</patternset>
+		</unzip>
+		<delete dir="${build.home}/WEB-INF/parserData/RefParseData/**.*" />
+		<unzip src="${res.home}/RefParse.zip" dest="${build.home}/WEB-INF/parserData">
+			<patternset>
+				<include name="**/**.*"/>
+				<exclude name="RefParse.jar"/>
+				<exclude name="LICENSE.txt"/>
+				<exclude name="README.txt"/>
+			</patternset>
+		</unzip>
+		<unzip src="${res.home}/RefParse.zip" dest="${lib.home}">
+			<patternset>
+				<include name="RefParse.jar"/>
+			</patternset>
+		</unzip>
 	</target>
 	
 	
