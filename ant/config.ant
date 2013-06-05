@@ -40,6 +40,6 @@
 	<!-- path to the .jar file that shall be created -->
 	<property name="jar.dataformats.file" value="${build.home}/WEB-INF/refDataFormats/DataFormats.jar" />
 	
-	<!-- path to the .war file that shall be created -->
-	<property name="war.file" value="${dist.home}/${app.name}.war" />
+	<!-- path to the .zip file that shall be created -->
+	<property name="zip.file" value="${dist.home}/${app.name}.zip" />
 </project>

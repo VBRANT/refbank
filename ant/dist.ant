@@ -5,18 +5,15 @@
 -->
 
 <project name="dist">
-	<target name="war" depends="jar,dataparsers,dataformats">
-		<delete file="${war.file}" />
-		<war warfile="${war.file}" webxml="${web.home}/WEB-INF/web.xml">
+	<target name="zip" depends="jar,dataparsers,dataformats">
+		<delete file="${zip.file}" />
+		<zip destfile="${zip.file}" >
 			<fileset dir="${build.home}">
 				<!-- Don't put the classes into this twice -->
 				<exclude name="classes/**" />
 			</fileset>
-			<fileset dir="${web.home}">
-				<!-- Don't put the web.xml into this twice -->
-				<exclude name="WEB-INF/web.xml" />
-			</fileset>
-		</war>
+			<fileset dir="${web.home}" />
+		</zip>
 	</target>
 	
 	<target name="jar">

@@ -9,7 +9,7 @@
 	<include file="ant/javac.ant" />
 	<include file="ant/dist.ant" />
 	
-	<target name="all" depends="clean,import,compile,war">
+	<target name="all" depends="clean,import,compile,pack">
 		<!--<input message="Press Enter to start Tomcat.." />-->
 	</target>
 	
@@ -26,7 +26,7 @@
 		<antcall target="import.fetch" />
 	</target>
 	
-	<target name="war" depends="compile" description="create the war file">
-		<antcall target="dist.war" />
+	<target name="pack" depends="compile" description="pack the webapp">
+		<antcall target="dist.zip" />
 	</target>
 </project>
