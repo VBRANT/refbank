@@ -1,0 +1,3 @@
+*.cnfg
+WEB-INF/footer.html
+WEB-INF/popupFooter.html

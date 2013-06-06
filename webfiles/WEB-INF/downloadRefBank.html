@@ -29,11 +29,13 @@ Instead, you can also use Apache Derby embedded database (included)<br/>
 </ul>
 <h3>SETTING UP A RefBank NODE</h3>
 <ul>
-<li>Download <a href="/RefBank/RefBank.war"><code>RefBank.war</code></a> into Tomcat's <code>webapps</code> folder<br/><br/><em>WARNING: if you are updating an existing RefBank node with a new version of the WAR file, put the new WAR file into the <code>webapps/RefBank</code> folder instead of directly into the <code>webapps</code> folder and then run the <code>update.sh</code> or <code>update.bat</code> script (whichever works for your OS) and restart Tomcat, as if you replace the <code>RefBank.war</code> in the <code>webapps</code> folder, Tomcat might simply undeploy the older version, i.e., delete the RefBank webapp, which results in a loss of all configurations you made, along with the parsed reference data.</em></li>
-<li>Call <code>http://localhost:8080/RefBank/rbk</code> to make Tomcat extract <code>RefBank.war</code><br/>
-(you might have to re-start Tomcat for it to recognize the WAR file)<br/>
-(adjust server name and port if working remotely or Tomcat runs on a different port, respectively)</li>
-<li>Tomcat's <code>webapps</code> folder should have a <code>RefBank</code> sub folder now, and it's time for some configuration:<ul>
+<li>Download <a href="/RefBank/RefBank.zip"><code>RefBank.zip</code></a> into Tomcat's <code>webapps</code> folder (an exploded archive directory, zipped up for your convenience; WAR deployment is impractical, as updates would uverwrite the configurations you make)<br/>
+Instead, you can also check out the project from GIT, build the ZIP file using Ant, and then deploy RefBank.zip to your Tomcat</li>
+<li>Create a <code>RefBank</code> sub folder in Tomcat's <code>webapps</code> folder.</li>
+<li>Un-zip the exploded archive directory into the <code>RefBank</code> folder.<br/>
+If you have WebAppUpdater (builds with idaho-core) installed, you can also simply type <code>bash update RefBank</code> in the console.</li>
+<li>Put <code>RefBank.zip</code> into the <code>RefBank</code> folder for others to download.</li>
+<li>Now, it's time for some configuration:<ul>
 <li>To enable the RefBank node to store parsed references in the file system and connect to other RefBank nodes, give the web application the permission to create and manipulate files and folders within its deployment folder and to establish outgoing network connections (there are two ways to achieve this):<ul>
 	<li>The simple, but very coarse way is to disable Tomcat's security manager altogether (not recommended)</li>
 	<li>More finegrained way is to add the permission statement below to Tomcat's security configuration (recommended); the security configuration resides inside Tomcat's <code>conf</code> folder, which is located on the same level as the <code>webapps</code> folder; the actual configuration file to add the permission to is either <code>catalina.policy</code> directly in the <code>conf</code> folder, or <code>04webapps.policy</code> in the <code>conf/policy.d</code> folder, whichever is present; if both files are present, either will do:<br/>

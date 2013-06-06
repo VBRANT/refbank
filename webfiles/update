@@ -1,0 +1,3 @@
+#! /bin/bash
+cd RefBank
+unzip -uo RefBank.zip -x *.cnfg *ooter.html
