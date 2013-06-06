@@ -163,13 +163,13 @@ public abstract class RefBankWiServlet extends RefBankAppServlet implements RefB
 		out.writeLine("    return false;");
 		out.writeLine("  else user = pUser.replace(/^\\s+|\\s+$/g,'');");
 		out.writeLine("  document.cookie = ('user=' + user + ';domain=' + escape(window.location.hostname) + ';expires=' + new Date(1509211565944).toGMTString());");
-		out.writeLine("  var undl = document.getElementById('userNameDisplayLabel');");
+		out.writeLine("  var undl = getById('userNameDisplayLabel');");
 		out.writeLine("  if (undl != null) {");
 		out.writeLine("    if (undl.firstChild)");
 		out.writeLine("      undl.firstChild.nodeValue = ((user.length != 0) ? 'Current screen name:' : 'No screen name specified');");
 		out.writeLine("    else undl.appendChild(document.createTextNode((user.length != 0) ? 'Current screen name:' : 'No screen name specified'));");
 		out.writeLine("  }");
-		out.writeLine("  var unds = document.getElementById('userNameDisplaySpan');");
+		out.writeLine("  var unds = getById('userNameDisplaySpan');");
 		out.writeLine("  if (unds != null) {");
 		out.writeLine("    if (unds.firstChild)");
 		out.writeLine("      unds.firstChild.nodeValue = user;");
@@ -182,27 +182,22 @@ public abstract class RefBankWiServlet extends RefBankAppServlet implements RefB
 		out.writeLine("  var bodyRoot = document.getElementsByTagName('body')[0];");
 		out.writeLine("  if (bodyRoot == null)");
 		out.writeLine("    return;");
-		out.writeLine("  var umRoot = document.createElement('div');");
+		out.writeLine("  var umRoot = newElement('div', null, null, null);");
 		out.writeLine("  setAttribute(umRoot, 'width', '100%');");
 		out.writeLine("  setAttribute(umRoot, 'align', 'right');");
-		out.writeLine("  var undl = document.createElement('span');");
-		out.writeLine("  setAttribute(undl, 'id', 'userNameDisplayLabel');");
-		out.writeLine("  undl.appendChild(document.createTextNode(getUser('silent') ? 'Currently credited as:' : 'Please enter your name so RefBank can credit your contributions'));");
+		out.writeLine("  var undl = newElement('span', 'userNameDisplayLabel', null, (getUser('silent') ? 'Currently credited as:' : 'Please enter your name so RefBank can credit your contributions'));");
 		out.writeLine("  umRoot.appendChild(undl);");
-		out.writeLine("  var unds = document.createElement('span');");
-		out.writeLine("  setAttribute(unds, 'id', 'userNameDisplaySpan');");
+		out.writeLine("  var unds = newElement('span', 'userNameDisplaySpan', null, user);");
 		out.writeLine("  setAttribute(unds, 'style', 'margin-left: 5px; font-weight: bold;');");
-		out.writeLine("  unds.appendChild(document.createTextNode(user));");
 		out.writeLine("  umRoot.appendChild(unds);");
-		out.writeLine("  var uneb = document.createElement('a');");
+		out.writeLine("  var uneb = newElement('a', null, 'footerNavigationLink', 'Enter / Edit');");
 		out.writeLine("  setAttribute(uneb, 'href', '#');");
-		out.writeLine("  setAttribute(uneb, 'class', 'footerNavigationLink');");
 		out.writeLine("  setAttribute(uneb, 'onclick', 'return editUserName();');");
 		out.writeLine("  setAttribute(uneb, 'style', 'margin-left: 10px;');");
-		out.writeLine("  uneb.appendChild(document.createTextNode('Enter / Edit'));");
 		out.writeLine("  umRoot.appendChild(uneb);");
 		out.writeLine("  bodyRoot.insertBefore(umRoot, bodyRoot.firstChild);");
 		out.writeLine("}");
+		
 		out.writeLine("</script>");
 	}
 }

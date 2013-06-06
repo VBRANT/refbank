@@ -366,7 +366,9 @@ public class RefBankUploadServlet extends RefBankWiServlet {
 					}
 				}
 			}
-			
+			protected boolean includeJavaScriptDomHelpers() {
+				return true;
+			}
 			private void includeUploadForm() throws IOException {
 				this.writeLine("<form id=\"uploadForm\" method=\"POST\" action=\"" + this.request.getContextPath() + this.request.getServletPath() + "\"" + ((dataFormats.length == 0) ? "" : (" onsubmit=\"return prepareUpload();\" enctype=\"multipart/form-data\"")) + ">");
 				this.includeFile("uploadFields.html");
@@ -749,6 +751,9 @@ public class RefBankUploadServlet extends RefBankWiServlet {
 						this.includeUploadStatistics();
 				}
 				else super.include(type, tag);
+			}
+			protected boolean includeJavaScriptDomHelpers() {
+				return true;
 			}
 			private void includeUploadForm() throws IOException {
 				this.writeLine("<table class=\"uploadTable\">");
