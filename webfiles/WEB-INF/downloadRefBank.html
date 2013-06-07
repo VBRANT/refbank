@@ -18,7 +18,7 @@ li {
 </head>
 <body>
 <div class="installRefBankInstructions">
-<em>A copy of these instructions is included in the download RefBank.war in the file README.txt.</em>
+<em>A copy of these instructions is included in the download RefBank.zip in the file README.txt.</em>
 <h3>SYSTEM REQUIREMENTS</h3>
 <ul>
 <li>Java Runtime Environment 1.5 or higher, Sun/Oracle JRE recommended</li>
@@ -34,7 +34,7 @@ Instead, you can also check out the project from GIT, build the ZIP file using A
 <li>Create a <code>RefBank</code> sub folder in Tomcat's <code>webapps</code> folder.</li>
 <li>Un-zip the exploded archive directory into the <code>RefBank</code> folder.<br/>
 If you have WebAppUpdater (builds with idaho-core) installed, you can also simply type <code>bash update RefBank</code> in the console.</li>
-<li>Put <code>RefBank.zip</code> into the <code>RefBank</code> folder for others to download.</li>
+<li><b>Put the <code>RefBank.zip</code> archive you downloaded into the <code>webapps/RefBank/</code> folder for others to download.</b></li>
 <li>Now, it's time for some configuration:<ul>
 <li>To enable the RefBank node to store parsed references in the file system and connect to other RefBank nodes, give the web application the permission to create and manipulate files and folders within its deployment folder and to establish outgoing network connections (there are two ways to achieve this):<ul>
 	<li>The simple, but very coarse way is to disable Tomcat's security manager altogether (not recommended)</li>
@@ -69,7 +69,6 @@ If you have WebAppUpdater (builds with idaho-core) installed, you can also simpl
 <code>Your Institution Name</code> with the name of your institution,<br>
 <code>YourInstitutionAcronym</code> with the acronym of your institution</li>
 </ul></li>
-<li><b>Put the WAR file you downloaded into the <code>webapps/RefBank/</code> folder so others can download it</b></li>
 </ul>
 <h3>LINKING THE RefBank NODE TO THE NETWORK</h3>
 <ul>
