@@ -1,4 +1,4 @@
-// other settings (fill in the angle-bracketed parts with your actual data)
+// other settings (fill in the angle-bracketed parts with your actual data, also removing the angle brackets)
 accessUrl = "http://<serverName>:<portOfTomcat>/<RefBank webapp name>/rbk";
 adminPasscode = "<yourNodePasscode>";
 domainName = "<yourRefBankDomainName>";

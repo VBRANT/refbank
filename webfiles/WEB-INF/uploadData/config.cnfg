@@ -4,7 +4,7 @@ cssNames = "refBankUpload.3.css";
 // JavaScript file required for search results (none for now)
 javaScriptNames = "";
 
-// settings for ReCAPTCHA based verification of uploads (to activate ReCAPTCHA verification, remove the double slashes from the start of the two lines below and fill in the angle-bracketed parts with your actual data)
+// settings for ReCAPTCHA based verification of uploads (to activate ReCAPTCHA verification, remove the double slashes from the start of the two lines below and fill in the angle-bracketed parts with your actual data, also removing the angle brackets)
 //reCaptchaPublicKey = "<ReCAPTCHA public key>";
 //reCaptchaPrivateKey = "<ReCAPTCHA private key>";
 
