@@ -203,7 +203,13 @@ RefBank upload servlet (/RefBank/upload):
 
     PUT: receive upload via script:
         request headers to set:
-            Data-Format: name of the reference data format used in request body (one of the formats selectable in the upload form)
+            Data-Format: name of the reference data format used in request body (one of the formats selectable in the upload form):
+                "BibTeX" for BibTeX
+                "EndNote" for EndNote
+                "EndNoteXML" for EndNote XML
+                "ListTxt" for plain text
+                "MODS" for MODS XML
+                "RIS" for EndNote / RIS2
             User-Name: the name of the user to credit for the contributed references
             Access-Key: the upload access key; needs to match configured key for servlet to accept the upload, ignored if no key is configured
         request body: references in format inidcated in header
