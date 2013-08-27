@@ -1,0 +1,222 @@
+RefBank data servlet (/RefBank/rbk):
+
+    GET (response content depends on action parameter):
+
+        action=admin (also as /refBank/rbk/admin): retrieve login form for the RefBank node administration HTML page (used in browser, not part of API)
+
+        action=nodes (also as /refBank/rbk/nodes): retrieve list of other RefBank nodes known to this one
+            additional parameters: none
+            response (MIME type text/xml, encoding UTF-8):
+
+            <nodes>
+              <node name="name of RefBank node" accessUrl="prefered access URL of node" />
+              <node ... />
+            </nodes>
+
+        action=ping (also as /refBank/rbk/ping): ping node
+            additional parameters: none
+            response (MIME type text/xml, encoding UTF-8):
+
+            <nodes />
+
+        action=name (also as /refBank/rbk/name): retrieve data of this RefBank node
+            additional parameters: none
+            response (MIME type text/xml, encoding UTF-8):
+
+            <nodes>
+              <node name=&qout;<name of RefBank node>&qout; accessUrl="prefered access URL of node" />
+            </nodes>
+
+        action=feed: retrieve the reference update feed, ordered by increasing update time
+            additional parameters:
+                updatedSince: minimum update time for references to include in the feed, formatted as UTC HTTP timestamp
+            response: compact feed of references updated since the specified timestamp (MIME type text/xml, encoding UTF-8
+
+            <refSet>
+              <ref id="reference ID" canonicalId="ID of canonical reference to set" deleted="deleted flag, true or false" createTime="UTC timestamp reference was first added to RefBank" updateTime="UTC timestamp reference was last updated" localUpdateTime="UTC timestamp reference was last updated on this RefBank node" parseChecksum="MD5 hash of parsed version, if available" />
+              <ref ... />
+            </refSet>
+
+        action=get: resolve RefBank internal identifiers
+            additional parameters:
+                id: the identifier(s) to resolve, can be multi-valued
+                format: the format to represent the parsed versions of references in (optional, defaults to the native MODS XML representation if omitted)
+            response: the reference(s) with the speciefied identifier(s) (MIME type text/xml, encoding UTF-8)
+
+            <refSet>
+              <ref id="reference ID" canonicalId="ID of canonical reference to set" deleted="deleted flag, true or false" createTime="UTC timestamp reference was first added to RefBank" createUser="name of the user to first add reference to RefBank" createDomain="name of RefBank node reference was first added to" updateTime="UTC timestamp reference was last updated" updateUser="name of the user to last update reference" updateDomain="name of RefBank node reference was last updated at">
+                <refString><plain reference string></refString>
+                <refParsed><parsed version of reference (if available), as MODS XML or in format specified by format parameter></refParsed>
+              </ref>
+              <ref>...</ref>
+            </refSet>
+
+        action=find: search references
+            additional parameters:
+                query: full text query against reference strings, can be multi-valued
+                combine: or or and, controls if multiple full text queries are combined conjunctively (the default) or disjunctively
+                type: type of reference, only finds references with parsed version available
+                user: contributing user
+                author: query against author attribute of references, only finds references with parsed version available
+                title: query against title attribute of references, only finds references with parsed version available
+                date: query against year of publication attribute of references, only finds references with parsed version available
+                origin: query against origin of references (journal + volume number, publisher or location, as well as volume title), only finds references with parsed version available
+                format=concise: exclude parsed verion of references from response
+                format: the name of the format for representing the parsed verion of the references (defaults to the native MODS XML if not specified)
+            response: the reference matching the specified search criteria (MIME type text/xml, encoding UTF-8)
+
+            <refSet>
+              <ref id="reference ID" canonicalId="ID of canonical reference to set" deleted="deleted flag, true or false" createTime="UTC timestamp reference was first added to RefBank" createUser="name of the user to first add reference to RefBank" createDomain="name of RefBank node reference was first added to" updateTime="UTC timestamp reference was last updated" updateUser="name of the user to last update reference" updateDomain="name of RefBank node reference was last updated at" parseChecksum="MD5 hash of parsed version, if available and format set to concise">
+                <refString><plain reference string></refString>
+                <refParsed><parsed version of reference (if available), as MODS XML or in format specified by format parameter></refParsed>
+              </ref>
+              <ref ...>...</ref>
+            </refSet>
+
+    POST: requests from RefBank node adminstration HTML page, infrastructure replication, or meta data updates for existing references:
+
+        /RefBank/rbk/update: for deleting or un-deleting existing references or updating canonical reference ID
+            request headers to set:
+                user: the user to credit for the update
+            request body:
+
+            <refSet>
+              <ref id="reference ID" canonicalId="ID of canonical reference to set" deleted="deleted flag to set, true or false"/>
+            </refSet>
+
+            response (MIME type text/xml, encoding UTF-8):
+
+            <refSet>
+              <ref id="reference ID" canonicalId="ID of canonical reference" deleted="deleted flag, true or false" createTime="UTC timestamp reference was first added to RefBank" createUser="name of the user to first add reference to RefBank" createDomain="name of RefBank node reference was first added to" updateTime="UTC timestamp reference was last updated" updateUser="name of the user to last update reference" updateDomain="name of RefBank node reference was last updated at" parseChecksum="MD5 hash of parsed version, if available">
+                <refString><plain reference string></refString>
+              </ref>
+            </refSet>
+
+        /RefBank/rbk/admin: process input from the RefBank node administration HTML page (used in browser, not part of API)
+
+        /refBank/rbk/nodes: retrieve list of other RefBank nodes known to this one
+            request body: none
+            response (MIME type text/xml, encoding UTF-8):
+
+            <nodes>
+              <node name="name of RefBank node" accessUrl="prefered access URL of node" />
+              <node ... />
+            </nodes>
+
+        /refBank/rbk/ping: ping node
+            request body: none
+            response (MIME type text/xml, encoding UTF-8):
+
+            <nodes />
+
+        /refBank/rbk/name: retrieve data of this RefBank node
+            request body: none
+            response (MIME type text/xml, encoding UTF-8):
+
+            <nodes>
+              <node name="name of RefBank node" accessUrl="prefered access URL of node" />
+            </nodes>
+
+        /refBank/rbk/introduce: introduce a new RefBank node to this one, retrieve list of other known RefBank nodes
+            request body (parameters):
+                name: the name of the RefBank node introducing itself
+                accessUrl: the prefered access URL of the RefBank node introducing itself
+            response (MIME type text/xml, encoding UTF-8):
+
+            <nodes>
+              <node name="name of RefBank node" accessUrl="prefered access URL of node" />
+              <node ... />
+            </nodes>
+
+    PUT: upload new or update existing references:
+
+        request headers to set:
+            Data-Format: the upload data format, xml or txt (tried to auto-detect if not specified)
+            User-Name: the user to credit for uploaded references (defaults to 'Anonymous' if not specified)
+        request body: the references as plain text or wrapped in XML, corresponding to the format specified in the header; to be encoded in UTF-8
+            Data-Format=txt: one plain reference string per line, adds new references, un-deletes ones that are re-added and were flagged as deleted
+            Data-Format=xml:
+
+            <refSet>
+              <ref>
+                <refString><plain reference string></refString>
+                <refParsed><parsed reference in MODS XML, if available></refParsed>
+              </ref>
+              <ref>...</ref>
+            </refSet>
+
+        response: update statistice (MIME type text/xml, encoding UTF-8), in particular the uploaded or otherwise updated references, with attributes indicating whether they were updated or alltogether newly added to RefBank:
+
+        <refSet created="number of references newly added to RefBank" updated="number of references updated, less newly created ones">
+          <ref id="reference ID" canonicalId="ID of canonical reference" deleted="deleted flag, true or false" createTime="UTC timestamp reference was first added to RefBank" updateTime="UTC timestamp reference was last updated" parseChecksum="MD5 hash of parsed version, if available" parseError="explanation why parsed version was rejected, if any" created="true or false, indicating whether reference was newly added to RefBank" updated="true or false, indicating whether reference existed and was updated">
+            <refString><plain reference string, as stored in RefBank></refString>
+          </ref>
+          <ref ...>...</ref>
+        </refSet>
+
+
+RefBank search servlet (/RefBank/search):
+
+    GET: retrieve search form, perform search, or retrieve styled or formatted reference, depending on parameters:
+        id: identifier of reference, yields reference specific response if set, depending on several other parameters:
+            format: reference format, for use with other software
+            style: reference string style, for use in bibliography of a publication
+            isFramePage: send reference specific pupup page instead of reference proper?
+            combinations of the id and style and format parameters return different results:
+                id + format=PaRsEtHeReF + isFramePage=true: reference specific popup page, with reference opened for manual parsing in embedded IFrame (used in browser, not part of API)
+                id + format=EdItReFsTrInG + isFramePage=true: reference specific popup page, with reference string opened for manual editing in embedded IFrame (used in browser, not part of API)
+                id + style or format + isFramePage=true: reference specific popup page, with reference in speciefied style or format showing in embedded IFrame (used in browser, not part of API)
+                id + style: return the reference with specified ID in the specified style (MIME type text/html, encoding UTF-8)
+                id + format: return the reference with specified ID in the specified data format (MIME type text/plain, encoding UTF-8)
+                id=MiNoRuPdATe, no style or format: return HTML form for POST callbacks from search result page (used in browser, not part of API)
+        canonicalStrinId: identifier of canonical representation, if set returns HTML page listing duplicate references (used in browser, not part of API)
+        query: full text query against reference strings
+        type: type of reference, only finds references with parsed version available
+        user: contributing user
+        author: query against author attribute of references, only finds references with parsed version available
+        title: query against title attribute of references, only finds references with parsed version available
+        date / year: query against year of publication attribute of references, only finds references with parsed version available (used synonymously)
+        origin: query against origin of references (journal + volume number, publisher or location, as well as volume title), only finds references with parsed version available
+        idType + idValue: query against some external identifier attribute of references (e.g. DOI or ISBN), only finds references with parsed version available
+        any of query, author, title, date/year, origin, or idType + idValue set: response is HTML page listing matching references (used in browser, not part of API)
+        no parameters at all: response is HTML page with search form (used in browser, not part of API)
+    
+    POST (used in browser, not part of API): receive update callbacks from search result page
+
+
+RefBank upload servlet (/RefBank/upload):
+
+    GET (used in browser, not part of API):
+
+        /RefBank/upload: retrieve upload form
+
+        /RefBank/upload/<upload-ID>/action: status info for running uploads
+
+    POST (used in browser, not part of API):
+
+        /RefBank/upload: receive text area or file upload from browser
+
+    PUT: receive upload via script:
+        request headers to set:
+            Data-Format: name of the reference data format used in request body (one of the formats selectable in the upload form)
+            User-Name: the name of the user to credit for the contributed references
+            Access-Key: the upload access key; needs to match configured key for servlet to accept the upload, ignored if no key is configured
+        request body: references in format inidcated in header
+        response: upload result statistics (MIME type text/plain, encoding UTF-8)
+
+        RECEIVED: <number of references received>
+        ERRORS: <number of references that contain errors>
+        CREATED: <number of references newly added to RefBank>
+        UPDATED: <number of references that were not newly added, but had their parsed version updated>
+
+
+RefBank data index servlet (/RefBank/data):
+
+    GET: retrieve a list of reference attribute values present from parsed references in RefBank, for use as a gazetteer
+        parameters:
+            type: the type of data to retrieve
+        response: list of data element values of requested type (MIME type text/plain, encoding UTF-8)
+            type=persons: names of persons, i.e., authors and editors
+            type=journals: names of journals
+            type=publishers: names of publishers
+            type=origins: names of journals and publishers
