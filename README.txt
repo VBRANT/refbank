@@ -180,19 +180,12 @@ Do not add header, navigation, or footer content to the refBank.html or refBankP
 
 If you alter any other files, include them in the update.cnfg file (with full path, starting with WEB-INF) so they are not replaced in case of an update.
 
-<<<<<<< HEAD
 
 
-=======
->>>>>>> c67019318cf8ba84fb77a39e887705b6bd934706
 PROGRAMMATIC ACCESS
 
 RefBank is also accessible programmatically. Hence, it can be integrated directly with your software.
 
 The API is documented in API.txt.
 
-<<<<<<< HEAD
 Some simple sample scripts to show the API in use are included in the RefBank_samples folder.
-=======
-Some simple sample scripts to show the API in use are included in the RefBank_samples folder.
->>>>>>> c67019318cf8ba84fb77a39e887705b6bd934706
