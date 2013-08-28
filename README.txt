@@ -179,3 +179,13 @@ To customize page header, navigation, or footer, customize the respective HTML f
 Do not add header, navigation, or footer content to the refBank.html or refBankPopup.html files directly, but use the respective inserted files insted (requires the web application to run for testing)
 
 If you alter any other files, include them in the update.cnfg file (with full path, starting with WEB-INF) so they are not replaced in case of an update.
+
+
+
+PROGRAMMATIC ACCESS
+
+RefBank is also accessible programmatically. Hence, it can be integrated directly with your software.
+
+The API is documented in API.txt.
+
+Some simple sample scripts to show the API in use are included in the RefBank_samples folder.
