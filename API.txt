@@ -203,7 +203,8 @@ RefBank upload servlet (/RefBank/upload):
 
     PUT: receive upload via script:
         request headers to set:
-            Data-Format: name of the reference data format used in request body (one of the formats selectable in the upload form):
+            Data-Format: name of the reference data format used in request body. These are one of the formats selectable in the upload form at localhost:8080/upload. Look for the dataFormats and acceptFileExtensions arrays. This page is built dynamically so that additional formats are automatically included as support for more file types is added to RefBank.
+            The currently (August 2013) supported file types are:
                 "BibTeX" for BibTeX
                 "EndNote" for EndNote
                 "EndNoteXML" for EndNote XML
