@@ -1,0 +1,1 @@
+curl --data @Zootaxa_2524.bib --header 'Accept: text/plain' --header 'Accept-Charset: UTF-8' --header 'Data-Format: BibTeX' --header 'User-Name: Example' --request 'PUT' http://localhost:8080/RefBank/upload/
