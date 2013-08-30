@@ -297,13 +297,13 @@ public class RefBankSearchServlet extends RefBankWiServlet {
 				ids.setProperty(idType, idValue);
 			}
 			String[] textPredicates = { query };
-			psi = rbc.findReferences(textPredicates, false, type, user, author, title, year, origin, ids, true);
+			psi = rbc.findReferences(textPredicates, false, type, user, author, title, year, origin, ids, true, 0);
 			if (psi.getException() != null)
 				throw psi.getException();
 		}
 		
 		//	create page builder
-		HtmlPageBuilder pageBuilder = this.getSearchPageBuilder(request, psi, /*canonicalStringId, */query, type, author, title, date, origin, response);
+		HtmlPageBuilder pageBuilder = this.getSearchPageBuilder(request, psi, query, type, author, title, date, origin, response);
 		
 		//	send page
 		this.sendHtmlPage(pageBuilder);
@@ -783,7 +783,7 @@ public class RefBankSearchServlet extends RefBankWiServlet {
 		}
 	}
 	
-	private HtmlPageBuilder getSearchPageBuilder(HttpServletRequest request, final PooledStringIterator psi, /*final String canonicalStringId,*/ final String query, final String refType, final String author, final String title, final String dateString, final String origin, HttpServletResponse response) throws IOException {
+	private HtmlPageBuilder getSearchPageBuilder(HttpServletRequest request, final PooledStringIterator psi, final String query, final String refType, final String author, final String title, final String dateString, final String origin, HttpServletResponse response) throws IOException {
 		response.setContentType("text/html");
 		response.setCharacterEncoding(ENCODING);
 		return new HtmlPageBuilder(this, request, response) {

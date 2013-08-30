@@ -43,9 +43,11 @@ public interface RefBankClient extends StringPoolClient {
 	 *            for
 	 * @param externalIDsByType a properties object containing external
 	 *            identifiers (like an ISBN or DOI) indexed by their type
+	 * @param limit the maximum number of references to include in the result
+	 *            (0 means no limit)
 	 * @return an iterator over the references matching the query
 	 */
-	public abstract PooledStringIterator findReferences(String[] textPredicates, boolean disjunctive, String type, String user, String author, String title, int year, String origin, Properties externalIDsByType);
+	public abstract PooledStringIterator findReferences(String[] textPredicates, boolean disjunctive, String type, String user, String author, String title, int year, String origin, Properties externalIDsByType, int limit);
 	
 	/**
 	 * Search for references, using both full text and detail predicates.
@@ -62,7 +64,9 @@ public interface RefBankClient extends StringPoolClient {
 	 * @param externalIDsByType a properties object containing external
 	 *            identifiers (like an ISBN or DOI) indexed by their type
 	 * @param concise obtain a concise result, i.e., without parses?
+	 * @param limit the maximum number of references to include in the result
+	 *            (0 means no limit)
 	 * @return an iterator over the references matching the query
 	 */
-	public abstract PooledStringIterator findReferences(String[] textPredicates, boolean disjunctive, String type, String user, String author, String title, int year, String origin, Properties externalIDsByType, boolean concise);
+	public abstract PooledStringIterator findReferences(String[] textPredicates, boolean disjunctive, String type, String user, String author, String title, int year, String origin, Properties externalIDsByType, boolean concise, int limit);
 }

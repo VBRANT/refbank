@@ -76,16 +76,16 @@ public class RefBankRestClient extends StringPoolRestClient implements RefBankCo
 	}
 	
 	/* (non-Javadoc)
-	 * @see de.uka.ipd.idaho.refBank.RefBankClient#findReferences(java.lang.String[], boolean, java.lang.String, java.lang.String, java.lang.String, java.lang.String, int, java.lang.String, java.util.Properties)
+	 * @see de.uka.ipd.idaho.refBank.RefBankClient#findReferences(java.lang.String[], boolean, java.lang.String, java.lang.String, java.lang.String, java.lang.String, int, java.lang.String, java.util.Properties, int)
 	 */
-	public PooledStringIterator findReferences(String[] textPredicates, boolean disjunctive, String type, String user, String author, String title, int year, String origin, Properties externalIDsByType) {
-		return this.findReferences(textPredicates, disjunctive, type, user, author, title, year, origin, externalIDsByType, false);
+	public PooledStringIterator findReferences(String[] textPredicates, boolean disjunctive, String type, String user, String author, String title, int year, String origin, Properties externalIDsByType, int limit) {
+		return this.findReferences(textPredicates, disjunctive, type, user, author, title, year, origin, externalIDsByType, false, limit);
 	}
 	
 	/* (non-Javadoc)
-	 * @see de.uka.ipd.idaho.refBank.RefBankClient#findReferences(java.lang.String[], boolean, java.lang.String, java.lang.String, java.lang.String, java.lang.String, int, java.lang.String, java.util.Properties, boolean)
+	 * @see de.uka.ipd.idaho.refBank.RefBankClient#findReferences(java.lang.String[], boolean, java.lang.String, java.lang.String, java.lang.String, java.lang.String, int, java.lang.String, java.util.Properties, boolean, int)
 	 */
-	public PooledStringIterator findReferences(String[] textPredicates, boolean disjunctive, String type, String user, String author, String title, int year, String origin, Properties externalIDsByType, boolean concise) {
+	public PooledStringIterator findReferences(String[] textPredicates, boolean disjunctive, String type, String user, String author, String title, int year, String origin, Properties externalIDsByType, boolean concise, int limit) {
 		try {
 			StringBuffer detailPredicates = new StringBuffer();
 			if (author != null)
@@ -102,7 +102,7 @@ public class RefBankRestClient extends StringPoolRestClient implements RefBankCo
 					String id = externalIDsByType.getProperty(idType);
 					detailPredicates.append("&ID-" + idType + "=" + URLEncoder.encode(id, ENCODING));
 				}
-			return this.findStrings(textPredicates, disjunctive, type, user, concise, detailPredicates.toString());
+			return this.findStrings(textPredicates, disjunctive, type, user, concise, limit, detailPredicates.toString());
 		}
 		catch (IOException ioe) {
 			return new ExceptionPSI(ioe);
