@@ -1,4 +1,4 @@
-/* RefBank, the distributed platform for biliographic references.
+/* RefBank, the distributed platform for bibliographic references.
  * Copyright (C) 2011-2013 ViBRANT (FP7/2007-2013, GA 261532), by D. King & G. Sautter
  * 
  * This program is free software; you can redistribute it and/or
@@ -365,9 +365,6 @@ public class RefBankUploadServlet extends RefBankWiServlet {
 							super.storeToken(value);
 					}
 				}
-			}
-			protected boolean includeJavaScriptDomHelpers() {
-				return true;
 			}
 			private void includeUploadForm() throws IOException {
 				this.writeLine("<form id=\"uploadForm\" method=\"POST\" action=\"" + this.request.getContextPath() + this.request.getServletPath() + "\"" + ((dataFormats.length == 0) ? "" : (" onsubmit=\"return prepareUpload();\" enctype=\"multipart/form-data\"")) + ">");
@@ -751,9 +748,6 @@ public class RefBankUploadServlet extends RefBankWiServlet {
 						this.includeUploadStatistics();
 				}
 				else super.include(type, tag);
-			}
-			protected boolean includeJavaScriptDomHelpers() {
-				return true;
 			}
 			private void includeUploadForm() throws IOException {
 				this.writeLine("<table class=\"uploadTable\">");

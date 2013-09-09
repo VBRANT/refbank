@@ -3,10 +3,16 @@
 	<xsl:output omit-xml-declaration="yes"/>
 	
 	<xsl:template match="/">
-		<xsl:apply-templates select="//mods:mods"/>
+		<xsl:choose>
+			<xsl:when test="count(//mods:mods) > 1"><mods:modsCollection>
+				<xsl:apply-templates select="//mods:mods"/>
+			</mods:modsCollection></xsl:when>
+			<xsl:otherwise><xsl:apply-templates select="//mods:mods"/></xsl:otherwise>
+		</xsl:choose>
 	</xsl:template>
 	
 	<xsl:template match="mods:mods">
+		<xsl:if test="./preceding::mods:mods"><xsl:text disable-output-escaping="yes">&#x0D;&#x0A;</xsl:text></xsl:if>
 		<xsl:copy-of select="."/>
 	</xsl:template>
 	

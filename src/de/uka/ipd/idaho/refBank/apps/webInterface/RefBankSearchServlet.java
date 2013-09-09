@@ -1,4 +1,4 @@
-/* RefBank, the distributed platform for biliographic references.
+/* RefBank, the distributed platform for bibliographic references.
  * Copyright (C) 2011-2013 ViBRANT (FP7/2007-2013, GA 261532), by D. King & G. Sautter
  * 
  * This program is free software; you can redistribute it and/or
@@ -28,12 +28,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.Properties;
 import java.util.TreeMap;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.stream.StreamResult;
@@ -49,8 +51,8 @@ import de.uka.ipd.idaho.htmlXmlUtil.accessories.XsltUtils.IsolatorWriter;
 import de.uka.ipd.idaho.onn.stringPool.StringPoolClient.PooledString;
 import de.uka.ipd.idaho.onn.stringPool.StringPoolClient.PooledStringIterator;
 import de.uka.ipd.idaho.plugins.bibRefs.BibRefTypeSystem;
-import de.uka.ipd.idaho.plugins.bibRefs.BibRefUtils;
 import de.uka.ipd.idaho.plugins.bibRefs.BibRefTypeSystem.BibRefType;
+import de.uka.ipd.idaho.plugins.bibRefs.BibRefUtils;
 import de.uka.ipd.idaho.plugins.bibRefs.BibRefUtils.RefData;
 import de.uka.ipd.idaho.refBank.RefBankClient;
 import de.uka.ipd.idaho.stringUtils.StringVector;
@@ -62,7 +64,7 @@ import de.uka.ipd.idaho.stringUtils.StringVector;
  */
 public class RefBankSearchServlet extends RefBankWiServlet {
 	
-	private static final String IS_FRAME_PAGE_PARAMETER = "isFramePage";
+	private static final String FRAME_PAGE_PATH = "fr";
 	
 	private static final String YEAR_PARAMETER = "year";
 	
@@ -71,13 +73,24 @@ public class RefBankSearchServlet extends RefBankWiServlet {
 	private static final String PARSE_REF_FORMAT = "PaRsEtHeReF";
 	private static final String EDIT_REF_FORMAT = "EdItReFsTrInG";
 	
-	private static final String MINOR_UPDATE_FORM_REF_ID = "MiNoRuPdAtE";
+	private static final String MINOR_UPDATE_PATH = "mu";
 	
 	private static final String MINOR_UPDATE_FRAME_ID = "minorUpdateFrame";
 	private static final String MINOR_UPDATE_FORM_ID = "minorUpdateForm";
 	private static final String MINOR_UPDATE_RESULT_ATTRIBUTE = "minorUpdateResult";
 	
 	private static final String DELETED_PARAMETER = "deleted";
+	
+	private static final String EXPORT_BASKET_UPDATE_PATH = "ebu";
+	private static final String EXPORT_BASKET_SHOW_PATH = "ebs";
+	private static final String EXPORT_BASKET_DOWNLOAD_PATH = "ebd";
+	
+	private static final String EXPORT_BASKET_ATTRIBUTE = "exportBasket";
+	
+	private static final String EXPORT_BASKET_UPDATE_FRAME_ID = "exportBasketUpdateFrame";
+	private static final String EXPORT_BASKET_UPDATE_FORM_ID = "exportBasketUpdateForm";
+	
+	private static final String EXPORT_BASKET_UPDATE_RESULT_ATTRIBUTE = "exportBasketAddResult";
 	
 	private String refParserUrl = null;
 	private String refEditorUrl = null;
@@ -133,72 +146,158 @@ public class RefBankSearchServlet extends RefBankWiServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
-		//	get parameters
-		String id = request.getParameter(STRING_ID_ATTRIBUTE);
-		String canonicalId = request.getParameter(CANONICAL_STRING_ID_ATTRIBUTE);
-		String deleted = request.getParameter(DELETED_PARAMETER);
-		String user = request.getParameter(USER_PARAMETER);
-		if (user == null)
-			user = "Anonymous";
-		String result = "OK";
+		//	determine action
+		String pathInfo = request.getPathInfo();
+		if (pathInfo != null) {
+			while (pathInfo.startsWith("/"))
+				pathInfo = pathInfo.substring(1);
+		}
 		
-		try {
+		//	minor update
+		if (MINOR_UPDATE_PATH.equals(pathInfo)) {
+			String id = request.getParameter(STRING_ID_ATTRIBUTE);
+			String canonicalId = request.getParameter(CANONICAL_STRING_ID_ATTRIBUTE);
+			String deleted = request.getParameter(DELETED_PARAMETER);
+			String user = request.getParameter(USER_PARAMETER);
+			if (user == null)
+				user = "Anonymous";
+			String result = "OK";
 			
-			//	make reference cluster representative
-			if ((canonicalId != null) && (canonicalId.length() != 0)) {
-				RefBankClient rbc = this.getRefBankClient();
+			try {
 				
-				//	update representative of cluster
-				if ((id == null) || (id.length() == 0)) {
-					PooledString rps = rbc.getString(canonicalId);
-					if (rps == null)
-						throw new IOException();
-					System.out.println("Making reference " + canonicalId + " representative of cluster " + rps.getCanonicalStringID());
-					PooledStringIterator psi = rbc.getLinkedStrings(rps.getCanonicalStringID());
-					if (psi.getException() != null)
-						throw psi.getException();
-					ArrayList refIDs = new ArrayList();
-					while (psi.hasNextString())
-						refIDs.add(psi.getNextString().id);
-					for (Iterator idit = refIDs.iterator(); idit.hasNext();)
-						rbc.setCanonicalStringId(((String) idit.next()), canonicalId, user);
+				//	make reference cluster representative
+				if ((canonicalId != null) && (canonicalId.length() != 0)) {
+					RefBankClient rbc = this.getRefBankClient();
+					
+					//	update representative of cluster
+					if ((id == null) || (id.length() == 0)) {
+						PooledString rps = rbc.getString(canonicalId);
+						if (rps == null)
+							throw new IOException();
+						System.out.println("Making reference " + canonicalId + " representative of cluster " + rps.getCanonicalStringID());
+						PooledStringIterator psi = rbc.getLinkedStrings(rps.getCanonicalStringID());
+						if (psi.getException() != null)
+							throw psi.getException();
+						ArrayList refIDs = new ArrayList();
+						while (psi.hasNextString())
+							refIDs.add(psi.getNextString().id);
+						for (Iterator idit = refIDs.iterator(); idit.hasNext();)
+							rbc.setCanonicalStringId(((String) idit.next()), canonicalId, user);
+					}
+					
+					//	removal from cluster
+					else if (id.equals(canonicalId)) {
+						System.out.println("Making reference " + id + " self-representative");
+						rbc.setCanonicalStringId(id, canonicalId, user);
+					}
+					
+					//	addition to cluster
+					else {
+						System.out.println("Adding reference " + id + " to cluster " + canonicalId);
+						PooledStringIterator psi = rbc.getLinkedStrings(id);
+						if (psi.getException() != null)
+							throw psi.getException();
+						ArrayList refIDs = new ArrayList();
+						while (psi.hasNextString())
+							refIDs.add(psi.getNextString().id);
+						for (Iterator idit = refIDs.iterator(); idit.hasNext();)
+							rbc.setCanonicalStringId(((String) idit.next()), canonicalId, user);
+					}
 				}
 				
-				//	removal from cluster
-				else if (id.equals(canonicalId)) {
-					System.out.println("Making reference " + id + " self-representative");
-					rbc.setCanonicalStringId(id, canonicalId, user);
+				//	delete or undelete reference
+				else if ((id != null) && (deleted != null)) {
+					System.out.println("Setting deletion status of reference " + id + " to " + deleted);
+					RefBankClient rbc = this.getRefBankClient();
+					rbc.setDeleted(id, "true".equals(deleted), user);
+				}
+			}
+			
+			//	catch exceptions and indicate failure to client
+			catch (IOException ioe) {
+				result = "FAIL";
+			}
+			
+			//	send back form for next minor update
+			this.sendMinorUpdateForm(request, response, result);
+			return;
+		}
+		
+		//	export basket update
+		if (EXPORT_BASKET_UPDATE_PATH.equals(pathInfo)) {
+			String id = request.getParameter(STRING_ID_ATTRIBUTE);
+			String result;
+			if (id != null) {
+				
+				//	removal
+				if (id.startsWith("--")) {
+					LinkedHashSet exportBasket = this.getExportBasket(request, false);
+					if (exportBasket != null) {
+						exportBasket.remove(id.substring("--".length()));
+						result = ("" + exportBasket.size());
+					}
+					else result = "0";
 				}
 				
-				//	addition to cluster
+				//	addition
 				else {
-					System.out.println("Adding reference " + id + " to cluster " + canonicalId);
-					PooledStringIterator psi = rbc.getLinkedStrings(id);
-					if (psi.getException() != null)
-						throw psi.getException();
-					ArrayList refIDs = new ArrayList();
-					while (psi.hasNextString())
-						refIDs.add(psi.getNextString().id);
-					for (Iterator idit = refIDs.iterator(); idit.hasNext();)
-						rbc.setCanonicalStringId(((String) idit.next()), canonicalId, user);
+					LinkedHashSet exportBasket = this.getExportBasket(request, true);
+					exportBasket.add(id);
+					result = ("" + exportBasket.size());
 				}
 			}
+			else result = "0";
 			
-			//	delete or undelete reference
-			else if ((id != null) && (deleted != null)) {
-				System.out.println("Setting deletion status of reference " + id + " to " + deleted);
-				RefBankClient rbc = this.getRefBankClient();
-				rbc.setDeleted(id, "true".equals(deleted), user);
-			}
+			//	send back form for next addition
+			this.sendExportBasketUpdateForm(request, response, result);
+			return;
 		}
-		
-		//	catch exceptions and indicate failure to client
-		catch (IOException ioe) {
-			result = "FAIL";
+	}
+	
+	private LinkedHashSet getExportBasket(HttpServletRequest request, boolean create) {
+		HttpSession session = request.getSession(create);
+		if (session == null)
+			return null;
+		LinkedHashSet exportBasket = ((LinkedHashSet) session.getAttribute(EXPORT_BASKET_ATTRIBUTE));
+		if (exportBasket == null) {
+			exportBasket = new LinkedHashSet();
+			session.setAttribute(EXPORT_BASKET_ATTRIBUTE, exportBasket);
 		}
-		
-		//	send back form
-		this.sendMinorUpdateForm(request, response, result);
+		return exportBasket;
+	}
+	
+	private void sendExportBasketUpdateForm(HttpServletRequest request, HttpServletResponse response, String result) throws IOException {
+		response.setContentType("text/html");
+		response.setCharacterEncoding(ENCODING);
+		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(response.getOutputStream(), ENCODING));
+		bw.write("<html><head>");bw.newLine();
+		HtmlPageBuilder.writeJavaScriptDomHelpers(bw);
+		if (result != null) {
+			bw.write("<script type=\"text/javascript\">");bw.newLine();
+			bw.write("function exportBasketUpdateResultRead() {");bw.newLine();
+			bw.write("  var aebr = getById('" + EXPORT_BASKET_UPDATE_RESULT_ATTRIBUTE + "');");bw.newLine();
+			bw.write("  if (aebr != null)");bw.newLine();
+			bw.write("    removeElement(aebr);");bw.newLine();
+			bw.write("  var ebuf = getById('" + EXPORT_BASKET_UPDATE_FORM_ID + "');");bw.newLine();
+			bw.write("  ebuf.appendChild(createExportBasketUpdateFormField('" + STRING_ID_ATTRIBUTE + "'));");bw.newLine();
+			bw.write("}");bw.newLine();
+			bw.write("function createExportBasketUpdateFormField(nameAndId) {");bw.newLine();
+			bw.write("  var input = newElement('input', null, null, null);");bw.newLine();
+			bw.write("  setAttribute(input, 'type', 'hidden');");bw.newLine();
+			bw.write("  setAttribute(input, 'name', nameAndId);");bw.newLine();
+			bw.write("  setAttribute(input, 'id', nameAndId);");bw.newLine();
+			bw.write("  return input;");bw.newLine();
+			bw.write("}");bw.newLine();
+			bw.write("</script>");bw.newLine();
+		}
+		bw.write("</head><body>");bw.newLine();
+		bw.write("<form id=\"" + EXPORT_BASKET_UPDATE_FORM_ID + "\" method=\"POST\" action=\"" + request.getContextPath() + request.getServletPath() + "/" + EXPORT_BASKET_UPDATE_PATH + "\">");
+		if (result == null)
+			bw.write("<input type=\"hidden\" name=\"" + STRING_ID_ATTRIBUTE + "\" value=\"\" id=\"" + STRING_ID_ATTRIBUTE + "\">");
+		else bw.write("<input type=\"hidden\" name=\"" + EXPORT_BASKET_UPDATE_RESULT_ATTRIBUTE + "\" value=\"" + result + "\" id=\"" + EXPORT_BASKET_UPDATE_RESULT_ATTRIBUTE + "\">");
+		bw.write("</form>");bw.newLine();
+		bw.write("</body></html>");bw.newLine();
+		bw.flush();
 	}
 	
 	private void sendMinorUpdateForm(HttpServletRequest request, HttpServletResponse response, String result) throws IOException {
@@ -229,7 +328,7 @@ public class RefBankSearchServlet extends RefBankWiServlet {
 			bw.write("</script>");bw.newLine();
 		}
 		bw.write("</head><body>");bw.newLine();
-		bw.write("<form id=\"" + MINOR_UPDATE_FORM_ID + "\" method=\"POST\" action=\"" + request.getContextPath() + request.getServletPath() + "\">");
+		bw.write("<form id=\"" + MINOR_UPDATE_FORM_ID + "\" method=\"POST\" action=\"" + request.getContextPath() + request.getServletPath() + "/" + MINOR_UPDATE_PATH + "\">");
 		if (result == null) {
 			bw.write("<input type=\"hidden\" name=\"" + CANONICAL_STRING_ID_ATTRIBUTE + "\" value=\"\" id=\"" + CANONICAL_STRING_ID_ATTRIBUTE + "\">");
 			bw.write("<input type=\"hidden\" name=\"" + STRING_ID_ATTRIBUTE + "\" value=\"\" id=\"" + STRING_ID_ATTRIBUTE + "\">");
@@ -244,8 +343,53 @@ public class RefBankSearchServlet extends RefBankWiServlet {
 	
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
-		//	retrieve RefBank client on the fly to use local bridge if possible
-		RefBankClient rbc = this.getRefBankClient();
+		//	determine action
+		String pathInfo = request.getPathInfo();
+		if (pathInfo != null) {
+			while (pathInfo.startsWith("/"))
+				pathInfo = pathInfo.substring(1);
+		}
+		
+		//	request for minor update form
+		if (MINOR_UPDATE_PATH.equals(pathInfo)) {
+			this.sendMinorUpdateForm(request, response, null);
+			return;
+		}
+		
+		//	request for export basket update form
+		if (EXPORT_BASKET_UPDATE_PATH.equals(pathInfo)) {
+			this.sendExportBasketUpdateForm(request, response, null);
+			return;
+		}
+		
+		//	request for export basket content
+		if (EXPORT_BASKET_SHOW_PATH.equals(pathInfo)) {
+			this.sendPopupHtmlPage(this.getExportBasketPageBuilder(request, response));
+			return;
+		}
+		
+		//	request for export basket content download
+		if (EXPORT_BASKET_DOWNLOAD_PATH.equals(pathInfo)) {
+			String format = request.getParameter(FORMAT_PARAMETER);
+			String style = request.getParameter(STYLE_PARAMETER);
+			if (style != null)
+				this.sendStyledExportBasket(request, style, response);
+			else this.sendFormattedExportBasket(request, ((format == null) ? "MODS" : format), response);
+			return;
+		}
+		
+		//	request for formatted reference frame
+		if (FRAME_PAGE_PATH.equals(pathInfo)) {
+			String id = request.getParameter(STRING_ID_ATTRIBUTE);
+			String format = request.getParameter(FORMAT_PARAMETER);
+			if ((format != null) && (format.trim().length() == 0))
+				format = null;
+			String style = request.getParameter(STYLE_PARAMETER);
+			if ((style != null) && (style.trim().length() == 0))
+				style = null;
+			this.sendFormattedReferenceFrame(request, id, format, style, response);
+			return;
+		}
 		
 		// reference id plus format or style ==> reference in special format
 		String id = request.getParameter(STRING_ID_ATTRIBUTE);
@@ -257,15 +401,9 @@ public class RefBankSearchServlet extends RefBankWiServlet {
 			style = null;
 		if (id != null) {
 			if ((format != null) || (style != null)) {
-				if ("true".equals(request.getParameter(IS_FRAME_PAGE_PARAMETER)))
-					this.sendFormattedReferenceFrame(request, id, format, style, response);
-				else if (style != null)
+				if (style != null)
 					this.sendStyledReference(request, id, style, response);
 				else this.sendFormattedReference(request, id, ((format == null) ? "MODS" : format), response);
-				return;
-			}
-			else if (MINOR_UPDATE_FORM_REF_ID.equals(id)) {
-				this.sendMinorUpdateForm(request, response, null);
 				return;
 			}
 		}
@@ -296,8 +434,9 @@ public class RefBankSearchServlet extends RefBankWiServlet {
 				ids = new Properties();
 				ids.setProperty(idType, idValue);
 			}
-			String[] textPredicates = { query };
-			psi = rbc.findReferences(textPredicates, false, type, user, author, title, year, origin, ids, true, 0);
+			String[] textPredicates = {query};
+			RefBankClient rbc = this.getRefBankClient(); //	retrieve RefBank client on the fly to use local bridge if possible
+			psi = rbc.findReferences(textPredicates, false, type, user, author, title, year, origin, ids, true, 0, false);
 			if (psi.getException() != null)
 				throw psi.getException();
 		}
@@ -308,7 +447,437 @@ public class RefBankSearchServlet extends RefBankWiServlet {
 		//	send page
 		this.sendHtmlPage(pageBuilder);
 	}
-
+	
+	private HtmlPageBuilder getExportBasketPageBuilder(HttpServletRequest request, HttpServletResponse response) throws IOException {
+		final LinkedHashSet exportBasket = this.getExportBasket(request, false);
+		RefBankClient rbk = this.getRefBankClient();
+		final PooledStringIterator psi = (((exportBasket == null) || exportBasket.isEmpty()) ? null : rbk.getStrings((String[]) exportBasket.toArray(new String[exportBasket.size()])));
+		response.setContentType("text/html");
+		response.setCharacterEncoding(ENCODING);
+		return new HtmlPageBuilder(this, request, response) {
+			protected void include(String type, String tag) throws IOException {
+				if ("includeBody".equals(type))
+					this.includeExportBasket();
+				else super.include(type, tag);
+			}
+			private void includeExportBasket() throws IOException {
+				this.writeLine("<table class=\"resultTable\" id=\"resultTable\">");
+				
+				//	indicate empty basket
+				if ((psi == null) || !psi.hasNextString()) {
+					this.writeLine("<tr class=\"resultTableRow\">");
+					this.writeLine("<td class=\"resultTableCell\">");
+					this.writeLine("There are currently no references in your Export Basket.");
+					this.writeLine("</td>");
+					this.writeLine("</tr>");
+				}
+				
+				//	list basket contents
+				else {
+					
+					//	add exporter buttons
+					this.writeLine("<tr class=\"resultTableRow\" id=\"topFunctionRow\">");
+					this.writeLine("<td class=\"resultTableCell\" colspan=\"2\">");
+					this.writeLine("<span class=\"referenceFormatLinkLabel\">Export References as</span>");
+					for (Iterator fit = formats.keySet().iterator(); fit.hasNext();) {
+						String format = ((String) fit.next());
+						this.writeLine("<a" + 
+								" class=\"referenceFormatLink\"" + 
+								" target=\"_blank\"" + 
+								" title=\"Download these references formatted as " + format + "\"" + 
+								" href=\"" + this.request.getContextPath() + this.request.getServletPath() + "/" + EXPORT_BASKET_DOWNLOAD_PATH + "?" + FORMAT_PARAMETER + "=" + format + "\"" + 
+								">" + format + "</a>");
+					}
+					this.writeLine("&nbsp;&nbsp;");
+					String[] styles = BibRefUtils.getRefStringStyles();
+					for (int s = 0; s < styles.length; s++) {
+						this.writeLine("<a" + 
+								" class=\"referenceFormatLink\"" + 
+								" target=\"_blank\"" + 
+								" title=\"Download these references styled as " + styles[s] + " style\"" + 
+								" href=\"" + this.request.getContextPath() + this.request.getServletPath() + "/" + EXPORT_BASKET_DOWNLOAD_PATH + "?" + STYLE_PARAMETER + "=" + styles[s] + "\"" + 
+								">" + styles[s] + "</a>");
+					}
+					this.writeLine("</td>");
+					this.writeLine("</tr>");
+					
+					//	display references
+					while (psi.hasNextString()) {
+						PooledString ps = psi.getNextString();
+						this.writeLine("<tr class=\"resultTableRow\" id=\"ref" + ps.id + "\">");
+						this.writeLine("<td class=\"resultTableCell\">");
+						this.writeLine("<div class=\"referenceString\">" + xmlGrammar.escape(ps.getStringPlain()) + "</div>");
+						this.writeLine("</td>");
+						this.writeLine("<td class=\"resultTableCell\">");
+						this.writeLine("<input" + 
+								" class=\"referenceFormatLink\"" + 
+								" type=\"button\"" + 
+								" value=\"Remove\"" + 
+								" title=\"Remove this reference from your Export Basket\"" + 
+								" onclick=\"return updateExportBasket('" + ps.id + "', true);\"" + 
+								">");
+						this.writeLine("</td>");
+						this.writeLine("</tr>");
+					}
+					
+					//	add exporter buttons once again
+					this.writeLine("<tr class=\"resultTableRow\" id=\"bottomFunctionRow\">");
+					this.writeLine("<td class=\"resultTableCell\" colspan=\"2\">");
+					this.writeLine("<span class=\"referenceFormatLinkLabel\">Export References as</span>");
+					for (Iterator fit = formats.keySet().iterator(); fit.hasNext();) {
+						String format = ((String) fit.next());
+						this.writeLine("<a" + 
+								" class=\"referenceFormatLink\"" + 
+								" target=\"_blank\"" + 
+								" title=\"Download these references formatted as " + format + "\"" + 
+								" href=\"" + this.request.getContextPath() + this.request.getServletPath() + "/" + EXPORT_BASKET_DOWNLOAD_PATH + "?" + FORMAT_PARAMETER + "=" + format + "\"" + 
+								">" + format + "</a>");
+					}
+					this.writeLine("&nbsp;&nbsp;");
+					for (int s = 0; s < styles.length; s++) {
+						this.writeLine("<a" + 
+								" class=\"referenceFormatLink\"" + 
+								" target=\"_blank\"" + 
+								" title=\"Download these references styled as " + styles[s] + " style\"" + 
+								" href=\"" + this.request.getContextPath() + this.request.getServletPath() + "/" + EXPORT_BASKET_DOWNLOAD_PATH + "?" + STYLE_PARAMETER + "=" + styles[s] + "\"" + 
+								">" + styles[s] + "</a>");
+					}
+					this.writeLine("</td>");
+					this.writeLine("</tr>");
+				}
+				this.writeLine("</table>");
+				
+				this.write("<iframe id=\"" + EXPORT_BASKET_UPDATE_FRAME_ID + "\" height=\"0px\" style=\"border-width: 0px;\" src=\"" + this.request.getContextPath() + this.request.getServletPath() + "/" + EXPORT_BASKET_UPDATE_PATH + "\">");
+				this.writeLine("</iframe>");
+			}
+			protected void writePageHeadExtensions() throws IOException {
+				this.writeLine("<script type=\"text/javascript\">");
+				writeExportBasketFunctions(this, true, false);
+				this.writeLine("</script>");
+			}
+		};
+	}
+	
+	private void writeExportBasketFunctions(HtmlPageBuilder hpb, boolean inBasketPage, boolean inFormattedRefPage) throws IOException {
+		LinkedHashSet exportBasket = this.getExportBasket(hpb.request, false);
+		
+		hpb.writeLine("var exportBasketUpdateOverlay = null;");
+		hpb.writeLine("var exportBasketUpdateRefId = null;");
+		hpb.writeLine("var exportBasketUpdateRefRemoved = false;");
+		hpb.writeLine("function updateExportBasket(refId, remove) {");
+		hpb.writeLine("  var exportBasketUpdateFrame = getById('" + EXPORT_BASKET_UPDATE_FRAME_ID + "');");
+		hpb.writeLine("  if (exportBasketUpdateFrame == null)");
+		hpb.writeLine("    return false;");
+		hpb.writeLine("  var exportBasketUpdateForm = exportBasketUpdateFrame.contentWindow.getById('" + EXPORT_BASKET_UPDATE_FORM_ID + "');");
+		hpb.writeLine("  if (exportBasketUpdateForm == null)");
+		hpb.writeLine("    return false;");
+		hpb.writeLine("  if (refId != null) {");
+		hpb.writeLine("    var refIdField = exportBasketUpdateFrame.contentWindow.getById('" + STRING_ID_ATTRIBUTE + "');");
+		hpb.writeLine("    if (refIdField == null)");
+		hpb.writeLine("      return false;");
+		hpb.writeLine("    refIdField.value = ((remove ? '--' : '') + refId);");
+		hpb.writeLine("  }");
+		hpb.writeLine("  exportBasketUpdateOverlay = getOverlay(null, 'exportBasketUpdateOverlay', true);");
+		hpb.writeLine("  exportBasketUpdateRefId = refId;");
+		hpb.writeLine("  exportBasketUpdateRefRemoved = remove;");
+		hpb.writeLine("  exportBasketUpdateForm.submit();");
+		hpb.writeLine("  window.setTimeout('waitUpdateExportBasket(0)', 250);");
+		hpb.writeLine("  return false;");
+		hpb.writeLine("}");
+		
+		hpb.writeLine("function waitUpdateExportBasket(round) {");
+		hpb.writeLine("  if (round > 20) {");
+		hpb.writeLine("    alert('The server did not reply in time, please try again later.');");
+		hpb.writeLine("    removeElement(exportBasketUpdateOverlay);");
+		hpb.writeLine("    exportBasketUpdateOverlay = null;");
+		hpb.writeLine("    exportBasketUpdateRefId = null;");
+		hpb.writeLine("    exportBasketUpdateRefRemoved = false;");
+		hpb.writeLine("    return;");
+		hpb.writeLine("  }");
+		hpb.writeLine("  var exportBasketUpdateFrame = getById('" + EXPORT_BASKET_UPDATE_FRAME_ID + "');");
+		hpb.writeLine("  if (!exportBasketUpdateFrame.contentWindow.getById) {");
+		hpb.writeLine("    window.setTimeout(('waitUpdateExportBasket(' + (round+1) + ')'), 250);");
+		hpb.writeLine("    return;");
+		hpb.writeLine("  }");
+		hpb.writeLine("  var exportBasketUpdateForm = exportBasketUpdateFrame.contentWindow.getById('" + EXPORT_BASKET_UPDATE_FORM_ID + "');");
+		hpb.writeLine("  if (exportBasketUpdateForm == null) {");
+		hpb.writeLine("    window.setTimeout(('waitUpdateExportBasket(' + (round+1) + ')'), 250);");
+		hpb.writeLine("    return;");
+		hpb.writeLine("  }");
+		hpb.writeLine("  var resultField = exportBasketUpdateFrame.contentWindow.getById('" + EXPORT_BASKET_UPDATE_RESULT_ATTRIBUTE + "');");
+		hpb.writeLine("  if (resultField == null) {");
+		hpb.writeLine("    window.setTimeout(('waitUpdateExportBasket(' + (round+1) + ')'), 250);");
+		hpb.writeLine("    return;");
+		hpb.writeLine("  }");
+		hpb.writeLine("  var ebSize = resultField.value;");
+		if (!inBasketPage) {
+			if (inFormattedRefPage)
+				hpb.writeLine("  var ebButton = getById('ebButton');");
+			else hpb.writeLine("  var ebButton = getById('ebButton' + exportBasketUpdateRefId);");
+			hpb.writeLine("  var refId = exportBasketUpdateRefId;");
+			hpb.writeLine("  if (exportBasketUpdateRefRemoved) {");
+			hpb.writeLine("    ebButton.value = 'Export';");
+			hpb.writeLine("    ebButton.title = 'Add this reference to your Export Basket';");
+			hpb.writeLine("    ebButton.onclick = function() {");
+			hpb.writeLine("      updateExportBasket(refId, false);");
+			hpb.writeLine("      return false;");
+			hpb.writeLine("    };");
+			hpb.writeLine("  }");
+			hpb.writeLine("  else {");
+			hpb.writeLine("    ebButton.value = 'Do Not Export';");
+			hpb.writeLine("    ebButton.title = 'Remove this reference from your Export Basket';");
+			hpb.writeLine("    ebButton.onclick = function() {");
+			hpb.writeLine("      updateExportBasket(refId, true);");
+			hpb.writeLine("      return false;");
+			hpb.writeLine("    };");
+			hpb.writeLine("  }");
+		}
+		if (inBasketPage || inFormattedRefPage) {
+			hpb.writeLine("  if (window.notifyExportBucketUpdated)");
+			hpb.writeLine("    notifyExportBucketUpdated(exportBasketUpdateRefId, exportBasketUpdateRefRemoved, ebSize);");
+		}
+		else {
+			hpb.writeLine("  var sEbButton = getById('showExportBasketButton');");
+			hpb.writeLine("  if (sEbButton != null) {");
+			hpb.writeLine("    if (sEbButton.firstChild)");
+			hpb.writeLine("      sEbButton.firstChild.nodeValue = ('My Export Refs (' + ebSize + ')');");
+			hpb.writeLine("    else sEbButton.appendChild(document.createTextNode('My Export Refs (' + ebSize + ')'));");
+			hpb.writeLine("  }");
+		}
+		hpb.writeLine("  exportBasketUpdateFrame.contentWindow.exportBasketUpdateResultRead();");
+		if (inBasketPage)
+			hpb.writeLine("  removeElement(getById('ref' + exportBasketUpdateRefId));");
+		hpb.writeLine("  exportBasketUpdateRefId = null;");
+		hpb.writeLine("  exportBasketUpdateRefRemoved = false;");
+		if (inBasketPage) {
+			hpb.writeLine("  if (ebSize == '0') {");
+			hpb.writeLine("    var tfr = getById('topFunctionRow');");
+			hpb.writeLine("    if (tfr != null)");
+			hpb.writeLine("      removeElement(tfr);");
+			hpb.writeLine("    var bfr = getById('bottomFunctionRow');");
+			hpb.writeLine("    if (bfr != null)");
+			hpb.writeLine("      removeElement(bfr);");
+			hpb.writeLine("    var rt = getById('resultTable');");
+			hpb.writeLine("    if (rt != null) {");
+			hpb.writeLine("      var ebtr = newElement('tr', null, 'resultTableRow');");
+			hpb.writeLine("      rt.appendChild(ebtr);");
+			hpb.writeLine("      var ebtc = newElement('td', null, 'resultTableCell', 'There are currently no references in your Export Basket.');");
+			hpb.writeLine("      ebtr.appendChild(ebtc);");
+			hpb.writeLine("    }");
+			hpb.writeLine("  }");
+		}
+		hpb.writeLine("  removeElement(exportBasketUpdateOverlay);");
+		hpb.writeLine("  exportBasketUpdateOverlay = null;");
+		hpb.writeLine("}");
+		
+		if (!inBasketPage && !inFormattedRefPage) {
+			hpb.writeLine("function addShowExportBasketButton() {");
+			hpb.writeLine("  if (getById('showExportBasketButton') != null)");
+			hpb.writeLine("    return;");
+			hpb.writeLine("  var ptm = getPageTopMenu();");
+			hpb.writeLine("  if (ptm == null)");
+			hpb.writeLine("    return;");
+			hpb.writeLine("  var sEbButton = newElement('a', 'showExportBasketButton', 'footerNavigationLink', 'My Export Refs (" + ((exportBasket == null) ? 0 : exportBasket.size()) + ")');");
+			hpb.writeLine("  setAttribute(sEbButton, 'href', '#');");
+			hpb.writeLine("  setAttribute(sEbButton, 'onclick', 'return openExportBasket();');");
+			hpb.writeLine("  setAttribute(sEbButton, 'title', 'Review and export contents of Export Basket');");
+			hpb.writeLine("  setAttribute(sEbButton, 'style', 'margin-left: 10px;');");
+			hpb.writeLine("  ptm.appendChild(sEbButton);");
+			hpb.writeLine("}");
+			
+			hpb.writeLine("function openExportBasket() {");
+			hpb.writeLine("  var w = window.open('" + hpb.request.getContextPath() + hpb.request.getServletPath() + "/" + EXPORT_BASKET_SHOW_PATH + "', 'Your Export Basket', 'width=500,height=400,top=100,left=100,resizable=yes,scrollbar=yes,scrollbars=yes');");
+			hpb.writeLine("  w.notifyExportBucketUpdated = window.notifyExportBucketUpdated;");
+			hpb.writeLine("  return false;");
+			hpb.writeLine("};");
+			
+			hpb.writeLine("function notifyExportBucketUpdated(refId, removed, ebSize) {");
+			hpb.writeLine("  exportBasketRefIDs[refId] = (removed ? null : 'E');");
+			hpb.writeLine("  var ebButton = getById('ebButton' + refId);");
+			hpb.writeLine("  if (ebButton != null) {");
+			hpb.writeLine("    if (removed) {");
+			hpb.writeLine("      ebButton.value = 'Export';");
+			hpb.writeLine("      ebButton.onclick = function() {");
+			hpb.writeLine("        updateExportBasket(refId, false);");
+			hpb.writeLine("        return false;");
+			hpb.writeLine("      };");
+			hpb.writeLine("    }");
+			hpb.writeLine("    else {");
+			hpb.writeLine("      ebButton.value = 'Do Not Export';");
+			hpb.writeLine("      ebButton.onclick = function() {");
+			hpb.writeLine("        updateExportBasket(refId, true);");
+			hpb.writeLine("        return false;");
+			hpb.writeLine("      };");
+			hpb.writeLine("    }");
+			hpb.writeLine("  }");
+			hpb.writeLine("  var sEbButton = getById('showExportBasketButton');");
+			hpb.writeLine("  if (sEbButton != null) {");
+			hpb.writeLine("    if (sEbButton.firstChild)");
+			hpb.writeLine("      sEbButton.firstChild.nodeValue = ('My Export Refs (' + ebSize + ')');");
+			hpb.writeLine("    else sEbButton.appendChild(document.createTextNode('My Export Refs (' + ebSize + ')'));");
+			hpb.writeLine("  }");
+			hpb.writeLine("}");
+		}
+	}
+	
+	private void sendFormattedExportBasket(HttpServletRequest request, String format, HttpServletResponse response) throws IOException {
+		
+		//	get export basket
+		LinkedHashSet exportBasket = this.getExportBasket(request, false);
+		if ((exportBasket == null) || exportBasket.isEmpty()) {
+			response.sendError(HttpServletResponse.SC_NOT_FOUND, "No references to export");
+			return;
+		}
+		
+		//	format response
+		response.setContentType("text/plain");
+		response.setCharacterEncoding(ENCODING);
+		
+		//	resolve reference IDs
+		RefBankClient rbk = this.getRefBankClient();
+		final PooledStringIterator psi = rbk.getStrings((String[]) exportBasket.toArray(new String[exportBasket.size()]));
+		
+		//	get format transformer
+		final Transformer xslt = ((Transformer) this.formats.get(format));
+		if (xslt == null) {
+			response.setContentType("text/plain");
+			response.setCharacterEncoding(ENCODING);
+			final BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(response.getOutputStream(), ENCODING));
+			bw.write("Unknown reference format: " + format);
+			if (this.formats.size() != 0) {
+				bw.newLine();
+				bw.write("Use the links above or below to get to the valid formats.");
+			}
+			bw.flush();
+			return;
+		}
+		
+		//	send formatted references
+		final BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(response.getOutputStream(), ENCODING));
+		StringBuffer refsParsed = new StringBuffer("<" + STRING_SET_NODE_TYPE + SP_XML_NAMESPACE_ATTRIBUTE + ">\n");
+		while (psi.hasNextString()) {
+			PooledString ps = psi.getNextString();
+			refsParsed.append("<" + STRING_NODE_TYPE + SP_XML_NAMESPACE_ATTRIBUTE + "><" + STRING_PARSED_NODE_TYPE + ">\n");
+			String refParsedString = ps.getStringParsed();
+			int fc = 0;
+			if (refParsedString.startsWith("<mods:mods>")) {
+				refsParsed.append("<mods:mods xmlns:mods=\"http://www.loc.gov/mods/v3\">");
+				fc = "<mods:mods>".length();
+			}
+			for (int c = fc; c < refParsedString.length(); c++) {
+				char ch = refParsedString.charAt(c);
+				if ((ch == '<') && (c != 0) && (refParsedString.charAt(c - 1) == '>'))
+					refsParsed.append('\n');
+				refsParsed.append(ch);
+			}
+			refsParsed.append("\n</" + STRING_PARSED_NODE_TYPE + "></" + STRING_NODE_TYPE + ">");
+		}
+		refsParsed.append("\n</" + STRING_SET_NODE_TYPE + ">");
+		final CharSequenceReader csr = new CharSequenceReader(refsParsed);
+		final IOException[] ioe = {null};
+		Thread tt = new Thread() {
+			public void run() {
+				synchronized (csr) {
+					csr.notify();
+				}
+				try {
+					xslt.transform(new StreamSource(csr), new StreamResult(new IsolatorWriter(bw)));
+				}
+				catch (TransformerException te) {
+					ioe[0] = new IOException(te.getMessage());
+				}
+			}
+		};
+		synchronized (csr) {
+			tt.start();
+			try {
+				csr.wait();
+			} catch (InterruptedException ie) {}
+		}
+		while (tt.isAlive()) {
+			try {
+				tt.join(250);
+			} catch (InterruptedException ie) {}
+			if (ioe[0] != null)
+				throw ioe[0];
+			if ((csr.lastRead + 2500) < System.currentTimeMillis())
+				break;
+		}
+		bw.flush();
+	}
+	
+	private void sendStyledExportBasket(HttpServletRequest request, String style, HttpServletResponse response) throws IOException {
+		LinkedHashSet exportBasket = this.getExportBasket(request, false);
+		if ((exportBasket == null) || exportBasket.isEmpty()) {
+			response.sendError(HttpServletResponse.SC_NOT_FOUND, "No references to export");
+			return;
+		}
+		
+		//	resolve reference IDs
+		RefBankClient rbk = this.getRefBankClient();
+		PooledStringIterator psi = rbk.getStrings((String[]) exportBasket.toArray(new String[exportBasket.size()]));
+		
+		//	anything to send?
+		if (!psi.hasNextString()) {
+			response.sendError(HttpServletResponse.SC_NOT_FOUND, "No references to export");
+			return;
+		}
+		
+		//	test reference style
+		PooledString ps = psi.getNextString(); 
+		QueriableAnnotation modsRef = SgmlDocumentReader.readDocument(new StringReader(ps.getStringParsed()));
+		RefData rd = BibRefUtils.modsXmlToRefData(modsRef);
+		String sr = BibRefUtils.toRefString(rd, style);
+		if (sr == null) {
+			response.setContentType("text/plain");
+			response.setCharacterEncoding(ENCODING);
+			BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(response.getOutputStream(), ENCODING));
+			bw.write("Unknown reference style: " + style);
+			if (BibRefUtils.getRefStringStyles().length != 0) {
+				bw.newLine();
+				bw.write("Use the links below to get to the valid styles.");
+			}
+			bw.flush();
+			return;
+		}
+		
+		//	format response
+		response.setContentType("text/html");
+		response.setCharacterEncoding(ENCODING);
+		
+		//	send list head
+		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(response.getOutputStream(), ENCODING));
+		bw.write("<html><head></head><body>"); bw.newLine();
+		
+		//	send references
+		while (true) {
+			
+			//	cut whitespace and HTML tags
+			sr = sr.trim();
+			if ("<html>".equals(sr.substring(0, 6).toLowerCase()))
+				sr = sr.substring(6);
+			if ("</html>".equals(sr.substring(sr.length()-7).toLowerCase()))
+				sr = sr.substring(0, (sr.length()-7));
+			sr = sr.trim();
+			
+			//	send reference
+			bw.write("<p style=\"" + this.styledRefLayout + "\">" + sr.trim() + "</p>"); bw.newLine();
+			
+			//	switch to next reference
+			if (psi.hasNextString()) {
+				ps = psi.getNextString(); 
+				modsRef = SgmlDocumentReader.readDocument(new StringReader(ps.getStringParsed()));
+				rd = BibRefUtils.modsXmlToRefData(modsRef);
+				sr = BibRefUtils.toRefString(rd, style);
+			}
+			else break;
+		}
+		
+		//	close reference list
+		bw.write("</body></html>"); bw.newLine();
+		bw.flush();
+	}
+	
 	private void sendFormattedReference(HttpServletRequest request, String id, String format, HttpServletResponse response) throws IOException {
 		
 		//	retrieve RefBank client on the fly to use local bridge if possible
@@ -432,7 +1001,7 @@ public class RefBankSearchServlet extends RefBankWiServlet {
 		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(response.getOutputStream(), ENCODING));
 		bw.write("<html><head></head><body>");
 		bw.newLine();
-		bw.write("<p style=\"" + this.styledRefLayout + "\">" + sr + "</p>");
+		bw.write("<p style=\"" + this.styledRefLayout + "\">" + sr.trim() + "</p>");
 		bw.newLine();
 		bw.write("</body></html>");
 		bw.newLine();
@@ -529,7 +1098,7 @@ public class RefBankSearchServlet extends RefBankWiServlet {
 				this.writeLine("</td>");
 				this.writeLine("</tr>");
 				String[] styles = BibRefUtils.getRefStringStyles();
-				if ((ps.getStringParsed() != null) && ((formats.size() + styles.length) > 1)) {
+				if (ps.getStringParsed() != null) {
 					if (formats.size() != 0) {
 						this.writeLine("<tr class=\"resultTableRow\">");
 						this.writeLine("<td class=\"resultTableCell\">");
@@ -563,6 +1132,20 @@ public class RefBankSearchServlet extends RefBankWiServlet {
 						this.writeLine("</td>");
 						this.writeLine("</tr>");
 					}
+					this.writeLine("<tr class=\"resultTableRow\">");
+					this.writeLine("<td class=\"resultTableCell\">");
+					this.writeLine("<span class=\"referenceFormatLinkLabel\">Export Reference:</span>");
+					LinkedHashSet exportBasket = getExportBasket(this.request, false);
+					this.writeLine("<input" + 
+							" class=\"referenceFormatLink\"" + 
+							" type=\"button\"" + 
+							" id=\"ebButton\"" + 
+							" value=\"" + (((exportBasket != null) && exportBasket.contains(id)) ? "Do Not Export" : "Export") + "\"" + 
+							" title=\"" + (((exportBasket != null) && exportBasket.contains(id)) ? "Remove this reference from your Export Basket" : "Add this reference to your Export Basket") + "\"" + 
+							" onclick=\"return updateExportBasket('" + id + "', " + (((exportBasket != null) && exportBasket.contains(id)) ? "true" : "false") + ");\"" +
+							">");
+					this.writeLine("</td>");
+					this.writeLine("</tr>");
 				}
 				this.writeLine("<tr class=\"resultTableRow\">");
 				this.writeLine("<td class=\"resultTableCell\">");
@@ -592,7 +1175,10 @@ public class RefBankSearchServlet extends RefBankWiServlet {
 				
 				this.writeLine("</table>");
 				
-				this.write("<iframe id=\"minorUpdateFrame\" height=\"0px\" style=\"border-width: 0px;\" src=\"" + this.request.getContextPath() + this.request.getServletPath() + "?" + STRING_ID_ATTRIBUTE + "=" + MINOR_UPDATE_FORM_REF_ID + "\">");
+				this.write("<iframe id=\"" + MINOR_UPDATE_FRAME_ID + "\" height=\"0px\" style=\"border-width: 0px;\" src=\"" + this.request.getContextPath() + this.request.getServletPath() + "/" + MINOR_UPDATE_PATH + "\">");
+				this.writeLine("</iframe>");
+				
+				this.write("<iframe id=\"" + EXPORT_BASKET_UPDATE_FRAME_ID + "\" height=\"0px\" style=\"border-width: 0px;\" src=\"" + this.request.getContextPath() + this.request.getServletPath() + "/" + EXPORT_BASKET_UPDATE_PATH + "\">");
 				this.writeLine("</iframe>");
 			}
 			
@@ -679,9 +1265,8 @@ public class RefBankSearchServlet extends RefBankWiServlet {
 					this.writeLine("}");
 				}
 				if (refEditorUrl != null) {
-					String editedRefBaseLink = (this.request.getContextPath() + this.request.getServletPath() + 
-							"?" + IS_FRAME_PAGE_PARAMETER + "=true" + 
-							"&" + FORMAT_PARAMETER + "=MODS" + 
+					String editedRefBaseLink = (this.request.getContextPath() + this.request.getServletPath() + "/" + FRAME_PAGE_PATH +
+							"?" + FORMAT_PARAMETER + "=MODS" + 
 							"&" + STRING_ID_ATTRIBUTE + "="
 						);
 					String editorLink = (refEditorUrl + 
@@ -696,10 +1281,9 @@ public class RefBankSearchServlet extends RefBankWiServlet {
 					this.writeLine("}");
 				}
 				
+				writeExportBasketFunctions(this, false, true);
+				
 				this.writeLine("</script>");
-			}
-			protected boolean includeJavaScriptDomHelpers() {
-				return true;
 			}
 		};
 		this.sendPopupHtmlPage(pageBuilder);
@@ -926,13 +1510,16 @@ public class RefBankSearchServlet extends RefBankWiServlet {
 				this.writeLine("}");
 				this.writeLine("</script>");
 				
-				this.write("<iframe id=\"minorUpdateFrame\" height=\"0px\" style=\"border-width: 0px;\" src=\"" + this.request.getContextPath() + this.request.getServletPath() + "?" + STRING_ID_ATTRIBUTE + "=" + MINOR_UPDATE_FORM_REF_ID + "\">");
+				this.write("<iframe id=\"" + MINOR_UPDATE_FRAME_ID + "\" height=\"0px\" style=\"border-width: 0px;\" src=\"" + this.request.getContextPath() + this.request.getServletPath() + "/" + MINOR_UPDATE_PATH + "\">");
+				this.writeLine("</iframe>");
+				
+				this.write("<iframe id=\"" + EXPORT_BASKET_UPDATE_FRAME_ID + "\" height=\"0px\" style=\"border-width: 0px;\" src=\"" + this.request.getContextPath() + this.request.getServletPath() + "/" + EXPORT_BASKET_UPDATE_PATH + "\">");
 				this.writeLine("</iframe>");
 			}
 			
 			private void writeSearchResultRef(PooledString ps, boolean isDuplicate) throws IOException {
 				this.writeLine("<div class=\"referenceStringContainer\" id=\"" + ps.id + "\"" + (ps.isDeleted() ? " style=\"display: none;\"" : "") + ">");
-				this.writeLine("<div class=\"referenceString\" id=\"refString" + ps.id + "\" onmousedown=\"return grabReference('" + ps.id + "');\" ondblclick=\"selectRefString('" + ps.id + "');\" onmouseover=\"" + (isDuplicate ? "showOptionsFor" : "setActiveReference") + "('" + ps.id + "');\" onmouseout=\"setActiveReference(null); dragGrabbedReference();\">" + ps.getStringPlain() + "</div>");
+				this.writeLine("<div class=\"referenceString\" id=\"refString" + ps.id + "\" onmousedown=\"return grabReference('" + ps.id + "');\" ondblclick=\"selectRefString('" + ps.id + "');\" onmouseover=\"" + (isDuplicate ? "showOptionsFor" : "setActiveReference") + "('" + ps.id + "');\" onmouseout=\"setActiveReference(null); dragGrabbedReference();\">" + xmlGrammar.escape(ps.getStringPlain()) + "</div>");
 				this.writeLine("<div class=\"referenceStringCredits\" id=\"credits" + ps.id + "\">");
 				this.writeLine("<span class=\"referenceFormatLinkLabel\">Contributed by <b>" + ps.getCreateUser() + "</b> (at <b>" + ps.getCreateDomain() + "</b>)</span>&nbsp;&nbsp;<span class=\"referenceFormatLinkLabel\">Last Updated by <b>" + ps.getUpdateUser() + "</b> (at <b>" + ps.getUpdateDomain() + "</b>)</span>");
 				this.writeLine("</div>");
@@ -940,12 +1527,8 @@ public class RefBankSearchServlet extends RefBankWiServlet {
 				this.writeLine("</div>");
 			}
 			
-			protected boolean includeJavaScriptDomHelpers() {
-				return true;
-			}
-			
 			protected String[] getOnloadCalls() {
-				String[] olcs = {"initDragReference();"};
+				String[] olcs = {"initDragReference();", "addShowExportBasketButton();"};
 				return olcs;
 			}
 			
@@ -958,6 +1541,14 @@ public class RefBankSearchServlet extends RefBankWiServlet {
 				this.writeLine("  if (debugMessage != null)");
 				this.writeLine("    debugMessage.value = message;");
 				this.writeLine("}");
+				
+				//	add object storing export basket ref IDs
+				this.writeLine("var exportBasketRefIDs = new Object();");
+				LinkedHashSet exportBasket = getExportBasket(this.request, false);
+				if (exportBasket != null) {
+					for (Iterator eridit = exportBasket.iterator(); eridit.hasNext();)
+						this.writeLine("exportBasketRefIDs['" + ((String) eridit.next()) + "'] = 'E';");
+				}
 				
 				//	reacting to mouse movements
 				this.writeLine("var activeReferenceId = null;");
@@ -1189,6 +1780,9 @@ public class RefBankSearchServlet extends RefBankWiServlet {
 				this.writeLine("  }");
 				this.writeLine("}");
 				
+				//	handling of export basket
+				writeExportBasketFunctions(this, false, false);
+				
 				//	generators for style and format buttons and contribution buttons
 				this.write("var formats = new Array(");
 				for (Iterator fit = formats.keySet().iterator(); fit.hasNext();) {
@@ -1225,9 +1819,9 @@ public class RefBankSearchServlet extends RefBankWiServlet {
 				this.writeLine("      cRefDupContainer = cRefDupContainer.parentNode;");
 				this.writeLine("    if (cRefDupContainer != null) {");
 				this.writeLine("      options.appendChild(newElement('span', null, 'referenceFormatLinkLabel', 'Contribute to Bibliography:'));");
-				this.writeLine("      var rButton = addFunctionButton(options, 'Make Representative', null, function() {setCanonicalId(cRefDupContainer.id.substring(12), refId, 'MR'); return false;});");
+				this.writeLine("      var rButton = addFunctionButton(options, 'Make Representative', 'Make this reference the representative of this duplicate cluster', function() {setCanonicalId(cRefDupContainer.id.substring(12), refId, 'MR'); return false;});");
 				this.writeLine("      setAttribute(rButton, 'id', ('rButton' + refId));");
-				this.writeLine("      var ndButton = addFunctionButton(options, 'Not a Duplicate', null, function() {setCanonicalId(refId, refId, 'ND'); return false;});");
+				this.writeLine("      var ndButton = addFunctionButton(options, 'Not a Duplicate', 'Remove this reference from this cluster and make it a top level reference', function() {setCanonicalId(refId, refId, 'ND'); return false;});");
 				this.writeLine("      setAttribute(ndButton, 'id', ('ndButton' + refId));");
 				this.writeLine("    }");
 				this.writeLine("    return;");
@@ -1235,20 +1829,24 @@ public class RefBankSearchServlet extends RefBankWiServlet {
 				this.writeLine("  if (options.className.indexOf('parsed') != -1) {");
 				this.writeLine("    options.appendChild(newElement('span', null, 'referenceFormatLinkLabel', 'Additional Formats & Styles:'));");
 				this.writeLine("    for (var f = 0; f < formats.length; f++)");
-				this.writeLine("      addOpenWindowButton(options, formats[f], ('Get this reference formatted as ' + formats[f]), (subWindowBaseUrl + '?id=' + refId + '&isFramePage=true&format=' + formats[f]), 'Parsed Reference');");
+				this.writeLine("      addOpenWindowButton(options, formats[f], ('Get this reference formatted as ' + formats[f]), (subWindowBaseUrl + '/" + FRAME_PAGE_PATH + "?" + STRING_ID_ATTRIBUTE + "=' + refId + '&" + FORMAT_PARAMETER + "=' + formats[f]), 'Formatted Reference');");
 				this.writeLine("    options.appendChild(document.createTextNode('  '));");
 				this.writeLine("    for (var s = 0; s < styles.length; s++)");
-				this.writeLine("      addOpenWindowButton(options, styles[s], ('Get this reference formatted in ' + styles[s] + ' style'), (subWindowBaseUrl + '?id=' + refId + '&isFramePage=true&style=' + styles[s]), 'Formatted Reference');");
+				this.writeLine("      addOpenWindowButton(options, styles[s], ('Get this reference formatted in ' + styles[s] + ' style'), (subWindowBaseUrl + '/" + FRAME_PAGE_PATH + "?" + STRING_ID_ATTRIBUTE + "=' + refId + '&" + STYLE_PARAMETER + "=' + styles[s]), 'Styled Reference');");
+				this.writeLine("    options.appendChild(document.createTextNode('  '));");
+				this.writeLine("    var isInEb = (exportBasketRefIDs[refId] == 'E');");
+				this.writeLine("    var ebButton = addFunctionButton(options, (isInEb ? 'Do Not Export' : 'Export'), (isInEb ? 'Remove this reference from your Export Basket' : 'Add this reference to your Export Basket'), function() {updateExportBasket(refId, isInEb); return false;});");
+				this.writeLine("    setAttribute(ebButton, 'id', ('ebButton' + refId));");
 				this.writeLine("    options.appendChild(newElement('br'));");
 				this.writeLine("  }");
 				this.writeLine("  options.appendChild(newElement('span', null, 'referenceFormatLinkLabel', 'Contribute to Bibliography:'));");
 				if (refParserUrl != null) {
 					this.writeLine("  if (options.className.indexOf('parsed') != -1)");
-					this.writeLine("    addOpenWindowButton(options, 'Refine Parsed Reference', 'Refine or correct the parsed version of this bibliographic reference', (subWindowBaseUrl + '?" + STRING_ID_ATTRIBUTE + "=' + refId + '&" + IS_FRAME_PAGE_PARAMETER + "=true&" + FORMAT_PARAMETER + "=" + PARSE_REF_FORMAT + "'), 'Parse Reference');");
-					this.writeLine("  else addOpenWindowButton(options, 'Parse Reference', 'Parse this bibliographic reference so formatted versions become available', (subWindowBaseUrl + '?" + STRING_ID_ATTRIBUTE + "=' + refId + '&" + IS_FRAME_PAGE_PARAMETER + "=true&" + FORMAT_PARAMETER + "=" + PARSE_REF_FORMAT + "'), 'Parse Reference');");
+					this.writeLine("    addOpenWindowButton(options, 'Refine Parsed Reference', 'Refine or correct the parsed version of this bibliographic reference', (subWindowBaseUrl + '/" + FRAME_PAGE_PATH + "?" + STRING_ID_ATTRIBUTE + "=' + refId + '&" + FORMAT_PARAMETER + "=" + PARSE_REF_FORMAT + "'), 'Parse Reference');");
+					this.writeLine("  else addOpenWindowButton(options, 'Parse Reference', 'Parse this bibliographic reference so formatted versions become available', (subWindowBaseUrl + '/" + FRAME_PAGE_PATH + "?" + STRING_ID_ATTRIBUTE + "=' + refId + '&" + FORMAT_PARAMETER + "=" + PARSE_REF_FORMAT + "'), 'Parse Reference');");
 				}
 				if (refEditorUrl != null)
-					this.writeLine("  addOpenWindowButton(options, 'Edit Reference', 'Correct this bibliographic reference string, e.g. to eliminate typos or punctuation errors', (subWindowBaseUrl + '?" + STRING_ID_ATTRIBUTE + "=' + refId + '&" + IS_FRAME_PAGE_PARAMETER + "=true&" + FORMAT_PARAMETER + "=" + EDIT_REF_FORMAT + "'), 'Edit Reference');");
+					this.writeLine("  addOpenWindowButton(options, 'Edit Reference', 'Correct this bibliographic reference string, e.g. to eliminate typos or punctuation errors', (subWindowBaseUrl + '/" + FRAME_PAGE_PATH + "?" + STRING_ID_ATTRIBUTE + "=' + refId + '&" + FORMAT_PARAMETER + "=" + EDIT_REF_FORMAT + "'), 'Edit Reference');");
 				this.writeLine("  var dudButton = addFunctionButton(options, ((deletedRefIdSet[refId] == 'D') ? 'Un-Delete' : 'Delete'), null, function() {setDeleted(refId, (deletedRefIdSet[refId] != 'D')); return false;});");
 				this.writeLine("  setAttribute(dudButton, 'id', ('dudButton' + refId));");
 				this.writeLine("  var dButton = addFunctionButton(options, 'Show Duplicates', null, function() {toggleDuplicates(refId); return false;});");
@@ -1261,10 +1859,12 @@ public class RefBankSearchServlet extends RefBankWiServlet {
 				this.writeLine("  setAttribute(button, 'value', text);");
 				this.writeLine("  setAttribute(button, 'title', tooltip);");
 				this.writeLine("  button.onclick = function() {");
-				this.writeLine("    window.open(url, title, 'width=500,height=400,top=100,left=100,resizable=yes,scrollbar=yes,scrollbars=yes');");
+				this.writeLine("    var w = window.open(url, title, 'width=500,height=400,top=100,left=100,resizable=yes,scrollbar=yes,scrollbars=yes');");
+				this.writeLine("    w.notifyExportBucketUpdated = window.notifyExportBucketUpdated;");
 				this.writeLine("    return false;");
 				this.writeLine("  };");
 				this.writeLine("  node.appendChild(button);");
+				this.writeLine("  return button;");
 				this.writeLine("}");
 				this.writeLine("function addFunctionButton(node, text, tooltip, onclick) {");
 				this.writeLine("  var button = newElement('input');");
@@ -1293,7 +1893,7 @@ public class RefBankSearchServlet extends RefBankWiServlet {
 				this.writeLine("    textRange.select();");
 				this.writeLine("  }");
 				this.writeLine("}");
-
+				
 				//	drag & drop for duplicate removal
 				this.writeLine("var grabbedId = null;");
 				this.writeLine("var draggingId = null;");

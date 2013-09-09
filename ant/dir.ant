@@ -34,7 +34,7 @@
 	<target name="copy" depends="mkdirs" >
 		
 		<!-- copy required libraries -->
-		<copy todir="${web.home}/WEB-INF/lib">
+		<copy todir="${build.home}/WEB-INF/lib" overwrite="true" verbose="false">
 			<fileset dir="${lib.home}" />
 		</copy>
 		

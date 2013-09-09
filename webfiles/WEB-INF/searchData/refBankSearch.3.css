@@ -82,6 +82,12 @@
 
 .resultOptions {}
 
+.resultDuplicates {
+    width: 90%;
+    font-size: 80%;
+    margin-left: 5%;
+}
+
 .referenceString {
     background-color: white;
     color: navy;
@@ -105,6 +111,18 @@
     background: silver;
     color: navy;
     padding: 0;
+    margin: 0.2em 0em 0.2em;
+    -moz-border-radius: 0.5em;
+    -webkit-border-radius: 0.5em;
+    border-radius: 0.5em;
+}
+
+a.referenceFormatLink {
+    font-size: 60%;
+    font-weight: bold;
+    background: silver;
+    color: navy;
+    padding: 0.2em 0.5em 0.2em;
     margin: 0.2em 0em 0.2em;
     -moz-border-radius: 0.5em;
     -webkit-border-radius: 0.5em;

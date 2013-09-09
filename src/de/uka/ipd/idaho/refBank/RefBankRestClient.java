@@ -1,4 +1,4 @@
-/* RefBank, the distributed platform for biliographic references.
+/* RefBank, the distributed platform for bibliographic references.
  * Copyright (C) 2011-2013 ViBRANT (FP7/2007-2013, GA 261532), by D. King & G. Sautter
  * 
  * This program is free software; you can redistribute it and/or
@@ -76,16 +76,16 @@ public class RefBankRestClient extends StringPoolRestClient implements RefBankCo
 	}
 	
 	/* (non-Javadoc)
-	 * @see de.uka.ipd.idaho.refBank.RefBankClient#findReferences(java.lang.String[], boolean, java.lang.String, java.lang.String, java.lang.String, java.lang.String, int, java.lang.String, java.util.Properties, int)
+	 * @see de.uka.ipd.idaho.refBank.RefBankClient#findReferences(java.lang.String[], boolean, java.lang.String, java.lang.String, java.lang.String, java.lang.String, int, java.lang.String, java.util.Properties, int, booleab)
 	 */
-	public PooledStringIterator findReferences(String[] textPredicates, boolean disjunctive, String type, String user, String author, String title, int year, String origin, Properties externalIDsByType, int limit) {
-		return this.findReferences(textPredicates, disjunctive, type, user, author, title, year, origin, externalIDsByType, false, limit);
+	public PooledStringIterator findReferences(String[] textPredicates, boolean disjunctive, String type, String user, String author, String title, int year, String origin, Properties externalIDsByType, int limit, boolean selfCanonicalOnly) {
+		return this.findReferences(textPredicates, disjunctive, type, user, author, title, year, origin, externalIDsByType, false, limit, selfCanonicalOnly);
 	}
 	
 	/* (non-Javadoc)
-	 * @see de.uka.ipd.idaho.refBank.RefBankClient#findReferences(java.lang.String[], boolean, java.lang.String, java.lang.String, java.lang.String, java.lang.String, int, java.lang.String, java.util.Properties, boolean, int)
+	 * @see de.uka.ipd.idaho.refBank.RefBankClient#findReferences(java.lang.String[], boolean, java.lang.String, java.lang.String, java.lang.String, java.lang.String, int, java.lang.String, java.util.Properties, boolean, int, boolean)
 	 */
-	public PooledStringIterator findReferences(String[] textPredicates, boolean disjunctive, String type, String user, String author, String title, int year, String origin, Properties externalIDsByType, boolean concise, int limit) {
+	public PooledStringIterator findReferences(String[] textPredicates, boolean disjunctive, String type, String user, String author, String title, int year, String origin, Properties externalIDsByType, boolean concise, int limit, boolean selfCanonicalOnly) {
 		try {
 			StringBuffer detailPredicates = new StringBuffer();
 			if (author != null)
@@ -102,7 +102,7 @@ public class RefBankRestClient extends StringPoolRestClient implements RefBankCo
 					String id = externalIDsByType.getProperty(idType);
 					detailPredicates.append("&ID-" + idType + "=" + URLEncoder.encode(id, ENCODING));
 				}
-			return this.findStrings(textPredicates, disjunctive, type, user, concise, limit, detailPredicates.toString());
+			return this.findStrings(textPredicates, disjunctive, type, user, concise, limit, selfCanonicalOnly, detailPredicates.toString());
 		}
 		catch (IOException ioe) {
 			return new ExceptionPSI(ioe);

@@ -3,56 +3,63 @@
 	<xsl:output omit-xml-declaration="yes"/>
 	
 	<xsl:template match="/">
-		<reference><xsl:text>&#x0A;</xsl:text>
-		<xsl:apply-templates select="//mods:mods"/>
-		<xsl:call-template name="id"/>
-		<xsl:text>&#x0A;</xsl:text></reference>
+		<xsl:choose>
+			<xsl:when test="count(//mods:mods) > 1"><references><xsl:text>&#x0A;</xsl:text>
+				<xsl:apply-templates select="//mods:mods"/>
+			<xsl:text>&#x0A;</xsl:text></references></xsl:when>
+			<xsl:otherwise><xsl:apply-templates select="//mods:mods"/></xsl:otherwise>
+		</xsl:choose>
 	</xsl:template>
 	
 	<xsl:template match="mods:mods">
+		<xsl:if test="./preceding::mods:mods"><xsl:text disable-output-escaping="yes">&#x0D;&#x0A;</xsl:text></xsl:if>
+		<reference><xsl:text>&#x0A;</xsl:text>
 		<xsl:choose>
-			<xsl:when test="//mods:classification = 'journal article'">
+			<xsl:when test="translate(./mods:classification, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz') = 'journal article'">
 				<dc:type>Journal Article</dc:type>
 				<xsl:call-template name="authors"/>
 				<xsl:call-template name="title"/>
 				<xsl:call-template name="dateJournal"/>
 				<xsl:call-template name="journal"/>
+				<xsl:apply-templates select="./mods:relatedItem[./@type = 'host']"/>
 			</xsl:when>
-			<xsl:when test="//mods:classification = 'journal volume'">
+			<xsl:when test="translate(./mods:classification, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz') = 'journal volume'">
 				<dc:type>Journal Volume</dc:type>
 				<xsl:call-template name="authors"/>
 				<xsl:call-template name="title"/>
 				<xsl:call-template name="dateJournal"/>
 				<xsl:call-template name="journal"/>
 			</xsl:when>
-			<xsl:when test="//mods:classification = 'book chapter'">
+			<xsl:when test="translate(./mods:classification, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz') = 'book chapter'">
 				<dc:type>Book Chapter</dc:type>
 				<xsl:call-template name="authors"/>
 				<xsl:call-template name="title"/>
 				<xsl:apply-templates select="./mods:relatedItem[./@type = 'host']"/>
 			</xsl:when>
-			<xsl:when test="//mods:classification = 'book'">
+			<xsl:when test="translate(./mods:classification, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz') = 'book'">
 				<dc:type>Book</dc:type>
 				<xsl:call-template name="authors"/>
 				<xsl:call-template name="title"/>
 				<xsl:call-template name="dateBook"/>
 				<xsl:call-template name="publisher"/>
 			</xsl:when>
-			<xsl:when test="//mods:classification = 'proceedings paper' or //mods:classification = 'conference paper'">
+			<xsl:when test="translate(./mods:classification, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz') = 'proceedings paper' or translate(./mods:classification, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz') = 'conference paper'">
 				<dc:type>Proceedings Paper</dc:type>
 				<xsl:call-template name="authors"/>
 				<xsl:call-template name="title"/>
 				<xsl:apply-templates select="./mods:relatedItem[./@type = 'host']"/>
 			</xsl:when>
-			<xsl:when test="//mods:classification = 'proceedings' or //mods:classification = 'conference proceedings'">
+			<xsl:when test="translate(./mods:classification, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz') = 'proceedings' or translate(./mods:classification, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz') = 'conference proceedings'">
 				<dc:type>Proceedings</dc:type>
 				<xsl:call-template name="authors"/>
 				<xsl:call-template name="title"/>
 				<xsl:call-template name="dateBook"/>
 				<xsl:call-template name="publisherIfGiven"/>
 			</xsl:when>
-			<xsl:otherwise>Dublin Core output is currently not supported for reference type '<xsl:value-of select="//mods:classification"/>'. Please contact your system administrator.</xsl:otherwise>
+			<xsl:otherwise>Dublin Core output is currently not supported for reference type '<xsl:value-of select="translate(./mods:classification, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz')"/>'. Please contact your system administrator.</xsl:otherwise>
 		</xsl:choose>
+		<xsl:call-template name="id"/>
+		<xsl:text>&#x0A;</xsl:text></reference>
 	</xsl:template>
 	
 	<xsl:template name="id">
@@ -61,7 +68,10 @@
 	
 	<xsl:template match="mods:relatedItem[./@type = 'host']">
 		<xsl:choose>
-			<xsl:when test="//mods:classification = 'proceedings paper' or //mods:classification = 'conference paper'">
+			<xsl:when test="translate(./following::mods:classification, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz') = 'journal article'">
+				<xsl:call-template name="editors"/>
+			</xsl:when>
+			<xsl:when test="translate(./following::mods:classification, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz') = 'proceedings paper' or translate(./following::mods:classification, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz') = 'conference paper'">
 				<xsl:call-template name="dateBook"/>
 				<xsl:call-template name="editors"/>
 				<xsl:call-template name="hostBook"/>

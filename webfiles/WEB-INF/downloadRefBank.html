@@ -162,7 +162,9 @@ If you have WebAppUpdater (builds with idaho-core) installed, you can also simpl
       <li><code>date</code>: query against year of publication attribute of references, only finds references with parsed version available</li>
       <li><code>origin</code>: query against origin of references (journal + volume number, publisher or location, as well as volume title), only finds references with parsed version available</li>
       <li><code>format=concise</code>: exclude parsed verion of references from response</li>
-      <li><code>format</code>: the name of the format for representing the parsed verion of the references (defaults to the native MODS XML if not specified)</li></ul></li>
+      <li><code>format</code>: the name of the format for representing the parsed verion of the references (defaults to the native MODS XML if not specified)</li>
+      <li><code>limit</code>: the maximum number of references to include in the search result (0, the default, means no limit)</li>
+      <li><code>sco</code>: set to <code>sco</code> to restrict search results to references not marked as duplicates of others</li></ul></li>
     <li>response: the reference matching the specified search criteria (MIME type <code>text/xml</code>, encoding <code>UTF-8</code>)
       <code><pre>&lt;refSet&gt;
   &lt;ref id=&quot;<i><i>reference ID</i></i>&quot; canonicalId=&quot;<i>ID of canonical reference to set</i>&quot; deleted=&quot;<i>deleted flag, true or false</i>&quot; createTime=&quot;<i>UTC timestamp reference was first added to RefBank</i>&quot; createUser=&quot;<i>name of the user to first add reference to RefBank</i>&quot; createDomain=&quot;<i>name of RefBank node reference was first added to</i>&quot; updateTime=&quot;<i>UTC timestamp reference was last updated</i>&quot; updateUser=&quot;<i>name of the user to last update reference</i>&quot; updateDomain=&quot;<i>name of RefBank node reference was last updated at</i>&quot; parseChecksum=&quot;<i>MD5 hash of parsed version, if available and format set to concise</i>&quot;&gt;

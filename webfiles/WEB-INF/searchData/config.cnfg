@@ -20,4 +20,4 @@ style.Harvard = "Harvard.refStringStyle.xslt";
 style.Pensoft = "Pensoft.refStringStyle.xslt";
 
 // css style for reference strings formatted according to some style guide
-styledRefLayout = "font-face: Times; font-size: 12pt;";
+styledRefLayout = "font-family: Times; font-size: 12pt;";

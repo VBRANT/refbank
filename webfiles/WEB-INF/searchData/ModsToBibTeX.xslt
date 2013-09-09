@@ -7,8 +7,9 @@
 	</xsl:template>
 	
 	<xsl:template match="mods:mods">
+		<xsl:if test="./preceding::mods:mods"><xsl:text disable-output-escaping="yes">&#x0D;&#x0A;&#x0D;&#x0A;</xsl:text></xsl:if>
 		<xsl:choose>
-			<xsl:when test="//mods:classification = 'journal article'">
+			<xsl:when test="translate(./mods:classification, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz') = 'journal article'">
 				<xsl:text>@Article{</xsl:text><xsl:call-template name="id"/>
 				<xsl:call-template name="authors"/>
 				<xsl:call-template name="title"/>
@@ -18,7 +19,7 @@
 				<xsl:call-template name="pagination"/>
 				<xsl:text>&#x0A;}</xsl:text>
 			</xsl:when>
-			<xsl:when test="//mods:classification = 'journal volume'">
+			<xsl:when test="translate(./mods:classification, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz') = 'journal volume'">
 				<xsl:text>@Misc{</xsl:text><xsl:call-template name="id"/>
 				<xsl:call-template name="authors"/>
 				<xsl:call-template name="title"/>
@@ -27,14 +28,14 @@
 				<xsl:call-template name="volume"/>
 				<xsl:text>&#x0A;}</xsl:text>
 			</xsl:when>
-			<xsl:when test="//mods:classification = 'book chapter'">
+			<xsl:when test="translate(./mods:classification, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz') = 'book chapter'">
 				<xsl:text>@Incollection{</xsl:text><xsl:call-template name="id"/>
 				<xsl:call-template name="authors"/>
 				<xsl:call-template name="title"/>
 				<xsl:apply-templates select="./mods:relatedItem[./@type = 'host']"/>
 				<xsl:text>&#x0A;}</xsl:text>
 			</xsl:when>
-			<xsl:when test="//mods:classification = 'book'">
+			<xsl:when test="translate(./mods:classification, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz') = 'book'">
 				<xsl:text>@Book{</xsl:text><xsl:call-template name="id"/>
 				<xsl:call-template name="authors"/>
 				<xsl:call-template name="title"/>
@@ -42,14 +43,14 @@
 				<xsl:call-template name="publisher"/>
 				<xsl:text>&#x0A;}</xsl:text>
 			</xsl:when>
-			<xsl:when test="//mods:classification = 'proceedings paper' or //mods:classification = 'conference paper'">
+			<xsl:when test="translate(./mods:classification, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz') = 'proceedings paper' or translate(./mods:classification, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz') = 'conference paper'">
 				<xsl:text>@Inproceedings{</xsl:text><xsl:call-template name="id"/>
 				<xsl:call-template name="authors"/>
 				<xsl:call-template name="title"/>
 				<xsl:apply-templates select="./mods:relatedItem[./@type = 'host']"/>
 				<xsl:text>&#x0A;}</xsl:text>
 			</xsl:when>
-			<xsl:when test="//mods:classification = 'proceedings' or //mods:classification = 'conference proceedings'">
+			<xsl:when test="translate(./mods:classification, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz') = 'proceedings' or translate(./mods:classification, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz') = 'conference proceedings'">
 				<xsl:text>@Inproceedings{</xsl:text><xsl:call-template name="id"/>
 				<xsl:call-template name="authorsIfGiven"/>
 				<xsl:call-template name="title"/>
@@ -57,13 +58,13 @@
 				<xsl:call-template name="publisherIfGiven"/>
 				<xsl:text>&#x0A;}</xsl:text>
 			</xsl:when>
-			<xsl:otherwise>BibTeX output is currently not supported for reference type '<xsl:value-of select="//mods:classification"/>'. Please contact your system administrator.</xsl:otherwise>
+			<xsl:otherwise>BibTeX output is currently not supported for reference type '<xsl:value-of select="translate(./mods:classification, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz')"/>'. Please contact your system administrator.</xsl:otherwise>
 		</xsl:choose>
 	</xsl:template>
 	
 	<xsl:template match="mods:relatedItem[./@type = 'host']">
 		<xsl:choose>
-			<xsl:when test="//mods:classification = 'proceedings paper' or //mods:classification = 'conference paper'">
+			<xsl:when test="translate(./following::mods:classification, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz') = 'proceedings paper' or translate(./following::mods:classification, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz') = 'conference paper'">
 				<xsl:call-template name="dateBook"/>
 				<xsl:call-template name="bookTitle"/>
 				<xsl:call-template name="editorsIfGiven"/>

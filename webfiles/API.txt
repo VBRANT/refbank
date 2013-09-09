@@ -68,6 +68,8 @@ RefBank data servlet (/RefBank/rbk):
                 origin: query against origin of references (journal + volume number, publisher or location, as well as volume title), only finds references with parsed version available
                 format=concise: exclude parsed verion of references from response
                 format: the name of the format for representing the parsed verion of the references (defaults to the native MODS XML if not specified)
+                limit: the maximum number of references to include in the search result (0, the default, means no limit)
+                sco: set to sco to restrict search results to references not marked as duplicates of others
             response: the reference matching the specified search criteria (MIME type text/xml, encoding UTF-8)
 
             <refSet>

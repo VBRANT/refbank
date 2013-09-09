@@ -58,6 +58,10 @@
 		<servlet-name>RefSearch</servlet-name>
 		<url-pattern>/search</url-pattern>
 	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>RefSearch</servlet-name>
+		<url-pattern>/search/*</url-pattern>
+	</servlet-mapping>
 	
 	<servlet>
 		<servlet-name>RefDataIndex</servlet-name>

@@ -1,4 +1,4 @@
-/* RefBank, the distributed platform for biliographic references.
+/* RefBank, the distributed platform for bibliographic references.
  * Copyright (C) 2011-2013 ViBRANT (FP7/2007-2013, GA 261532), by D. King & G. Sautter
  * 
  * This program is free software; you can redistribute it and/or
@@ -45,9 +45,10 @@ public interface RefBankClient extends StringPoolClient {
 	 *            identifiers (like an ISBN or DOI) indexed by their type
 	 * @param limit the maximum number of references to include in the result
 	 *            (0 means no limit)
+	 * @param selfCanonicalOnly filter out references linked to others?
 	 * @return an iterator over the references matching the query
 	 */
-	public abstract PooledStringIterator findReferences(String[] textPredicates, boolean disjunctive, String type, String user, String author, String title, int year, String origin, Properties externalIDsByType, int limit);
+	public abstract PooledStringIterator findReferences(String[] textPredicates, boolean disjunctive, String type, String user, String author, String title, int year, String origin, Properties externalIDsByType, int limit, boolean selfCanonicalOnly);
 	
 	/**
 	 * Search for references, using both full text and detail predicates.
@@ -66,7 +67,8 @@ public interface RefBankClient extends StringPoolClient {
 	 * @param concise obtain a concise result, i.e., without parses?
 	 * @param limit the maximum number of references to include in the result
 	 *            (0 means no limit)
+	 * @param selfCanonicalOnly filter out references linked to others?
 	 * @return an iterator over the references matching the query
 	 */
-	public abstract PooledStringIterator findReferences(String[] textPredicates, boolean disjunctive, String type, String user, String author, String title, int year, String origin, Properties externalIDsByType, boolean concise, int limit);
+	public abstract PooledStringIterator findReferences(String[] textPredicates, boolean disjunctive, String type, String user, String author, String title, int year, String origin, Properties externalIDsByType, boolean concise, int limit, boolean selfCanonicalOnly);
 }

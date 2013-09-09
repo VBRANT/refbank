@@ -1,4 +1,4 @@
-/* RefBank, the distributed platform for biliographic references.
+/* RefBank, the distributed platform for bibliographic references.
  * Copyright (C) 2011-2013 ViBRANT (FP7/2007-2013, GA 261532), by D. King & G. Sautter
  * 
  * This program is free software; you can redistribute it and/or
@@ -133,11 +133,13 @@ public abstract class RefBankWiServlet extends RefBankAppServlet implements RefB
 	}
 	
 	public String[] getOnloadCalls() {
-		String[] olcs = {"showUserMenu();"};
+		String[] olcs = {"addPageTopMenu();", "showUserMenu();"};
 		return olcs;
 	}
 	
 	public void writePageHeadExtensions(HtmlPageBuilder out) throws IOException {
+		HtmlPageBuilder.writeJavaScriptDomHelpers(out);
+		
 		out.writeLine("<script type=\"text/javascript\">");
 		
 		out.writeLine("var user = '';");
@@ -178,24 +180,35 @@ public abstract class RefBankWiServlet extends RefBankAppServlet implements RefB
 		out.writeLine("  return false;");
 		out.writeLine("}");
 		
-		out.writeLine("function showUserMenu() {");
+		out.writeLine("function addPageTopMenu() {");
 		out.writeLine("  var bodyRoot = document.getElementsByTagName('body')[0];");
 		out.writeLine("  if (bodyRoot == null)");
 		out.writeLine("    return;");
-		out.writeLine("  var umRoot = newElement('div', null, null, null);");
-		out.writeLine("  setAttribute(umRoot, 'width', '100%');");
-		out.writeLine("  setAttribute(umRoot, 'align', 'right');");
+		out.writeLine("  var ptm = newElement('div', 'pageTopMenu', null, null);");
+		out.writeLine("  setAttribute(ptm, 'position', 'fixed');");
+		out.writeLine("  setAttribute(ptm, 'width', '100%');");
+		out.writeLine("  setAttribute(ptm, 'align', 'right');");
+		out.writeLine("  bodyRoot.insertBefore(ptm, bodyRoot.firstChild);");
+		out.writeLine("}");
+		
+		out.writeLine("function getPageTopMenu() {");
+		out.writeLine("  return getById('pageTopMenu');");
+		out.writeLine("}");
+		
+		out.writeLine("function showUserMenu() {");
+		out.writeLine("  var ptm = getPageTopMenu();");
+		out.writeLine("  if (ptm == null)");
+		out.writeLine("    return;");
 		out.writeLine("  var undl = newElement('span', 'userNameDisplayLabel', null, (getUser('silent') ? 'Currently credited as:' : 'Please enter your name so RefBank can credit your contributions'));");
-		out.writeLine("  umRoot.appendChild(undl);");
+		out.writeLine("  ptm.appendChild(undl);");
 		out.writeLine("  var unds = newElement('span', 'userNameDisplaySpan', null, user);");
 		out.writeLine("  setAttribute(unds, 'style', 'margin-left: 5px; font-weight: bold;');");
-		out.writeLine("  umRoot.appendChild(unds);");
+		out.writeLine("  ptm.appendChild(unds);");
 		out.writeLine("  var uneb = newElement('a', null, 'footerNavigationLink', 'Enter / Edit');");
 		out.writeLine("  setAttribute(uneb, 'href', '#');");
 		out.writeLine("  setAttribute(uneb, 'onclick', 'return editUserName();');");
 		out.writeLine("  setAttribute(uneb, 'style', 'margin-left: 10px;');");
-		out.writeLine("  umRoot.appendChild(uneb);");
-		out.writeLine("  bodyRoot.insertBefore(umRoot, bodyRoot.firstChild);");
+		out.writeLine("  ptm.appendChild(uneb);");
 		out.writeLine("}");
 		
 		out.writeLine("</script>");
