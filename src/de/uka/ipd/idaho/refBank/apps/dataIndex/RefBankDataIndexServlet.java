@@ -159,13 +159,8 @@ public class RefBankDataIndexServlet extends RefBankAppServlet implements RefBan
 		try {
 			this.lastReceived = Long.parseLong(this.getSetting("lastReceived", ("" + this.lastReceived)));
 		} catch (NumberFormatException nfe) {}
-		 catch (Exception e) { /* TODO remove this after test */ }
-//		
-//		//	get access to backing RefBank node
-//		this.refBankClient = new RefBankRestClient(this.stringPoolNodeUrl);
 		
 		// get and check database connection
-//		this.io = EasyIO.getIoProvider(this.config);
 		this.io = WebAppHost.getInstance(this.getServletContext()).getIoProvider();
 		if (!this.io.isJdbcAvailable())
 			throw new RuntimeException("RefBankDataIndex: Cannot work without database access.");

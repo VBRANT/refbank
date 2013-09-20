@@ -18,7 +18,6 @@
 	</target>
 	
 	<target name="compile" description="do the compilation" >
-		<antcall target="dir.copy" />
 		<antcall target="javac.compile" />
 	</target>
 	
@@ -27,6 +26,7 @@
 	</target>
 	
 	<target name="pack" depends="compile" description="pack the webapp">
+		<antcall target="dir.copy" />
 		<antcall target="dist.zip" />
 	</target>
 </project>

@@ -129,16 +129,23 @@ public class RefBankSearchServlet extends RefBankWiServlet {
 			} catch (IOException ioe) {}
 		}
 		
+		//	get type system
+		String refTypeSystemPath = this.getSetting("refTypeSystemPath");
+		this.refTypeSystem = ((refTypeSystemPath == null) ? BibRefTypeSystem.getDefaultInstance() : BibRefTypeSystem.getInstance(new File(this.webInfFolder, refTypeSystemPath), true));
+	}
+	
+	/* (non-Javadoc)
+	 * @see de.uka.ipd.idaho.refBank.apps.RefBankAppServlet#reInit()
+	 */
+	protected void reInit() throws ServletException {
+		super.reInit();
+		
 		//	get layout for styled references
 		this.styledRefLayout = this.getSetting("styledRefLayout", this.styledRefLayout);
 		
 		//	get link to reference parser and reference string editor
 		this.refParserUrl = this.getSetting("refParserUrl");
 		this.refEditorUrl = this.getSetting("refEditorUrl");
-		
-		//	get type system
-		String refTypeSystemPath = this.getSetting("refTypeSystemPath");
-		this.refTypeSystem = ((refTypeSystemPath == null) ? BibRefTypeSystem.getDefaultInstance() : BibRefTypeSystem.getInstance(new File(this.webInfFolder, refTypeSystemPath), true));
 	}
 	
 	/* (non-Javadoc)

@@ -71,17 +71,24 @@ public class RefBankUploadServlet extends RefBankWiServlet {
 	protected void doInit() throws ServletException {
 		super.doInit();
 		
-		//	load reCAPTCHA keys
-		this.reCaptchaPublicKey = this.getSetting("reCaptchaPublicKey", this.reCaptchaPublicKey);
-		this.reCaptchaPrivateKey = this.getSetting("reCaptchaPrivateKey", this.reCaptchaPrivateKey);
-		this.useReCaptcha = ((this.reCaptchaPublicKey != null) && (this.reCaptchaPrivateKey != null));
-		
 		//	prepare for upload caching
 		this.uploadCacheFolder = new File(this.dataFolder, "cache");
 		this.uploadCacheFolder.mkdirs();
 		
 		//	create upload handler
 		this.uploadHandler = new AsynchronousUploadHandler();
+	}
+	
+	/* (non-Javadoc)
+	 * @see de.uka.ipd.idaho.refBank.apps.RefBankAppServlet#reInit()
+	 */
+	protected void reInit() throws ServletException {
+		super.reInit();
+		
+		//	load reCAPTCHA keys
+		this.reCaptchaPublicKey = this.getSetting("reCaptchaPublicKey", this.reCaptchaPublicKey);
+		this.reCaptchaPrivateKey = this.getSetting("reCaptchaPrivateKey", this.reCaptchaPrivateKey);
+		this.useReCaptcha = ((this.reCaptchaPublicKey != null) && (this.reCaptchaPrivateKey != null));
 		
 		//	read access key for PUT uploads
 		this.putAccessKey = this.getSetting("putAccessKey", this.putAccessKey);

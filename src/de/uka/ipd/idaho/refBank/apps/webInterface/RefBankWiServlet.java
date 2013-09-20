@@ -33,7 +33,6 @@ import de.uka.ipd.idaho.refBank.apps.RefBankAppServlet;
  * @author sautter
  */
 public abstract class RefBankWiServlet extends RefBankAppServlet implements RefBankConstants {
-	
 	private TreeMap dataFormats = new TreeMap();
 	
 	/**

@@ -18,6 +18,7 @@
 package de.uka.ipd.idaho.refBank.apps;
 
 import javax.servlet.Servlet;
+import javax.servlet.ServletException;
 
 import de.uka.ipd.idaho.easyIO.web.WebAppHost;
 import de.uka.ipd.idaho.onn.stringPool.apps.StringPoolAppServlet;
@@ -31,6 +32,14 @@ import de.uka.ipd.idaho.refBank.RefBankRestClient;
  * @author sautter
  */
 public class RefBankAppServlet extends StringPoolAppServlet {
+	
+	/* (non-Javadoc)
+	 * @see de.uka.ipd.idaho.onn.stringPool.apps.StringPoolAppServlet#reInit()
+	 */
+	protected void reInit() throws ServletException {
+		super.reInit();
+		this.rbc = null;
+	}
 	
 	/**
 	 * Retrieve a client object to communicate with the backing Refbank node.

@@ -94,7 +94,6 @@ public class RefBankEditorServlet extends RefBankAppServlet {
 				else super.include(type, tag);
 			}
 			private void includeParsedReference() throws IOException {
-//				this.writeLine("<form id=\"refEditorForm\" method=\"POST\" action=\"" + this.request.getContextPath() + this.request.getServletPath() + "\" accept-charset=\"" + ENCODING + "\">");
 				this.writeLine("<form id=\"refEditorForm\" method=\"POST\" action=\"" + this.request.getContextPath() + this.request.getServletPath() + "\" accept-charset=\"utf8\" encrypt=\"application/x-www-form-urlencoded; charset=utf8\">");
 				this.writeLine("<table class=\"editTable\">");
 				
@@ -163,11 +162,12 @@ public class RefBankEditorServlet extends RefBankAppServlet {
 		}
 		
 		//	get edited reference
-		String refString = new String(data.getFieldByteValue("refString"), ENCODING);
-		if (refString == null) {
+		byte[] refStringBytes = data.getFieldByteValue("refString");
+		if (refStringBytes == null) {
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid reference string");
 			return;
 		}
+		String refString = new String(refStringBytes, ENCODING);
 		
 		//	connect to RefBank
 		RefBankClient rbk = this.getRefBankClient();
@@ -272,7 +272,7 @@ public class RefBankEditorServlet extends RefBankAppServlet {
 			}
 		});
 		
-		//	annotate all occurences of all attribute values
+		//	annotate all occurrences of all attribute values
 		for (int d = 0; d < detailNames.length; d++) {
 			if (BibRefUtils.PUBLICATION_TYPE_ATTRIBUTE.equals(detailNames[d]) || BibRefUtils.PUBLICATION_IDENTIFIER_ANNOTATION_TYPE.equals(detailNames[d]))
 				continue;
@@ -394,10 +394,6 @@ public class RefBankEditorServlet extends RefBankAppServlet {
 		
 		//	did we assign everything? (this should work in the very most cases)
 		return detailAnnotLists.isEmpty();
-		
-		//	TODO use greedy overlay technique to deal with details that have equal values, etc
-		//		 - use same technique as for generating structures
-		//		 - select first to cover all
 	}
 //	
 //	public static void main(String[] args) throws Exception {
