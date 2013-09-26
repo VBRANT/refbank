@@ -8,5 +8,8 @@ domainName = "<yourRefBankDomainName>";
 //accessUrl = "http://plazi2.cs.umb.edu:8080/RefBank/rbk";
 //adminPasscode = "<noneOfYourBusiness>";
 
+// HTML template file for admin page
+basePage = "onnNodeAdminPage.html";
+
 // Stylesheet file required for admin page
 cssNames = "onnNodeAdminPage.3.css";
