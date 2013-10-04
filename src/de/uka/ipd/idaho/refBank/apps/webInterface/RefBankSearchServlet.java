@@ -1445,6 +1445,8 @@ public class RefBankSearchServlet extends RefBankWiServlet {
 				this.writeLine("<table class=\"resultTable\" id=\"resultTable\">");
 				
 				StringVector deletedRefIDs = new StringVector();
+				HashMap refClusters = new HashMap();
+				int refCount = 0;
 				if (!psi.hasNextString()) {
 					this.writeLine("<tr class=\"resultTableRow\">");
 					this.writeLine("<td class=\"resultTableCell\">");
@@ -1454,8 +1456,13 @@ public class RefBankSearchServlet extends RefBankWiServlet {
 				}
 				else {
 					this.writeLine("<tr class=\"resultTableRow\">");
-					this.writeLine("<td class=\"resultTableCell\" width=\"20%\">");
-					this.writeLine("<span class=\"referenceString\" style=\"font-size: 60%;\">Hover&nbsp;references&nbsp;for&nbsp;further&nbsp;options</span>&nbsp;&nbsp;<span class=\"referenceString\" style=\"font-size: 60%;\"><a href=\"#\" onclick=\"window.open('" + this.request.getContextPath() + "/staticPopup/help.html', 'RefBank Help', 'width=500,height=400,top=100,left=100,resizable=yes,scrollbar=yes,scrollbars=yes'); return false;\">Help</a></span>");
+					this.writeLine("<td class=\"resultTableCell\" width=\"50%\">");
+					this.writeLine("<span class=\"referenceString\" style=\"font-size: 60%;\">Hover&nbsp;references&nbsp;for&nbsp;further&nbsp;options</span>" +
+							"&nbsp;&nbsp;" +
+							"<span class=\"referenceString\" style=\"font-size: 60%;\"><span id=\"resultRefCount\"></span>&nbsp;matching&nbsp;references&nbsp;(including&nbsp;<span id=\"resultRefCountDeleted\"></span>&nbsp;deleted&nbsp;and&nbsp;<span id=\"resultRefCountDuplicate\"></span>&nbsp;duplicates)&nbsp;out&nbsp;of&nbsp;" + getRefBankClient().getStringCount(0) + "</span>" +
+							"&nbsp;&nbsp;" +
+							"<span class=\"referenceString\" style=\"font-size: 60%;\"><a href=\"#\" onclick=\"window.open('" + this.request.getContextPath() + "/staticPopup/help.html', 'RefBank Help', 'width=500,height=400,top=100,left=100,resizable=yes,scrollbar=yes,scrollbars=yes'); return false;\">Help</a></span>" +
+							"");
 					this.writeLine("</td>");
 					this.writeLine("<td class=\"resultTableCell\" style=\"text-align: right;\">");
 					this.writeLine("<input type=\"button\" id=\"showDeleted\" class=\"referenceFormatLink\" onclick=\"return toggleDeleted(true);\" value=\"Show references flagged as deleted\">");
@@ -1464,7 +1471,6 @@ public class RefBankSearchServlet extends RefBankWiServlet {
 					this.writeLine("</tr>");
 					
 					//	retrieve and group result references
-					HashMap refClusters = new HashMap();
 					while (psi.hasNextString()) {
 						PooledString ps = psi.getNextString();
 						SearchResultRefCluster refCluster = ((SearchResultRefCluster) refClusters.get(ps.getCanonicalStringID()));
@@ -1488,12 +1494,14 @@ public class RefBankSearchServlet extends RefBankWiServlet {
 						
 						this.writeLine("<tr class=\"resultTableRow\" id=\"row" + refCluster.id + "\"" + (refCluster.isClusterDeleted() ? " style=\"display: none;\"" : "") + "><td class=\"resultTableCell\" colspan=\"2\">");
 						this.writeSearchResultRef(refCluster.getRepresentative(), false);
+						refCount++;
 						if (refCluster.getRepresentative().isDeleted())
 							deletedRefIDs.addElement(refCluster.id);
 						this.writeLine("<div id=\"duplicatesOf" + refCluster.id + "\" class=\"resultDuplicates\" style=\"display: none;\">");
 						for (PooledStringIterator dpsi = refCluster.getDuplicateIterator(); dpsi.hasNextString();) {
 							PooledString dps = dpsi.getNextString();
 							this.writeSearchResultRef(dps, true);
+							refCount++;
 							if (dps.isDeleted())
 								deletedRefIDs.addElement(dps.id);
 						}
@@ -1515,6 +1523,15 @@ public class RefBankSearchServlet extends RefBankWiServlet {
 					this.writeLine("  deletedRefIdSet['" + deletedRefIDs.get(d) + "'] = 'D';");
 				}
 				this.writeLine("}");
+				this.writeLine("var rcSpan = getById('resultRefCount');");
+				this.writeLine("if (rcSpan != null)");
+				this.writeLine("  rcSpan.appendChild(document.createTextNode('" + refCount + "'));");
+				this.writeLine("var rcDelSpan = getById('resultRefCountDeleted');");
+				this.writeLine("if (rcDelSpan != null)");
+				this.writeLine("  rcDelSpan.appendChild(document.createTextNode('" + deletedRefIDs.size() + "'));");
+				this.writeLine("var rcDupSpan = getById('resultRefCountDuplicate');");
+				this.writeLine("if (rcDupSpan != null)");
+				this.writeLine("  rcDupSpan.appendChild(document.createTextNode('" + (refCount - refClusters.size()) + "'));");
 				this.writeLine("</script>");
 				
 				this.write("<iframe id=\"" + MINOR_UPDATE_FRAME_ID + "\" height=\"0px\" style=\"border-width: 0px;\" src=\"" + this.request.getContextPath() + this.request.getServletPath() + "/" + MINOR_UPDATE_PATH + "\">");
