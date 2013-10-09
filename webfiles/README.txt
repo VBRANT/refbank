@@ -31,7 +31,7 @@ Instead, you can also use Apache Derby embedded database (included)
 
 SETTING UP A RefBank NODE (you likely have already done the first three steps when you open this file)
 
-Download RefBank.zip into Tomcat's webapps folder (an exploded archive directory, zipped up for your convenience; WAR deployment is impractical, as updates would uverwrite the configurations you make)
+Download RefBank.zip into Tomcat's webapps folder (an exploded archive directory, zipped up for your convenience; WAR deployment is impractical, as updates would overwrite the configurations you make)
 Instead, you can also check out the project from GIT, build the ZIP file using Ant, and then deploy RefBank.zip to your Tomcat
 
 Create a RefBank sub folder in Tomcat's webapps folder.
@@ -56,9 +56,9 @@ Now, it's time for some configuration:
 
     Adjust the config.cnfg files in the WEB-INF/<xyz>Data folders:
 
-        In the config file in WEB-INF/rbkData/, enter a (presumably) globally unique RefBank domain name, which should identify the institution the RefBank node runs in and, if the institution runs multiple RefBank nodes, also distingish the node being set up from the other ones already running
+        In the config file in WEB-INF/rbkData/, enter a (presumably) globally unique RefBank domain name, which should identify the institution the RefBank node runs in and, if the institution runs multiple RefBank nodes, also distinguish the node being set up from the other ones already running (if you set up the node for testing or experimentation purposes, please choose a domain name ending in "-Test", ".test", "-Dev", "-Development", ".dev", or something similar)
 
-        In the same file, enter the prefered access URL for the node, i.e., the (prefered) URL for accessing the node from the WWW
+        In the same file, enter the preferred access URL for the node, i.e., the (preferred) URL for accessing the node from the WWW
 
         In the same file, enter the administration passcode for the RefBank node being set up
 
@@ -74,7 +74,7 @@ Now, it's time for some configuration:
         Set the stringPoolNodeName setting to the name assigned to the RefBank servlet in the web.xml (which is RefBank if you did not change it) so dependent local servlets can connect to it directly (Java method invocations) instead of the local network loopback adapter for better performance
         (if you do not change the web.xml file, you need not change this setting, either)
 
-        Set the stringPoolNodeUrl setting to the access URL you configured above, or to a localhost URL; in any case, the URL used should point to the RefBank servlet directly for better performance, even if the prefered external access URL is one proxied through a local Apache web server or the like
+        Set the stringPoolNodeUrl setting to the access URL you configured above, or to a localhost URL; in any case, the URL used should point to the RefBank servlet directly for better performance, even if the preferred external access URL is one proxied through a local Apache web server or the like
         (the default setting assumes Tomcat running on port 8080, you need to change this only if your Tomcat is running on a different port)
 
 To make your RefBank node credit your institution, do the following:
@@ -156,6 +156,6 @@ To customize page header, navigation, or footer, customize the respective HTML f
 
     This can include adding new <includeFile .../> tags; when doing this, make sure that the references files exist (requires the web application to run for testing)
 
-Do not add header, navigation, or footer content to the refBank.html or refBankPopup.html files directly, but use the respective inserted files insted (requires the web application to run for testing)
+Do not add header, navigation, or footer content to the refBank.html or refBankPopup.html files directly, but use the respective inserted files instead (requires the web application to run for testing)
 
 If you alter any other files, include them in the update.cnfg file (with full path, starting with WEB-INF) so they are not replaced in case of an update.

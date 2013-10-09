@@ -29,7 +29,7 @@ Instead, you can also use Apache Derby embedded database (included)<br/>
 </ul>
 <h3>SETTING UP A RefBank NODE</h3>
 <ul>
-<li>Download <a href="/RefBank/RefBank.zip"><code>RefBank.zip</code></a> into Tomcat's <code>webapps</code> folder (an exploded archive directory, zipped up for your convenience; WAR deployment is impractical, as updates would uverwrite the configurations you make)<br/>
+<li>Download <a href="/RefBank/RefBank.zip"><code>RefBank.zip</code></a> into Tomcat's <code>webapps</code> folder (an exploded archive directory, zipped up for your convenience; WAR deployment is impractical, as updates would overwrite the configurations you make)<br/>
 Instead, you can also check out the project from GIT, build the ZIP file using Ant, and then deploy RefBank.zip to your Tomcat</li>
 <li>Create a <code>RefBank</code> sub folder in Tomcat's <code>webapps</code> folder.</li>
 <li>Un-zip the exploded archive directory into the <code>RefBank</code> folder.<br/>
@@ -45,8 +45,8 @@ If you have WebAppUpdater (builds with idaho-core) installed, you can also simpl
 }</pre>
 </ul></li>
 <li>Adjust the <code>config.cnfg</code> files in the <code>WEB-INF/&lt;xyz&gt;Data</code> folders:<ul>
-	<li>In the config file in <code>WEB-INF/rbkData/</code>, enter a (presumably) globally unique RefBank domain name, which should identify the institution the RefBank node runs in and, if the institution runs multiple RefBank nodes, also distingish the node being set up from the other ones already running</li>
-	<li>In the same file, enter the prefered access URL for the node, i.e., the (prefered) URL for accessing the node from the WWW</li>
+	<li>In the config file in <code>WEB-INF/rbkData/</code>, enter a (presumably) globally unique RefBank domain name, which should identify the institution the RefBank node runs in and, if the institution runs multiple RefBank nodes, also distinguish the node being set up from the other ones already running  (if you set up the node for testing or experimentation purposes, please choose a domain name ending in <code>"-Test"</code>, <code>".test"</code>, <code>"-Dev"</code>, <code>"-Development"</code>, <code>".dev"</code>, or something similar)</li>
+	<li>In the same file, enter the preferred access URL for the node, i.e., the (preferred) URL for accessing the node from the WWW</li>
 	<li>In the same file, enter the administration passcode for the RefBank node being set up</li>
 	<li>To secure form based reference upload with ReCAPTCHA to avoid spamming, obtain a ReCAPTCHA API key pair and put it in the config file in the <code>WEB-INF/uploadData/</code> folder</li>
 	<li>To secure script based reference upload with an access key to avoid spamming, specify a n access key in the config file in the <code>WEB-INF/uploadData/</code> folder</li>
@@ -57,7 +57,7 @@ If you have WebAppUpdater (builds with idaho-core) installed, you can also simpl
 	(by default configured to use Apache Derby in embedded mode)</li>
 	<li>Set the <code>stringPoolNodeName</code> setting to the name assigned to the RefBank servlet in the web.xml (which is <code>RefBank</code> if you did not change it) so dependent local servlets can connect to it directly (Java method invocations) instead of the local network loopback adapter for better performance<br/>
 	(if you do not change the <code>web.xml</code> file, you need not change this setting, either)</li>
-	<li>Set the <code>stringPoolNodeUrl</code> setting to the access URL you configured above, or to a <code>localhost</code> URL; in any case, the URL used should point to the RefBank servlet directly for better performance, even if the prefered external access URL is one proxied through a local Apache web server or the like<br/>
+	<li>Set the <code>stringPoolNodeUrl</code> setting to the access URL you configured above, or to a <code>localhost</code> URL; in any case, the URL used should point to the RefBank servlet directly for better performance, even if the preferred external access URL is one proxied through a local Apache web server or the like<br/>
 	(the default setting assumes Tomcat running on port 8080, you need to change this only if your Tomcat is running on a different port)</li>
 </ul></li>
 </ul></li>
@@ -108,7 +108,7 @@ If you have WebAppUpdater (builds with idaho-core) installed, you can also simpl
 	<li>This can be as simple customizing respective CSS styles (can be tested on statically saved post-generation HTML pages)</li>
 	<li>This can include adding new <code>&lt;includeFile .../&gt;</code> tags; when doing this, make sure that the references files exist (requires the web application to run for testing)</li>
 </ul></li>
-<li>Do not add header, navigation, or footer content to the <code>refBank.html</code> or <code>refBankPopup.html</code> files directly, but use the respective inserted files insted (requires the web application to run for testing)</li>
+<li>Do not add header, navigation, or footer content to the <code>refBank.html</code> or <code>refBankPopup.html</code> files directly, but use the respective inserted files instead (requires the web application to run for testing)</li>
 </ul></p>
 <h3>THE RefBank NODE API</h3>
 <p>RefBank data servlet (<code>/RefBank/rbk</code>):<ul>
@@ -118,7 +118,7 @@ If you have WebAppUpdater (builds with idaho-core) installed, you can also simpl
     <li>additional parameters: none</li>
     <li>response (MIME type <code>text/xml</code>, encoding <code>UTF-8</code>):
       <code><pre>&lt;nodes&gt;
-  &lt;node name=&quot;<i>name of RefBank node</i>&quot; accessUrl=&quot;<i>prefered access URL of node</i>&quot; /&gt;
+  &lt;node name=&quot;<i>name of RefBank node</i>&quot; accessUrl=&quot;<i>preferred access URL of node</i>&quot; /&gt;
   &lt;node ... /&gt;
 &lt;/nodes&gt;</code></pre></li></ul></li>
   <li><code>action=ping</code> (also as <code>/refBank/rbk/ping</code>): ping node<ul>
@@ -129,7 +129,7 @@ If you have WebAppUpdater (builds with idaho-core) installed, you can also simpl
     <li>additional parameters: none</li>
     <li>response (MIME type <code>text/xml</code>, encoding <code>UTF-8</code>):
       <code><pre>&lt;nodes&gt;
-  &lt;node name=&qout;&lt;name of RefBank node&gt;&qout; accessUrl=&quot;<i>prefered access URL of node</i>&quot; /&gt;
+  &lt;node name=&qout;&lt;name of RefBank node&gt;&qout; accessUrl=&quot;<i>preferred access URL of node</i>&quot; /&gt;
 &lt;/nodes&gt;</pre></code></li></ul></li>
   <li><code>action=feed</code>: retrieve the reference update feed, ordered by increasing update time<ul>
     <li>additional parameters:<ul>
@@ -143,7 +143,7 @@ If you have WebAppUpdater (builds with idaho-core) installed, you can also simpl
     <li>additional parameters:<ul>
       <li>id: the identifier(s) to resolve, can be multi-valued</li>
       <li>format: the format to represent the parsed versions of references in (optional, defaults to the native MODS XML representation if omitted)</li></ul></li>
-    <li>response: the reference(s) with the speciefied identifier(s) (MIME type <code>text/xml</code>, encoding <code>UTF-8</code>)
+    <li>response: the reference(s) with the specified identifier(s) (MIME type <code>text/xml</code>, encoding <code>UTF-8</code>)
       <code><pre>&lt;refSet&gt;
   &lt;ref id=&quot;<i>reference ID</i>&quot; canonicalId=&quot;<i>ID of canonical reference to set</i>&quot; deleted=&quot;<i>deleted flag, true or false</i>&quot; createTime=&quot;<i>UTC timestamp reference was first added to RefBank</i>&quot; createUser=&quot;<i>name of the user to first add reference to RefBank</i>&quot; createDomain=&quot;<i>name of RefBank node reference was first added to</i>&quot; updateTime=&quot;<i>UTC timestamp reference was last updated</i>&quot; updateUser=&quot;<i>name of the user to last update reference</i>&quot; updateDomain=&quot;<i>name of RefBank node reference was last updated at</i>&quot;&gt;
     &lt;refString&gt;&lt;plain reference string&gt;&lt;/refString&gt;
@@ -193,7 +193,7 @@ If you have WebAppUpdater (builds with idaho-core) installed, you can also simpl
     <li>request body: none</li>
     <li>response (MIME type <code>text/xml</code>, encoding <code>UTF-8</code>):
       <code><pre>&lt;nodes&gt;
-  &lt;node name=&quot;<i>name of RefBank node</i>&quot; accessUrl=&quot;<i>prefered access URL of node</i>&quot; /&gt;
+  &lt;node name=&quot;<i>name of RefBank node</i>&quot; accessUrl=&quot;<i>preferred access URL of node</i>&quot; /&gt;
   &lt;node ... /&gt;
 &lt;/nodes&gt;</pre></code></li></ul></li>
   <li><code>/refBank/rbk/ping</code>: ping node<ul>
@@ -204,15 +204,15 @@ If you have WebAppUpdater (builds with idaho-core) installed, you can also simpl
     <li>request body: none</li>
     <li>response (MIME type <code>text/xml</code>, encoding <code>UTF-8</code>):
       <code><pre>&lt;nodes&gt;
-  &lt;node name=&quot;<i>name of RefBank node</i>&quot; accessUrl=&quot;<i>prefered access URL of node</i>&quot; /&gt;
+  &lt;node name=&quot;<i>name of RefBank node</i>&quot; accessUrl=&quot;<i>preferred access URL of node</i>&quot; /&gt;
 &lt;/nodes&gt;</pre></code></li></ul></li>
   <li><code>/refBank/rbk/introduce</code>: introduce a new RefBank node to this one, retrieve list of other known RefBank nodes<ul>
     <li>request body (parameters):<ul>
       <li><code>name</code>: the name of the RefBank node introducing itself</li>
-      <li><code>accessUrl</code>: the prefered access URL of the RefBank node introducing itself</li></ul></li>
+      <li><code>accessUrl</code>: the preferred access URL of the RefBank node introducing itself</li></ul></li>
     <li>response (MIME type <code>text/xml</code>, encoding <code>UTF-8</code>):
       <code><pre>&lt;nodes&gt;
-  &lt;node name=&quot;<i>name of RefBank node</i>&quot; accessUrl=&quot;<i>prefered access URL of node</i>&quot; /&gt;
+  &lt;node name=&quot;<i>name of RefBank node</i>&quot; accessUrl=&quot;<i>preferred access URL of node</i>&quot; /&gt;
   &lt;node ... /&gt;
 &lt;/nodes&gt;</pre></code></li></ul></li>
 </ul></li>
@@ -247,7 +247,7 @@ If you have WebAppUpdater (builds with idaho-core) installed, you can also simpl
     <li>combinations of the id and style and format parameters return different results:<ul>
       <li><code>id</code> + <code>format=PaRsEtHeReF</code> + <code>isFramePage=true</code>: reference specific popup page, with reference opened for manual parsing in embedded IFrame (used in browser, not part of API)</li>
       <li><code>id</code> + <code>format=EdItReFsTrInG</code> + <code>isFramePage=true</code>: reference specific popup page, with reference string opened for manual editing in embedded IFrame (used in browser, not part of API)</li>
-      <li><code>id</code> + <code>style</code> or <code>format</code> + <code>isFramePage=true</code>: reference specific popup page, with reference in speciefied style or format showing in embedded IFrame (used in browser, not part of API)</li>
+      <li><code>id</code> + <code>style</code> or <code>format</code> + <code>isFramePage=true</code>: reference specific popup page, with reference in specified style or format showing in embedded IFrame (used in browser, not part of API)</li>
       <li><code>id</code> + <code>style</code>: return the reference with specified ID in the specified style (MIME type <code>text/html</code>, encoding <code>UTF-8</code>)</li>
       <li><code>id</code> + <code>format</code>: return the reference with specified ID in the specified data format (MIME type <code>text/plain</code>, encoding <code>UTF-8</code>)</li>
       <li><code>id=MiNoRuPdATe</code>, no style or format: return HTML form for <code>POST</code> callbacks from search result page (used in browser, not part of API)</ul></li></ul></li>
