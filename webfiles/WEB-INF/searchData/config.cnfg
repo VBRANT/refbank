@@ -14,6 +14,16 @@ format.RIS = "ModsToRIS.xslt";
 format.BibTeX = "ModsToBibTeX.xslt";
 format.DC = "ModsToDC.xslt";
 
+// additional settings for export basket download
+export.MODS.mimeType = "text/xml";
+export.MODS.fileExtension = "xml";
+export.RIS.mimeType = "text/plain";
+export.RIS.fileExtension = "ris";
+export.BibTeX.mimeType = "text/plain";
+export.BibTeX.fileExtension = "bib";
+export.DC.mimeType = "text/xml";
+export.DC.fileExtension = "xml";
+
 // reference string styles linked to in search results
 style.Chicago = "Chicago.refStringStyle.xslt";
 style.Harvard = "Harvard.refStringStyle.xslt";

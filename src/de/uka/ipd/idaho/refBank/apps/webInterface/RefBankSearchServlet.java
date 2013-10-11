@@ -69,6 +69,8 @@ public class RefBankSearchServlet extends RefBankWiServlet {
 	private static final String YEAR_PARAMETER = "year";
 	
 	private TreeMap formats = new TreeMap(String.CASE_INSENSITIVE_ORDER);
+	private Properties formatExportMimeTypes = new Properties();
+	private Properties formatExportFileExtensions = new Properties();
 	
 	private static final String PARSE_REF_FORMAT = "PaRsEtHeReF";
 	private static final String EDIT_REF_FORMAT = "EdItReFsTrInG";
@@ -107,28 +109,6 @@ public class RefBankSearchServlet extends RefBankWiServlet {
 	protected void doInit() throws ServletException {
 		super.doInit();
 		
-		//	read available data formats and respective XSL transformers
-		Settings formats = this.config.getSubset("format");
-		String[] formatNames = formats.getKeys();
-		for (int f = 0; f < formatNames.length; f++) {
-			String xsltName = formats.getSetting(formatNames[f]);
-			try {
-				Transformer xslt = XsltUtils.getTransformer(new File(this.dataFolder, xsltName));
-				this.formats.put(formatNames[f], xslt);
-			} catch (IOException ioe) {}
-		}
-		
-		//	load reference string styles
-		Settings styles = this.config.getSubset("style");
-		String[] styleNames = styles.getKeys();
-		for (int s = 0; s < styleNames.length; s++) {
-			String xsltName = styles.getSetting(styleNames[s]);
-			try {
-				Transformer xslt = XsltUtils.getTransformer(new File(this.dataFolder, xsltName));
-				BibRefUtils.addRefStringStyle(styleNames[s], xslt);
-			} catch (IOException ioe) {}
-		}
-		
 		//	get type system
 		String refTypeSystemPath = this.getSetting("refTypeSystemPath");
 		this.refTypeSystem = ((refTypeSystemPath == null) ? BibRefTypeSystem.getDefaultInstance() : BibRefTypeSystem.getInstance(new File(this.webInfFolder, refTypeSystemPath), true));
@@ -139,6 +119,42 @@ public class RefBankSearchServlet extends RefBankWiServlet {
 	 */
 	protected void reInit() throws ServletException {
 		super.reInit();
+		
+		//	read available data formats and respective XSL transformers
+		this.formats.clear();
+		Settings formats = this.config.getSubset("format");
+		String[] formatNames = formats.getKeys();
+		for (int f = 0; f < formatNames.length; f++) {
+			String xsltName = formats.getSetting(formatNames[f]);
+			try {
+				Transformer xslt = XsltUtils.getTransformer(new File(this.dataFolder, xsltName), false);
+				this.formats.put(formatNames[f], xslt);
+			} catch (IOException ioe) {}
+		}
+		
+		//	read additional settings for export basket download
+		this.formatExportMimeTypes.clear();
+		this.formatExportFileExtensions.clear();
+		Settings export = this.config.getSubset("export");
+		for (int f = 0; f < formatNames.length; f++) {
+			String mimeType = export.getSetting(formatNames[f] + ".mimeType");
+			if (mimeType != null)
+				this.formatExportMimeTypes.setProperty(formatNames[f], mimeType);
+			String fileExtension = export.getSetting(formatNames[f] + ".fileExtension");
+			if (fileExtension != null)
+				this.formatExportFileExtensions.setProperty(formatNames[f], fileExtension);
+		}
+		
+		//	load reference string styles
+		Settings styles = this.config.getSubset("style");
+		String[] styleNames = styles.getKeys();
+		for (int s = 0; s < styleNames.length; s++) {
+			String xsltName = styles.getSetting(styleNames[s]);
+			try {
+				Transformer xslt = XsltUtils.getTransformer(new File(this.dataFolder, xsltName), false);
+				BibRefUtils.addRefStringStyle(styleNames[s], xslt);
+			} catch (IOException ioe) {}
+		}
 		
 		//	get layout for styled references
 		this.styledRefLayout = this.getSetting("styledRefLayout", this.styledRefLayout);
@@ -490,7 +506,7 @@ public class RefBankSearchServlet extends RefBankWiServlet {
 						String format = ((String) fit.next());
 						this.writeLine("<a" + 
 								" class=\"referenceFormatLink\"" + 
-								" target=\"_blank\"" + 
+//								" target=\"_blank\"" + 
 								" title=\"Download these references formatted as " + format + "\"" + 
 								" href=\"" + this.request.getContextPath() + this.request.getServletPath() + "/" + EXPORT_BASKET_DOWNLOAD_PATH + "?" + FORMAT_PARAMETER + "=" + format + "\"" + 
 								">" + format + "</a>");
@@ -500,7 +516,7 @@ public class RefBankSearchServlet extends RefBankWiServlet {
 					for (int s = 0; s < styles.length; s++) {
 						this.writeLine("<a" + 
 								" class=\"referenceFormatLink\"" + 
-								" target=\"_blank\"" + 
+//								" target=\"_blank\"" + 
 								" title=\"Download these references styled as " + styles[s] + " style\"" + 
 								" href=\"" + this.request.getContextPath() + this.request.getServletPath() + "/" + EXPORT_BASKET_DOWNLOAD_PATH + "?" + STYLE_PARAMETER + "=" + styles[s] + "\"" + 
 								">" + styles[s] + "</a>");
@@ -535,7 +551,7 @@ public class RefBankSearchServlet extends RefBankWiServlet {
 						String format = ((String) fit.next());
 						this.writeLine("<a" + 
 								" class=\"referenceFormatLink\"" + 
-								" target=\"_blank\"" + 
+//								" target=\"_blank\"" + 
 								" title=\"Download these references formatted as " + format + "\"" + 
 								" href=\"" + this.request.getContextPath() + this.request.getServletPath() + "/" + EXPORT_BASKET_DOWNLOAD_PATH + "?" + FORMAT_PARAMETER + "=" + format + "\"" + 
 								">" + format + "</a>");
@@ -544,7 +560,7 @@ public class RefBankSearchServlet extends RefBankWiServlet {
 					for (int s = 0; s < styles.length; s++) {
 						this.writeLine("<a" + 
 								" class=\"referenceFormatLink\"" + 
-								" target=\"_blank\"" + 
+//								" target=\"_blank\"" + 
 								" title=\"Download these references styled as " + styles[s] + " style\"" + 
 								" href=\"" + this.request.getContextPath() + this.request.getServletPath() + "/" + EXPORT_BASKET_DOWNLOAD_PATH + "?" + STYLE_PARAMETER + "=" + styles[s] + "\"" + 
 								">" + styles[s] + "</a>");
@@ -736,19 +752,15 @@ public class RefBankSearchServlet extends RefBankWiServlet {
 			return;
 		}
 		
-		//	format response
-		response.setContentType("text/plain");
-		response.setCharacterEncoding(ENCODING);
-		
 		//	resolve reference IDs
 		RefBankClient rbk = this.getRefBankClient();
 		final PooledStringIterator psi = rbk.getStrings((String[]) exportBasket.toArray(new String[exportBasket.size()]));
 		
 		//	get format transformer
 		final Transformer xslt = ((Transformer) this.formats.get(format));
+		
+		//	send error message
 		if (xslt == null) {
-			response.setContentType("text/plain");
-			response.setCharacterEncoding(ENCODING);
 			final BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(response.getOutputStream(), ENCODING));
 			bw.write("Unknown reference format: " + format);
 			if (this.formats.size() != 0) {
@@ -758,6 +770,12 @@ public class RefBankSearchServlet extends RefBankWiServlet {
 			bw.flush();
 			return;
 		}
+		
+		//	format response
+		response.setCharacterEncoding(ENCODING);
+		response.setContentType(this.formatExportMimeTypes.getProperty(format, "text/plain"));
+		response.setHeader("Cache-Control", "no-cache");
+		response.setHeader("Content-Disposition", ("attachment; filename=MyRefs." + format + "." + this.formatExportFileExtensions.getProperty(format, "txt")));
 		
 		//	send formatted references
 		final BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(response.getOutputStream(), ENCODING));
@@ -851,6 +869,8 @@ public class RefBankSearchServlet extends RefBankWiServlet {
 		//	format response
 		response.setContentType("text/html");
 		response.setCharacterEncoding(ENCODING);
+		response.setHeader("Cache-Control", "no-cache");
+		response.setHeader("Content-Disposition", ("attachment; filename=MyRefs." + style + ".html"));
 		
 		//	send list head
 		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(response.getOutputStream(), ENCODING));
