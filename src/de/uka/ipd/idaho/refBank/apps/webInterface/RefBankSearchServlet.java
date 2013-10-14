@@ -444,89 +444,87 @@ public class RefBankSearchServlet extends RefBankWiServlet {
 		String idValue = request.getParameter(ID_VALUE_PARAMETER);
 		
 		//	request for search result rendering calls
-		if (SEARCH_RESULT_PATH.equals(pathInfo)) {
-			
-			//	query parameters and perform search if given
-			PooledStringIterator psi = null;
-			RefBankClient rbc = null;
-			
-			//	perform search if query given;
-			if ((query != null) || (author != null) || (title != null) || (year != null) || (origin != null) || ((idType != null) && (idValue != null))) {
-				int yearInt = -1;
-				if (year != null) try {
-					yearInt = Integer.parseInt(year);
-				} catch (NumberFormatException nfe) {}
-				Properties ids = null;
-				if ((idType != null) && (idValue != null)) {
-					ids = new Properties();
-					ids.setProperty(idType, idValue);
-				}
-				String[] textPredicates = {};
-				if (query != null) {
-					textPredicates = new String[1];
-					textPredicates[0] = query;
-				}
-				rbc = this.getRefBankClient(); //	retrieve RefBank client on the fly to use local bridge if possible
-				psi = rbc.findReferences(textPredicates, false, type, user, author, title, yearInt, origin, ids, true, 0, false);
-//				if (psi.getException() != null)
-//					throw psi.getException();
-			}
-			
-			//	send result
-			response.setContentType("text/plain");
-			response.setCharacterEncoding(ENCODING);
-			BufferedWriter srw = new BufferedWriter(new OutputStreamWriter(response.getOutputStream(), ENCODING));
-			
-			//	no query at all
-			if (psi == null) {
-				srw.write("alert('Please specify search parameters!');");
-				srw.newLine();
-			}
-			
-			//	search error
-			else if (psi.getException() != null) {
-				srw.write("alert('An error occurred while ecexuting your request, sorry:\\n  " + psi.getException().getMessage() + "\\nPlease try again later or modify your search parameters!');");
-				srw.newLine();
-			}
-			
-			//	send references found (self-canonical ones first)
-			else {
-				HashSet canonicalRefIDs = new HashSet();
-				ArrayList duplicateRefs = new ArrayList();
-				while (psi.hasNextString()) {
-					PooledString ps = psi.getNextString();
-					if (ps.id.equals(ps.getCanonicalStringID())) {
-						srw.write("displayResultRef('" + ps.id + "', '" + this.escapeForJavaScript(ps.getStringPlain()) + "', '" + ps.getCreateUser() + "', '" + ps.getCreateDomain() + "', '" + ps.getUpdateUser() + "', '" + ps.getUpdateDomain() + "', " + (ps.getParseChecksum() != null) + ", " + ps.isDeleted() + ", '" + ps.getCanonicalStringID() + "');");
-						srw.newLine();
-						canonicalRefIDs.add(ps.id);
-					}
-					else duplicateRefs.add(ps);
-				}
-				for (int d = 0; d < duplicateRefs.size(); d++) {
-					PooledString ps = ((PooledString) duplicateRefs.get(d));
-					if (!canonicalRefIDs.contains(ps.getCanonicalStringID())) {
-						PooledString rps = rbc.getString(ps.getCanonicalStringID());
-						if (rps != null) {
-							srw.write("displayResultRef('" + rps.id + "', '" + this.escapeForJavaScript(rps.getStringPlain()) + "', '" + rps.getCreateUser() + "', '" + rps.getCreateDomain() + "', '" + rps.getUpdateUser() + "', '" + rps.getUpdateDomain() + "', " + (rps.getParseChecksum() != null) + ", " + rps.isDeleted() + ", '" + rps.getCanonicalStringID() + "');");
-							srw.newLine();
-							canonicalRefIDs.add(rps.id);
-						}
-					}
-					srw.write("displayResultRef('" + ps.id + "', '" + this.escapeForJavaScript(ps.getStringPlain()) + "', '" + ps.getCreateUser() + "', '" + ps.getCreateDomain() + "', '" + ps.getUpdateUser() + "', '" + ps.getUpdateDomain() + "', " + (ps.getParseChecksum() != null) + ", " + ps.isDeleted() + ", '" + ps.getCanonicalStringID() + "');");
-					srw.newLine();
-				}
-				srw.write("updateSearchResultStats('" + rbc.getStringCount(-1) + "');");
-				srw.newLine();
-			}
-			
-			srw.flush();
-		}
+		if (SEARCH_RESULT_PATH.equals(pathInfo))
+			this.sendSearchResultData(query, type, user, author, title, year, origin, idType, idValue, response);
 		
 		//	request for search page proper
-		else {
-			HtmlPageBuilder pageBuilder = this.getSearchPageBuilder(request, /*psi,*/ query, type, author, title, year, origin, response);
-			this.sendHtmlPage(pageBuilder);
+		else this.sendHtmlPage(this.getSearchPageBuilder(request, query, type, author, title, year, origin, response));
+	}
+	
+	private void sendSearchResultData(String query, String type, String user, String author, String title, String year, String origin, String idType, String idValue, HttpServletResponse response) throws IOException {
+		
+		//	query parameters and perform search if given
+		PooledStringIterator psi = null;
+		RefBankClient rbc = null;
+		
+		//	perform search if query given;
+		if ((query != null) || (author != null) || (title != null) || (year != null) || (origin != null) || ((idType != null) && (idValue != null))) {
+			int yearInt = -1;
+			if (year != null) try {
+				yearInt = Integer.parseInt(year);
+			} catch (NumberFormatException nfe) {}
+			Properties ids = null;
+			if ((idType != null) && (idValue != null)) {
+				ids = new Properties();
+				ids.setProperty(idType, idValue);
+			}
+			String[] textPredicates = {};
+			if (query != null) {
+				textPredicates = new String[1];
+				textPredicates[0] = query;
+			}
+			rbc = this.getRefBankClient(); //	retrieve RefBank client on the fly to use local bridge if possible
+			psi = rbc.findReferences(textPredicates, false, type, user, author, title, yearInt, origin, ids, true, 0, false);
 		}
+		
+		//	send result
+		response.setContentType("text/plain");
+		response.setCharacterEncoding(ENCODING);
+		BufferedWriter srw = new BufferedWriter(new OutputStreamWriter(response.getOutputStream(), ENCODING));
+		
+		//	no query at all
+		if (psi == null) {
+			srw.write("alert('Please specify search parameters!');");
+			srw.newLine();
+		}
+		
+		//	search error
+		else if (psi.getException() != null) {
+			srw.write("alert('An error occurred while ecexuting your request, sorry:\\n  " + psi.getException().getMessage() + "\\nPlease try again later or modify your search parameters!');");
+			srw.newLine();
+		}
+		
+		//	send references found (self-canonical ones first)
+		else {
+			HashSet canonicalRefIDs = new HashSet();
+			ArrayList duplicateRefs = new ArrayList();
+			while (psi.hasNextString()) {
+				PooledString ps = psi.getNextString();
+				if (ps.id.equals(ps.getCanonicalStringID())) {
+					srw.write("displayResultRef('" + ps.id + "', '" + this.escapeForJavaScript(ps.getStringPlain()) + "', '" + ps.getCreateUser() + "', '" + ps.getCreateDomain() + "', '" + ps.getUpdateUser() + "', '" + ps.getUpdateDomain() + "', " + (ps.getParseChecksum() != null) + ", " + ps.isDeleted() + ", '" + ps.getCanonicalStringID() + "');");
+					srw.newLine();
+					canonicalRefIDs.add(ps.id);
+				}
+				else duplicateRefs.add(ps);
+			}
+			for (int d = 0; d < duplicateRefs.size(); d++) {
+				PooledString ps = ((PooledString) duplicateRefs.get(d));
+				if (!canonicalRefIDs.contains(ps.getCanonicalStringID())) {
+					PooledString rps = rbc.getString(ps.getCanonicalStringID());
+					if (rps != null) {
+						srw.write("displayResultRef('" + rps.id + "', '" + this.escapeForJavaScript(rps.getStringPlain()) + "', '" + rps.getCreateUser() + "', '" + rps.getCreateDomain() + "', '" + rps.getUpdateUser() + "', '" + rps.getUpdateDomain() + "', " + (rps.getParseChecksum() != null) + ", " + rps.isDeleted() + ", '" + rps.getCanonicalStringID() + "');");
+						srw.newLine();
+						canonicalRefIDs.add(rps.id);
+					}
+				}
+				srw.write("displayResultRef('" + ps.id + "', '" + this.escapeForJavaScript(ps.getStringPlain()) + "', '" + ps.getCreateUser() + "', '" + ps.getCreateDomain() + "', '" + ps.getUpdateUser() + "', '" + ps.getUpdateDomain() + "', " + (ps.getParseChecksum() != null) + ", " + ps.isDeleted() + ", '" + ps.getCanonicalStringID() + "');");
+				srw.newLine();
+			}
+			srw.write("updateSearchResultStats('" + rbc.getStringCount(-1) + "');");
+			srw.newLine();
+		}
+		
+		srw.flush();
 	}
 	
 	private String escapeForJavaScript(String str) {
@@ -578,7 +576,6 @@ public class RefBankSearchServlet extends RefBankWiServlet {
 						String format = ((String) fit.next());
 						this.writeLine("<a" + 
 								" class=\"referenceFormatLink\"" + 
-//								" target=\"_blank\"" + 
 								" title=\"Download these references formatted as " + format + "\"" + 
 								" href=\"" + this.request.getContextPath() + this.request.getServletPath() + "/" + EXPORT_BASKET_DOWNLOAD_PATH + "?" + FORMAT_PARAMETER + "=" + format + "\"" + 
 								">" + format + "</a>");
@@ -588,7 +585,6 @@ public class RefBankSearchServlet extends RefBankWiServlet {
 					for (int s = 0; s < styles.length; s++) {
 						this.writeLine("<a" + 
 								" class=\"referenceFormatLink\"" + 
-//								" target=\"_blank\"" + 
 								" title=\"Download these references styled as " + styles[s] + " style\"" + 
 								" href=\"" + this.request.getContextPath() + this.request.getServletPath() + "/" + EXPORT_BASKET_DOWNLOAD_PATH + "?" + STYLE_PARAMETER + "=" + styles[s] + "\"" + 
 								">" + styles[s] + "</a>");
@@ -623,7 +619,6 @@ public class RefBankSearchServlet extends RefBankWiServlet {
 						String format = ((String) fit.next());
 						this.writeLine("<a" + 
 								" class=\"referenceFormatLink\"" + 
-//								" target=\"_blank\"" + 
 								" title=\"Download these references formatted as " + format + "\"" + 
 								" href=\"" + this.request.getContextPath() + this.request.getServletPath() + "/" + EXPORT_BASKET_DOWNLOAD_PATH + "?" + FORMAT_PARAMETER + "=" + format + "\"" + 
 								">" + format + "</a>");
@@ -632,7 +627,6 @@ public class RefBankSearchServlet extends RefBankWiServlet {
 					for (int s = 0; s < styles.length; s++) {
 						this.writeLine("<a" + 
 								" class=\"referenceFormatLink\"" + 
-//								" target=\"_blank\"" + 
 								" title=\"Download these references styled as " + styles[s] + " style\"" + 
 								" href=\"" + this.request.getContextPath() + this.request.getServletPath() + "/" + EXPORT_BASKET_DOWNLOAD_PATH + "?" + STYLE_PARAMETER + "=" + styles[s] + "\"" + 
 								">" + styles[s] + "</a>");
@@ -1466,17 +1460,15 @@ public class RefBankSearchServlet extends RefBankWiServlet {
 		}
 	}
 	
-	private HtmlPageBuilder getSearchPageBuilder(HttpServletRequest request, /*final PooledStringIterator psi,*/ final String query, final String refType, final String author, final String title, final String year, final String origin, HttpServletResponse response) throws IOException {
+	private HtmlPageBuilder getSearchPageBuilder(HttpServletRequest request, final String query, final String refType, final String author, final String title, final String year, final String origin, HttpServletResponse response) throws IOException {
 		response.setContentType("text/html");
 		response.setCharacterEncoding(ENCODING);
 		return new HtmlPageBuilder(this, request, response) {
 			protected void include(String type, String tag) throws IOException {
 				if ("includeForm".equals(type))
 					this.includeSearchForm();
-				else if ("includeResult".equals(type)) {
-//					if (psi != null)
-						this.includeSearchResult();
-				}
+				else if ("includeResult".equals(type))
+					this.includeSearchResult();
 				else if ("includeRefTypeOptions".equals(type))
 					this.includeRefTypeOptions();
 				else super.include(type, tag);
@@ -1554,7 +1546,6 @@ public class RefBankSearchServlet extends RefBankWiServlet {
 				this.writeLine("  var ds = getById('dynamicSearchScript');");
 				this.writeLine("  var dsp = ds.parentNode;");
 				this.writeLine("  removeElement(ds);");
-//				this.writeLine("  var dsSrc = (window.location.protocol + '//' + window.location.host + window.location.pathname.substring(0, (window.location.pathname.lastIndexOf('/')+1)) + '" + SEARCH_RESULT_PATH + "?');");
 				this.writeLine("  var dsSrc = ('" + this.request.getContextPath() + this.request.getServletPath() + "/" + SEARCH_RESULT_PATH + "?');");
 				this.writeLine("  dsSrc = (dsSrc + 'time=' + (new Date).getTime());");
 				this.writeLine("  dsSrc = (dsSrc + getSearchParameter('" + QUERY_PARAMETER + "', '" + this.searchFieldIDs.get(QUERY_PARAMETER) + "'));");
@@ -1564,7 +1555,6 @@ public class RefBankSearchServlet extends RefBankWiServlet {
 				this.writeLine("  dsSrc = (dsSrc + getSearchParameter('" + DATE_PARAMETER + "', '" + this.searchFieldIDs.get(DATE_PARAMETER) + "'));");
 				this.writeLine("  dsSrc = (dsSrc + getSearchParameter('" + YEAR_PARAMETER + "', '" + this.searchFieldIDs.get(YEAR_PARAMETER) + "'));");
 				this.writeLine("  dsSrc = (dsSrc + getSearchParameter('" + ORIGIN_PARAMETER + "', '" + this.searchFieldIDs.get(ORIGIN_PARAMETER) + "'));");
-//				this.writeLine("  alert('Switching to ' + dsSrc);");
 				
 				this.writeLine("  activeReferenceId = null;");
 				this.writeLine("  showingOptionsFor = null;");
@@ -1587,7 +1577,6 @@ public class RefBankSearchServlet extends RefBankWiServlet {
 				this.writeLine("  ds = newElement('script', 'dynamicSearchScript');");
 				this.writeLine("  ds.type = 'text/javascript';");
 				this.writeLine("  ds.src = dsSrc;");
-//				this.writeLine("  ds.src = ('./dynamicSearchResult.js?' + 'time=' + (new Date).getTime());");
 				this.writeLine("  dsp.appendChild(ds);");
 				this.writeLine("  return false;");
 				this.writeLine("}");
@@ -1611,92 +1600,21 @@ public class RefBankSearchServlet extends RefBankWiServlet {
 			private void includeSearchResult() throws IOException {
 				
 				this.writeLine("<table class=\"resultTable\" id=\"resultTable\" style=\"display: none;\">");
-//				
-//				StringVector deletedRefIDs = new StringVector();
-//				HashMap refClusters = new HashMap();
-//				int refCount = 0;
-//				if (!psi.hasNextString()) {
-//					this.writeLine("<tr class=\"resultTableRow\">");
-//					this.writeLine("<td class=\"resultTableCell\">");
-//					this.writeLine("Your search did not return any results, sorry.");
-//					this.writeLine("</td>");
-//					this.writeLine("</tr>");
-//				}
-//				else {
-					this.writeLine("<tr class=\"resultTableRow\" id=\"resultTableHeader\">");
-					this.writeLine("<td class=\"resultTableCell\" width=\"50%\">");
-					this.writeLine("<span class=\"referenceString\" style=\"font-size: 60%;\">Hover&nbsp;references&nbsp;for&nbsp;further&nbsp;options</span>" +
-							"&nbsp;&nbsp;" +
-							"<span class=\"referenceString\" style=\"font-size: 60%;\"><span id=\"resultRefCount\"></span>&nbsp;matching&nbsp;references&nbsp;(including&nbsp;<span id=\"resultRefCountDeleted\"></span>&nbsp;deleted&nbsp;and&nbsp;<span id=\"resultRefCountDuplicate\"></span>&nbsp;duplicates)&nbsp;out&nbsp;of&nbsp;" + getRefBankClient().getStringCount(0) + "</span>" +
-							"&nbsp;&nbsp;" +
-							"<span class=\"referenceString\" style=\"font-size: 60%;\"><a href=\"#\" onclick=\"window.open('" + this.request.getContextPath() + "/staticPopup/help.html', 'RefBank Help', 'width=500,height=400,top=100,left=100,resizable=yes,scrollbar=yes,scrollbars=yes'); return false;\">Help</a></span>" +
-							"");
-					this.writeLine("</td>");
-					this.writeLine("<td class=\"resultTableCell\" style=\"text-align: right;\">");
-					this.writeLine("<input type=\"button\" id=\"showDeleted\" class=\"referenceFormatLink\" onclick=\"return toggleDeleted(true);\" value=\"Show references flagged as deleted\">");
-					this.writeLine("<input type=\"button\" id=\"hideDeleted\" class=\"referenceFormatLink\" style=\"display: none;\" onclick=\"return toggleDeleted(false);\" value=\"Hide references flagged as deleted\">");
-					this.writeLine("</td>");
-					this.writeLine("</tr>");
-//					
-//					//	retrieve and group result references
-//					while (psi.hasNextString()) {
-//						PooledString ps = psi.getNextString();
-//						SearchResultRefCluster refCluster = ((SearchResultRefCluster) refClusters.get(ps.getCanonicalStringID()));
-//						if (refCluster == null) {
-//							refCluster = new SearchResultRefCluster(ps.getCanonicalStringID());
-//							refClusters.put(ps.getCanonicalStringID(), refCluster);
-//						}
-//						refCluster.add(ps);
-//					}
-//					
-//					//	generate search result display
-//					for (Iterator canIdIt = refClusters.keySet().iterator(); canIdIt.hasNext();) {
-//						SearchResultRefCluster refCluster = ((SearchResultRefCluster) refClusters.get(canIdIt.next()));
-//						
-//						if (refCluster.getRepresentative() == null) {
-//							RefBankClient rbc = getRefBankClient();
-//							PooledString rps = rbc.getString(refCluster.id);
-//							if (rps != null)
-//								refCluster.add(rps);
-//						}
-//						
-//						this.writeLine("<tr class=\"resultTableRow\" id=\"row" + refCluster.id + "\"" + (refCluster.isClusterDeleted() ? " style=\"display: none;\"" : "") + "><td class=\"resultTableCell\" colspan=\"2\">");
-//						this.writeSearchResultRef(refCluster.getRepresentative(), false);
-//						refCount++;
-//						if (refCluster.getRepresentative().isDeleted())
-//							deletedRefIDs.addElement(refCluster.id);
-//						this.writeLine("<div id=\"duplicatesOf" + refCluster.id + "\" class=\"resultDuplicates\" style=\"display: none;\">");
-//						for (PooledStringIterator dpsi = refCluster.getDuplicateIterator(); dpsi.hasNextString();) {
-//							PooledString dps = dpsi.getNextString();
-//							this.writeSearchResultRef(dps, true);
-//							refCount++;
-//							if (dps.isDeleted())
-//								deletedRefIDs.addElement(dps.id);
-//						}
-//						this.writeLine("</div>");
-//						this.writeLine("</td></tr>");
-//					}
-//				}
+				this.writeLine("<tr class=\"resultTableRow\" id=\"resultTableHeader\">");
+				this.writeLine("<td class=\"resultTableCell\" width=\"50%\">");
+				this.writeLine("<span class=\"referenceString\" style=\"font-size: 60%;\">Hover&nbsp;references&nbsp;for&nbsp;further&nbsp;options</span>" +
+						"&nbsp;&nbsp;" +
+						"<span class=\"referenceString\" style=\"font-size: 60%;\"><span id=\"resultRefCount\"></span>&nbsp;matching&nbsp;references&nbsp;(including&nbsp;<span id=\"resultRefCountDeleted\"></span>&nbsp;deleted&nbsp;and&nbsp;<span id=\"resultRefCountDuplicate\"></span>&nbsp;duplicates)&nbsp;out&nbsp;of&nbsp;" + getRefBankClient().getStringCount(0) + "</span>" +
+						"&nbsp;&nbsp;" +
+						"<span class=\"referenceString\" style=\"font-size: 60%;\"><a href=\"#\" onclick=\"window.open('" + this.request.getContextPath() + "/staticPopup/help.html', 'RefBank Help', 'width=500,height=400,top=100,left=100,resizable=yes,scrollbar=yes,scrollbars=yes'); return false;\">Help</a></span>" +
+						"");
+				this.writeLine("</td>");
+				this.writeLine("<td class=\"resultTableCell\" style=\"text-align: right;\">");
+				this.writeLine("<input type=\"button\" id=\"showDeleted\" class=\"referenceFormatLink\" onclick=\"return toggleDeleted(true);\" value=\"Show references flagged as deleted\">");
+				this.writeLine("<input type=\"button\" id=\"hideDeleted\" class=\"referenceFormatLink\" style=\"display: none;\" onclick=\"return toggleDeleted(false);\" value=\"Hide references flagged as deleted\">");
+				this.writeLine("</td>");
+				this.writeLine("</tr>");
 				this.writeLine("</table>");
-				
-//				this.writeLine("<script type=\"text/javascript\">");
-//				this.writeLine("function buildDeletedArray() {");
-//				this.writeLine("  deletedRefIDs = new Array(" + deletedRefIDs.size() + ");");
-//				for (int d = 0; d < deletedRefIDs.size(); d++) {
-//					this.writeLine("  deletedRefIDs[" + d + "] = '" + deletedRefIDs.get(d) + "';");
-//					this.writeLine("  deletedRefIdSet['" + deletedRefIDs.get(d) + "'] = 'D';");
-//				}
-//				this.writeLine("}");
-//				this.writeLine("var rcSpan = getById('resultRefCount');");
-//				this.writeLine("if (rcSpan != null)");
-//				this.writeLine("  rcSpan.appendChild(document.createTextNode('" + refCount + "'));");
-//				this.writeLine("var rcDelSpan = getById('resultRefCountDeleted');");
-//				this.writeLine("if (rcDelSpan != null)");
-//				this.writeLine("  rcDelSpan.appendChild(document.createTextNode('" + deletedRefIDs.size() + "'));");
-//				this.writeLine("var rcDupSpan = getById('resultRefCountDuplicate');");
-//				this.writeLine("if (rcDupSpan != null)");
-//				this.writeLine("  rcDupSpan.appendChild(document.createTextNode('" + (refCount - refClusters.size()) + "'));");
-//				this.writeLine("</script>");
 				
 				this.write("<iframe id=\"" + MINOR_UPDATE_FRAME_ID + "\" height=\"0px\" style=\"border-width: 0px;\" src=\"" + this.request.getContextPath() + this.request.getServletPath() + "/" + MINOR_UPDATE_PATH + "\">");
 				this.writeLine("</iframe>");
@@ -1708,16 +1626,6 @@ public class RefBankSearchServlet extends RefBankWiServlet {
 				this.writeLine("</script>");
 			}
 			
-//			private void writeSearchResultRef(PooledString ps, boolean isDuplicate) throws IOException {
-//				this.writeLine("<div class=\"referenceStringContainer\" id=\"" + ps.id + "\"" + (ps.isDeleted() ? " style=\"display: none;\"" : "") + ">");
-//				this.writeLine("<div class=\"referenceString\" id=\"refString" + ps.id + "\" onmousedown=\"return grabReference('" + ps.id + "');\" ondblclick=\"selectRefString('" + ps.id + "');\" onmouseover=\"" + (isDuplicate ? "showOptionsFor" : "setActiveReference") + "('" + ps.id + "');\" onmouseout=\"setActiveReference(null); dragGrabbedReference();\">" + xmlGrammar.escape(ps.getStringPlain()) + "</div>");
-//				this.writeLine("<div class=\"referenceStringCredits\" id=\"credits" + ps.id + "\">");
-//				this.writeLine("<span class=\"referenceFormatLinkLabel\">Contributed by <b>" + ps.getCreateUser() + "</b> (at <b>" + ps.getCreateDomain() + "</b>)</span>&nbsp;&nbsp;<span class=\"referenceFormatLinkLabel\">Last Updated by <b>" + ps.getUpdateUser() + "</b> (at <b>" + ps.getUpdateDomain() + "</b>)</span>");
-//				this.writeLine("</div>");
-//				this.writeLine("<div id=\"optionsFor" + ps.id + "\" class=\"resultOptions" + ((ps.getParseChecksum() == null) ? "" : " parsed") + (isDuplicate ? " duplicate" : "") + "\" style=\"display: none;\"></div>");
-//				this.writeLine("</div>");
-//			}
-//			
 			protected String[] getOnloadCalls() {
 				if ((query != null) || (author != null) || (title != null) || (year != null) || (origin != null)) {
 					String[] olcs = {"initDragReference();", "addShowExportBasketButton();", "doDynamicSearch();"};
@@ -1770,8 +1678,6 @@ public class RefBankSearchServlet extends RefBankWiServlet {
 				this.writeLine("var deletedRefIdSet = new Object();");
 				this.writeLine("var showingDeleted = false;");
 				this.writeLine("function toggleDeleted(showDeleted) {");
-//				this.writeLine("  if (deletedRefIDs == null)");
-//				this.writeLine("    buildDeletedArray();");
 				this.writeLine("  showingDeleted = showDeleted;");
 				this.writeLine("  for (var d = 0; d < deletedRefIDs.length; d++) {");
 				this.writeLine("    var deletedRefRow = getById('row' + deletedRefIDs[d]);");
@@ -1787,8 +1693,6 @@ public class RefBankSearchServlet extends RefBankWiServlet {
 				this.writeLine("  var hd = getById('hideDeleted');");
 				this.writeLine("  if (hd != null)");
 				this.writeLine("    hd.style.display = (showDeleted ? '' : 'none');");
-//				this.writeLine("  getById('showDeleted').style.display = (showDeleted ? 'none' : '');");
-//				this.writeLine("  getById('hideDeleted').style.display = (showDeleted ? '' : 'none');");
 				this.writeLine("  return false;");
 				this.writeLine("}");
 				
@@ -1887,8 +1791,6 @@ public class RefBankSearchServlet extends RefBankWiServlet {
 				//	deleting and un-deleting
 				this.writeLine("function setDeleted(refId, deleted) {");
 				this.writeLine("  showDebugMessage('deleted ' + refId + ' set to ' + deleted);");
-//				this.writeLine("  if (deletedRefIDs == null)");
-//				this.writeLine("    buildDeletedArray();");
 				this.writeLine("  window.doMinorUpdateClient = function() {setDeletedBrowser(refId, deleted);}");
 				this.writeLine("  doMinorUpdateServer(refId, null, deleted);");
 				this.writeLine("}");
@@ -2019,8 +1921,6 @@ public class RefBankSearchServlet extends RefBankWiServlet {
 				this.writeLine("  var options = getById('optionsFor' + refId);");
 				this.writeLine("  if ((options.firstChild != null) && (options.firstChild.nodeName.toLowerCase() == 'span'))");
 				this.writeLine("    return;");
-//				this.writeLine("  if (deletedRefIDs == null)");
-//				this.writeLine("    buildDeletedArray();");
 				this.writeLine("  showDebugMessage('generating options for ' + refId);");
 				this.writeLine("  clearOptions(refId);");
 				this.writeLine("  if (options.className.indexOf('duplicate') != -1) {");
@@ -2290,46 +2190,8 @@ public class RefBankSearchServlet extends RefBankWiServlet {
 			}
 			
 			protected String getPageTitle(String title) {
-//				return ("RefBank Search" + ((psi == null) ? "" : " Results"));
 				return "RefBank Search";
 			}
 		};
 	}
-//	
-//	private static class SearchResultRefCluster {
-//		final String id;
-//		private PooledString representative;
-//		private HashSet duplicates = new HashSet();
-//		private boolean cluserDeleted = true;
-//		SearchResultRefCluster(String id) {
-//			this.id = id;
-//		}
-//		void add(PooledString ps) {
-//			if (ps.id.equals(ps.getCanonicalStringID()))
-//				this.representative = ps;
-//			else this.duplicates.add(ps);
-//			if (!ps.isDeleted())
-//				this.cluserDeleted = false;
-//		}
-//		PooledString getRepresentative() {
-//			return this.representative;
-//		}
-//		boolean isClusterDeleted() {
-//			return this.cluserDeleted;
-//		}
-//		PooledStringIterator getDuplicateIterator() {
-//			final Iterator dupIt = this.duplicates.iterator();
-//			return new PooledStringIterator() {
-//				public boolean hasNextString() {
-//					return dupIt.hasNext();
-//				}
-//				public PooledString getNextString() {
-//					return ((PooledString) dupIt.next());
-//				}
-//				public IOException getException() {
-//					return null;
-//				}
-//			};
-//		}
-//	}
 }
