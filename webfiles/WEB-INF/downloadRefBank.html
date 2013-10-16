@@ -173,6 +173,13 @@ If you have WebAppUpdater (builds with idaho-core) installed, you can also simpl
   &lt;/ref&gt;
   &lt;ref ...&gt;...&lt;/ref&gt;
 &lt;/refSet&gt;</pre></code></li></ul></li>
+  <li><code>action=apiStats</code>: retrieve statistics on the usage of the node, in particular for the data handling actions<ul>
+            <li>additional parameters:<ul>
+                <li><code>format</code>: the name of the XSLT stylesheet to use for transforming the result (defaults to the native XML if not specified)</li></ul></li>
+            <li>response: the API call statistics (MIME type <code>text/xml</code>, encoding <code>UTF-8</code>)
+
+            <code><pre>&lt;apiStats total=&quot;total number of API calls&quot; feed=&quot;number of calls to feed action&quot; rss=&quot;number of calls to RSS feed action&quot; find=&quot;number of calls to find action&quot; get=&quot;number of calls to get action&quot; update=&quot;number of calls to update action&quot; count=&quot;number of calls to count action&quot; stats=&quot;number of calls to API statistics&quot;/&gt;</pre></code></li></ul></li>
+
 </ul></li>
 <li><code>POST</code>: requests from RefBank node adminstration HTML page, infrastructure replication, or meta data updates for existing references:<ul>
   <li><code>/RefBank/rbk/update</code>: for deleting or un-deleting existing references or updating canonical reference ID<ul>
