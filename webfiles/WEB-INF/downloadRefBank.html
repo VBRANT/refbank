@@ -51,7 +51,7 @@ If you have WebAppUpdater (builds with idaho-core) installed, you can also simpl
 	<li>To secure form based reference upload with ReCAPTCHA to avoid spamming, obtain a ReCAPTCHA API key pair and put it in the config file in the <code>WEB-INF/uploadData/</code> folder</li>
 	<li>To secure script based reference upload with an access key to avoid spamming, specify a n access key in the config file in the <code>WEB-INF/uploadData/</code> folder</li>
 </ul></li>
-<li>If not using an embedded database, create a database for RefBank in your database server, e.g. </code>RefBankDB</code></li>
+<li>If not using an embedded database, create a database for RefBank in your database server, e.g. <code>RefBankDB</code></li>
 <li>Adjust the <code>web.cnfg</code> file in the <code>WEB-INF</code> folder:<ul>
 	<li>Adjust the JDBC settings to access the database created for RefBank<br/>
 	(by default configured to use Apache Derby in embedded mode)</li>
@@ -79,7 +79,7 @@ If you have WebAppUpdater (builds with idaho-core) installed, you can also simpl
 	==&gt; A list of other nodes shows up, labeled <em>Connected Nodes</em></li>
 <li>Configure replication of data in the <em>Connected Nodes</em> table and click the <em>Update Nodes</em> button to submit it<br/>
 	==&gt; afterwards, the web application might be busy for a while importing the references from the other nodes via the replication mechanism</li>
-</ul></li>
+</ul>
 <h3>CUSTOMIZING THE LAYOUT</h3>
 <p>The servlets generate the search and upload forms as well as the search results and reference detail views dynamically from multiple files residing in the <code>WEB-INF</code> folder or one of its sub folders:<ul>
 <li><code>refBank.html</code> is the template for the main pages</li>
@@ -97,7 +97,7 @@ If you have WebAppUpdater (builds with idaho-core) installed, you can also simpl
 	<li>The reCAPTCHA widget is inserted where the <code>&lt;includeReCAPTCHA/&gt;</code> tag is in <code>uploadFields.html</code></li>
 	<li>The CSS styles for the upload form and results are in <code>WEB-INF/uploadData/refBankUpload.css</code>, <code>WEB-INF/uploadData/refBankUpload.2.css</code>, and <code>WEB-INF/uploadData/refBankUpload.3.css</code>, corresponding to the respective variants of <code>refBank.css</code></li>
 </ul></li>
-<li></code>onnNodeAdminPage.html</code> is the template for the administration page</li>
+<li><code>onnNodeAdminPage.html</code> is the template for the administration page</li>
 <li>The respective CSS styles are in <code>onnNodeAdminPage.css</code>, <code>onnNodeAdminPage.2.css</code>, and <code>onnNodeAdminPage.3.css</code>, corresponding to the respective variants of <code>refBank.css</code></li>
 <li>To customize general page layout, change the <code>refBank.html</code> and <code>refBankPopup.html</code> files and the respective stylesheets<ul>
 	<li>This can be as simple customizing respective CSS styles (can be tested on statically saved post-generation HTML pages)</li>
@@ -109,7 +109,7 @@ If you have WebAppUpdater (builds with idaho-core) installed, you can also simpl
 	<li>This can include adding new <code>&lt;includeFile .../&gt;</code> tags; when doing this, make sure that the references files exist (requires the web application to run for testing)</li>
 </ul></li>
 <li>Do not add header, navigation, or footer content to the <code>refBank.html</code> or <code>refBankPopup.html</code> files directly, but use the respective inserted files instead (requires the web application to run for testing)</li>
-</ul></p>
+</ul>
 <h3>THE RefBank NODE API</h3>
 <p>RefBank data servlet (<code>/RefBank/rbk</code>):<ul>
 <li><code>GET</code> (response content depends on <code>action</code> parameter):<ul>
@@ -120,7 +120,7 @@ If you have WebAppUpdater (builds with idaho-core) installed, you can also simpl
       <code><pre>&lt;nodes&gt;
   &lt;node name=&quot;<i>name of RefBank node</i>&quot; accessUrl=&quot;<i>preferred access URL of node</i>&quot; /&gt;
   &lt;node ... /&gt;
-&lt;/nodes&gt;</code></pre></li></ul></li>
+&lt;/nodes&gt;</pre></code></li></ul></li>
   <li><code>action=ping</code> (also as <code>/refBank/rbk/ping</code>): ping node<ul>
     <li>additional parameters: none</li>
     <li>response (MIME type text/xml, encoding UTF-8):
@@ -129,20 +129,31 @@ If you have WebAppUpdater (builds with idaho-core) installed, you can also simpl
     <li>additional parameters: none</li>
     <li>response (MIME type <code>text/xml</code>, encoding <code>UTF-8</code>):
       <code><pre>&lt;nodes&gt;
-  &lt;node name=&qout;&lt;name of RefBank node&gt;&qout; accessUrl=&quot;<i>preferred access URL of node</i>&quot; /&gt;
+  &lt;node name=&quot;&lt;name of RefBank node&gt;&quot; accessUrl=&quot;<i>preferred access URL of node</i>&quot; /&gt;
 &lt;/nodes&gt;</pre></code></li></ul></li>
   <li><code>action=feed</code>: retrieve the reference update feed, ordered by increasing update time<ul>
     <li>additional parameters:<ul>
       <li><code>updatedSince</code>: minimum update time for references to include in the feed, formatted as UTC HTTP timestamp</li></ul></li>
-    <li>response: compact feed of references updated since the specified timestamp (MIME type <code>text/xml</code>, encoding <code>UTF-8</code>
+    <li>response: compact feed of references updated since the specified timestamp (MIME type <code>text/xml</code>, encoding <code>UTF-8</code>)
       <code><pre>&lt;refSet&gt;
   &lt;ref id=&quot;<i>reference ID</i>&quot; canonicalId=&quot;<i>ID of canonical reference to set</i>&quot; deleted=&quot;<i>deleted flag, true or false</i>&quot; createTime=&quot;<i>UTC timestamp reference was first added to RefBank</i>&quot; updateTime=&quot;<i>UTC timestamp reference was last updated</i>&quot; localUpdateTime=&quot;<i>UTC timestamp reference was last updated on this RefBank node</i>&quot; parseChecksum=&quot;<i>MD5 hash of parsed version, if available</i>&quot; /&gt;
   &lt;ref ... /&gt;
 &lt;/refSet&gt;</pre></code></li></ul></li>
+  <li><code>action=rss</code>: retrieve an RSS feed announcing recently added references, ordered by decreasing upload time<ul>
+            <li>additional parameters:<ul>
+                <li><code>top</code>: number of references to include in the feed (defaults to 100 if not specified)</li></ul></li>
+            <li>response: an RSS feed announcing the latest additions (MIME type <code>application/rss+xml</code>, encoding <code>UTF-8</code>)</li></ul></li>
+  <li><code>action=count</code>: retrieve the number of references stored in the node<ul>
+            <li>additional parameters:<ul>
+                <li><code>since</code>: the UTC timestamp since which to count the references (optional, defaults to 0)</li>
+                <li><code>format</code>: the format to represent the response (optional, defaults to the native XML representation if omitted)</li></ul></li>
+            <li>response: the number of references stored in the node (MIME type <code>text/xml</code>, encoding <code>UTF-8</code>)
+            <code><pre>&lt;refSet count=&quot;number of strings&quot; since=&quot;argument since&quot; /&gt;</pre></code></li></ul></li>
+	
   <li><code>action=get</code>: resolve RefBank internal identifiers<ul>
     <li>additional parameters:<ul>
-      <li>id: the identifier(s) to resolve, can be multi-valued</li>
-      <li>format: the format to represent the parsed versions of references in (optional, defaults to the native MODS XML representation if omitted)</li></ul></li>
+      <li><code>id</code>: the identifier(s) to resolve, can be multi-valued</li>
+      <li><code>format</code>: the format to represent the parsed versions of references in (optional, defaults to the native MODS XML representation if omitted)</li></ul></li>
     <li>response: the reference(s) with the specified identifier(s) (MIME type <code>text/xml</code>, encoding <code>UTF-8</code>)
       <code><pre>&lt;refSet&gt;
   &lt;ref id=&quot;<i>reference ID</i>&quot; canonicalId=&quot;<i>ID of canonical reference to set</i>&quot; deleted=&quot;<i>deleted flag, true or false</i>&quot; createTime=&quot;<i>UTC timestamp reference was first added to RefBank</i>&quot; createUser=&quot;<i>name of the user to first add reference to RefBank</i>&quot; createDomain=&quot;<i>name of RefBank node reference was first added to</i>&quot; updateTime=&quot;<i>UTC timestamp reference was last updated</i>&quot; updateUser=&quot;<i>name of the user to last update reference</i>&quot; updateDomain=&quot;<i>name of RefBank node reference was last updated at</i>&quot;&gt;
@@ -179,7 +190,6 @@ If you have WebAppUpdater (builds with idaho-core) installed, you can also simpl
             <li>response: the API call statistics (MIME type <code>text/xml</code>, encoding <code>UTF-8</code>)
 
             <code><pre>&lt;apiStats total=&quot;total number of API calls&quot; feed=&quot;number of calls to feed action&quot; rss=&quot;number of calls to RSS feed action&quot; find=&quot;number of calls to find action&quot; get=&quot;number of calls to get action&quot; update=&quot;number of calls to update action&quot; count=&quot;number of calls to count action&quot; stats=&quot;number of calls to API statistics&quot;/&gt;</pre></code></li></ul></li>
-
 </ul></li>
 <li><code>POST</code>: requests from RefBank node adminstration HTML page, infrastructure replication, or meta data updates for existing references:<ul>
   <li><code>/RefBank/rbk/update</code>: for deleting or un-deleting existing references or updating canonical reference ID<ul>
@@ -244,7 +254,7 @@ If you have WebAppUpdater (builds with idaho-core) installed, you can also simpl
   &lt;/ref&gt;
   &lt;ref ...&gt;...&lt;/ref&gt;
 &lt;/refSet&gt;</pre></code></li></ul></li>
-</ul></p>
+</ul>
 <p>RefBank search servlet (<code>/RefBank/search</code>):<ul>
 <li><code>GET</code>: retrieve search form, perform search, or retrieve styled or formatted reference, depending on parameters:<ul>
   <li><code>id</code>: identifier of reference, yields reference specific response if set, depending on several other parameters:<ul>
@@ -271,7 +281,7 @@ If you have WebAppUpdater (builds with idaho-core) installed, you can also simpl
   <li>no parameters at all: response is HTML page with search form (used in browser, not part of API)</li>
 </ul></li>
 <li><code>POST</code> (used in browser, not part of API): receive update callbacks from search result page</li>
-</ul></p>
+</ul>
 <p>RefBank upload servlet (<code>/RefBank/upload</code>):<ul>
 <li><code>GET</code> (used in browser, not part of API):<ul>
   <li><code>/RefBank/upload</code>: retrieve upload form</li>
@@ -292,7 +302,7 @@ ERRORS: &lt;number of references that contain errors&gt;
 CREATED: &lt;number of references newly added to RefBank&gt;
 UPDATED: &lt;number of references that were not newly added, but had their parsed version updated&gt;</pre></code></li>
 </ul></li>
-</ul></p>
+</ul>
 <p>RefBank data index servlet (<code>/RefBank/data</code>):<ul>
 <li><code>GET</code>: retrieve a list of reference attribute values present from parsed references in RefBank, for use as a gazetteer<ul>
   <li>parameters:<ul>
@@ -303,7 +313,7 @@ UPDATED: &lt;number of references that were not newly added, but had their parse
     <li><code>type=publishers</code>: names of publishers</li>
     <li><code>type=origins</code>: names of journals and publishers</li></ul></li>
 </ul></li>
-</ul></p>
+</ul>
 </div>
 </body>
 </html>

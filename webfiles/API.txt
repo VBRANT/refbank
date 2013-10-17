@@ -42,6 +42,14 @@ RefBank data servlet (/RefBank/rbk):
                 top: number of references to include in the feed (defaults to 100 if not specified)
             response: an RSS feed announcing the latest additions (MIME type application/rss+xml, encoding UTF-8)
 	
+        action=count: retrieve the number of references stored in the node
+            additional parameters:
+                since: the UTC timestamp since which to count the references (optional, defaults to 0)
+                format: the format to represent the response (optional, defaults to the native XML representation if omitted)
+            response: the number of references stored in the node (MIME type text/xml, encoding UTF-8)
+
+            <refSet count="number of strings" since="argument since" />
+
         action=get: resolve RefBank internal identifiers
             additional parameters:
                 id: the identifier(s) to resolve, can be multi-valued
