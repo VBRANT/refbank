@@ -27,6 +27,10 @@ SYSTEM REQUIREMENTS
 Java Runtime Environment 1.5 or higher, Sun/Oracle JRE recommended
 
 Apache Tomcat 5.5 or higher (other servlet containers should work as well, but have not been tested yet)
+If you are running Tomcat with a Server JRE 1.7 or higher, you have to enable Java 1.6 compatibility mode, as otherwise some required classes are excluded from the class path.
+This works as follows:
+- Linux/Unix: in /etc/init.d/tomcat, add the parameter "-Djava.specification.version=1.6" to the JAVA_OPTS="..."; line
+- Windows: include the parameter "-Djava.specification.version=1.6" wherever you set other parameters like the maximum memory as well
 
 A database server, e.g. PostgreSQL (drivers included for version 8.2) or Microsoft SQL Server (drivers included)
 Instead, you can also use Apache Derby embedded database (included)

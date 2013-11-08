@@ -22,7 +22,12 @@ li {
 <h3>SYSTEM REQUIREMENTS</h3>
 <ul>
 <li>Java Runtime Environment 1.5 or higher, Sun/Oracle JRE recommended</li>
-<li>Apache Tomcat 5.5 or higher (other servlet containers should work as well, but have not been tested yet)</li>
+<li>Apache Tomcat 5.5 or higher (other servlet containers should work as well, but have not been tested yet)<br>
+If you are running Tomcat with a Server JRE 1.7 or higher, you have to enable Java 1.6 compatibility mode, as otherwise some required classes are excluded from the class path.<br>
+This works as follows:<ul>
+<li>Linux/Unix: in <code>/etc/init.d/tomcat</code>, add the parameter <code>-Djava.specification.version=1.6</code> to the <code>JAVA_OPTS=&quot;...&quot;;</code> line</li>
+<li>Windows: include the parameter <code>-Djava.specification.version=1.6</code> wherever you set other parameters like the maximum memory as well</li>
+</ul></li>
 <li>A database server, e.g. PostgreSQL (drivers included for version 8.2) or Microsoft SQL Server (drivers included)<br/>
 Instead, you can also use Apache Derby embedded database (included)<br/>
 (using Apache Derby is the default configuration, so you can test RefBank without setting up a database)</li>
