@@ -90,10 +90,10 @@ public class RefBankEditorServlet extends RefBankAppServlet {
 		HtmlPageBuilder pageBuilder = new HtmlPageBuilder(this, request, response) {
 			protected void include(String type, String tag) throws IOException {
 				if ("includeBody".equals(type))
-					this.includeParsedReference();
+					this.includeEditForm();
 				else super.include(type, tag);
 			}
-			private void includeParsedReference() throws IOException {
+			private void includeEditForm() throws IOException {
 				this.writeLine("<form id=\"refEditorForm\" method=\"POST\" action=\"" + this.request.getContextPath() + this.request.getServletPath() + "\" accept-charset=\"utf8\" encrypt=\"application/x-www-form-urlencoded; charset=utf8\">");
 				this.writeLine("<table class=\"editTable\">");
 				
