@@ -1,5 +1,5 @@
 // Stylesheet file required for upload form
-cssNames = "refBankUpload.3.css";
+cssNames = "refBankUpload.bol.css";
 
 // JavaScript file required for search results (none for now)
 javaScriptNames = "";

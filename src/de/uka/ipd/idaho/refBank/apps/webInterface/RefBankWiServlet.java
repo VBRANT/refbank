@@ -203,7 +203,7 @@ public abstract class RefBankWiServlet extends RefBankAppServlet implements RefB
 		out.writeLine("  var unds = newElement('span', 'userNameDisplaySpan', null, user);");
 		out.writeLine("  setAttribute(unds, 'style', 'margin-left: 5px; font-weight: bold;');");
 		out.writeLine("  ptm.appendChild(unds);");
-		out.writeLine("  var uneb = newElement('a', null, 'footerNavigationLink', 'Enter / Edit');");
+		out.writeLine("  var uneb = newElement('a', 'editUserNameButton', null, 'Enter / Edit');");
 		out.writeLine("  setAttribute(uneb, 'href', '#');");
 		out.writeLine("  setAttribute(uneb, 'onclick', 'return editUserName();');");
 		out.writeLine("  setAttribute(uneb, 'style', 'margin-left: 10px;');");

@@ -572,23 +572,26 @@ public class RefBankSearchServlet extends RefBankWiServlet {
 					this.writeLine("<tr class=\"resultTableRow\" id=\"topFunctionRow\">");
 					this.writeLine("<td class=\"resultTableCell\" colspan=\"2\">");
 					this.writeLine("<span class=\"referenceFormatLinkLabel\">Export References as</span>");
+					this.writeLine("<div class=\"formatButtons\">");
 					for (Iterator fit = formats.keySet().iterator(); fit.hasNext();) {
 						String format = ((String) fit.next());
 						this.writeLine("<a" + 
-								" class=\"referenceFormatLink\"" + 
+								" class=\"referenceFormatLink format\"" + 
 								" title=\"Download these references formatted as " + format + "\"" + 
 								" href=\"" + this.request.getContextPath() + this.request.getServletPath() + "/" + EXPORT_BASKET_DOWNLOAD_PATH + "?" + FORMAT_PARAMETER + "=" + format + "\"" + 
 								">" + format + "</a>");
 					}
-					this.writeLine("&nbsp;&nbsp;");
+					this.writeLine("</div>");
+					this.writeLine("<div class=\"styleButtons\">");
 					String[] styles = BibRefUtils.getRefStringStyles();
 					for (int s = 0; s < styles.length; s++) {
 						this.writeLine("<a" + 
-								" class=\"referenceFormatLink\"" + 
+								" class=\"referenceFormatLink style\"" + 
 								" title=\"Download these references styled as " + styles[s] + " style\"" + 
 								" href=\"" + this.request.getContextPath() + this.request.getServletPath() + "/" + EXPORT_BASKET_DOWNLOAD_PATH + "?" + STYLE_PARAMETER + "=" + styles[s] + "\"" + 
 								">" + styles[s] + "</a>");
 					}
+					this.writeLine("</div>");
 					this.writeLine("</td>");
 					this.writeLine("</tr>");
 					
@@ -600,13 +603,20 @@ public class RefBankSearchServlet extends RefBankWiServlet {
 						this.writeLine("<div class=\"referenceString\">" + xmlGrammar.escape(ps.getStringPlain()) + "</div>");
 						this.writeLine("</td>");
 						this.writeLine("<td class=\"resultTableCell\">");
-						this.writeLine("<input" + 
-								" class=\"referenceFormatLink\"" + 
+//						this.writeLine("<input" + 
+//								" class=\"referenceFormatLink dontExport\"" + 
+//								" type=\"button\"" + 
+//								" value=\"Remove\"" + 
+//								" title=\"Remove this reference from your Export Basket\"" + 
+//								" onclick=\"return updateExportBasket('" + ps.id + "', true);\"" + 
+//								">");
+						this.writeLine("<button" + 
+								" class=\"referenceFormatLink dontExport\"" + 
 								" type=\"button\"" + 
 								" value=\"Remove\"" + 
 								" title=\"Remove this reference from your Export Basket\"" + 
 								" onclick=\"return updateExportBasket('" + ps.id + "', true);\"" + 
-								">");
+								">Remove</button>");
 						this.writeLine("</td>");
 						this.writeLine("</tr>");
 					}
@@ -615,6 +625,7 @@ public class RefBankSearchServlet extends RefBankWiServlet {
 					this.writeLine("<tr class=\"resultTableRow\" id=\"bottomFunctionRow\">");
 					this.writeLine("<td class=\"resultTableCell\" colspan=\"2\">");
 					this.writeLine("<span class=\"referenceFormatLinkLabel\">Export References as</span>");
+					this.writeLine("<div class=\"formatButtons\">");
 					for (Iterator fit = formats.keySet().iterator(); fit.hasNext();) {
 						String format = ((String) fit.next());
 						this.writeLine("<a" + 
@@ -623,7 +634,8 @@ public class RefBankSearchServlet extends RefBankWiServlet {
 								" href=\"" + this.request.getContextPath() + this.request.getServletPath() + "/" + EXPORT_BASKET_DOWNLOAD_PATH + "?" + FORMAT_PARAMETER + "=" + format + "\"" + 
 								">" + format + "</a>");
 					}
-					this.writeLine("&nbsp;&nbsp;");
+					this.writeLine("</div>");
+					this.writeLine("<div class=\"styleButtons\">");
 					for (int s = 0; s < styles.length; s++) {
 						this.writeLine("<a" + 
 								" class=\"referenceFormatLink\"" + 
@@ -631,6 +643,7 @@ public class RefBankSearchServlet extends RefBankWiServlet {
 								" href=\"" + this.request.getContextPath() + this.request.getServletPath() + "/" + EXPORT_BASKET_DOWNLOAD_PATH + "?" + STYLE_PARAMETER + "=" + styles[s] + "\"" + 
 								">" + styles[s] + "</a>");
 					}
+					this.writeLine("</div>");
 					this.writeLine("</td>");
 					this.writeLine("</tr>");
 				}
@@ -703,9 +716,13 @@ public class RefBankSearchServlet extends RefBankWiServlet {
 			if (inFormattedRefPage)
 				hpb.writeLine("  var ebButton = getById('ebButton');");
 			else hpb.writeLine("  var ebButton = getById('ebButton' + exportBasketUpdateRefId);");
+			hpb.writeLine("  while (ebButton.firstChild && (ebButton.firstChild != null))");
+			hpb.writeLine("    removeElement(ebButton.firstChild);");
 			hpb.writeLine("  var refId = exportBasketUpdateRefId;");
 			hpb.writeLine("  if (exportBasketUpdateRefRemoved) {");
 			hpb.writeLine("    ebButton.value = 'Export';");
+			hpb.writeLine("    ebButton.className = 'referenceFormatLink export';");
+			hpb.writeLine("    ebButton.appendChild(document.createTextNode('Export'));");
 			hpb.writeLine("    ebButton.title = 'Add this reference to your Export Basket';");
 			hpb.writeLine("    ebButton.onclick = function() {");
 			hpb.writeLine("      updateExportBasket(refId, false);");
@@ -714,6 +731,8 @@ public class RefBankSearchServlet extends RefBankWiServlet {
 			hpb.writeLine("  }");
 			hpb.writeLine("  else {");
 			hpb.writeLine("    ebButton.value = 'Do Not Export';");
+			hpb.writeLine("    ebButton.className = 'referenceFormatLink dontExport';");
+			hpb.writeLine("    ebButton.appendChild(document.createTextNode('Do Not Export'));");
 			hpb.writeLine("    ebButton.title = 'Remove this reference from your Export Basket';");
 			hpb.writeLine("    ebButton.onclick = function() {");
 			hpb.writeLine("      updateExportBasket(refId, true);");
@@ -766,7 +785,7 @@ public class RefBankSearchServlet extends RefBankWiServlet {
 			hpb.writeLine("  var ptm = getPageTopMenu();");
 			hpb.writeLine("  if (ptm == null)");
 			hpb.writeLine("    return;");
-			hpb.writeLine("  var sEbButton = newElement('a', 'showExportBasketButton', 'footerNavigationLink', 'My Export Refs (" + ((exportBasket == null) ? 0 : exportBasket.size()) + ")');");
+			hpb.writeLine("  var sEbButton = newElement('a', 'showExportBasketButton', null, 'My Export Refs (" + ((exportBasket == null) ? 0 : exportBasket.size()) + ")');");
 			hpb.writeLine("  setAttribute(sEbButton, 'href', '#');");
 			hpb.writeLine("  setAttribute(sEbButton, 'onclick', 'return openExportBasket();');");
 			hpb.writeLine("  setAttribute(sEbButton, 'title', 'Review and export contents of Export Basket');");
@@ -784,8 +803,12 @@ public class RefBankSearchServlet extends RefBankWiServlet {
 			hpb.writeLine("  exportBasketRefIDs[refId] = (removed ? null : 'E');");
 			hpb.writeLine("  var ebButton = getById('ebButton' + refId);");
 			hpb.writeLine("  if (ebButton != null) {");
+			hpb.writeLine("    while (ebButton.firstChild && (ebButton.firstChild != null))");
+			hpb.writeLine("      removeElement(ebButton.firstChild);");
 			hpb.writeLine("    if (removed) {");
 			hpb.writeLine("      ebButton.value = 'Export';");
+			hpb.writeLine("      ebButton.appendChild(document.createTextNode('Export'));");
+			hpb.writeLine("      ebButton.className = 'referenceFormatLink export';");
 			hpb.writeLine("      ebButton.onclick = function() {");
 			hpb.writeLine("        updateExportBasket(refId, false);");
 			hpb.writeLine("        return false;");
@@ -793,6 +816,8 @@ public class RefBankSearchServlet extends RefBankWiServlet {
 			hpb.writeLine("    }");
 			hpb.writeLine("    else {");
 			hpb.writeLine("      ebButton.value = 'Do Not Export';");
+			hpb.writeLine("      ebButton.appendChild(document.createTextNode('Do Not Export'));");
+			hpb.writeLine("      ebButton.className = 'referenceFormatLink dontExport';");
 			hpb.writeLine("      ebButton.onclick = function() {");
 			hpb.writeLine("        updateExportBasket(refId, true);");
 			hpb.writeLine("        return false;");
@@ -1179,6 +1204,7 @@ public class RefBankSearchServlet extends RefBankWiServlet {
 				this.writeLine("</tr>");
 				this.writeLine("<tr class=\"resultTableRow\">");
 				this.writeLine("<td class=\"resultTableCell\">");
+				this.writeLine("<div class=\"referenceStringCredits\">");
 				this.writeLine("<span class=\"referenceFormatLinkLabel\">");
 				this.writeLine("Contributed by <b>" + ps.getCreateUser() + "</b> (at <b>" + ps.getCreateDomain() + "</b>)");
 				this.writeLine("</span>");
@@ -1188,81 +1214,128 @@ public class RefBankSearchServlet extends RefBankWiServlet {
 					this.writeLine("Parsed by <b>" + ps.getUpdateUser() + "</b> (at <b>" + ps.getUpdateDomain() + "</b>)");
 					this.writeLine("</span>");
 				}
-				this.writeLine("</td>");
-				this.writeLine("</tr>");
+				this.writeLine("</div>");
+//				this.writeLine("</td>");
+//				this.writeLine("</tr>");
 				String[] styles = BibRefUtils.getRefStringStyles();
 				if (ps.getStringParsed() != null) {
 					if (formats.size() != 0) {
-						this.writeLine("<tr class=\"resultTableRow\">");
-						this.writeLine("<td class=\"resultTableCell\">");
-						this.writeLine("<span class=\"referenceFormatLinkLabel\">Other Formats:</span>");
+//						this.writeLine("<tr class=\"resultTableRow\">");
+//						this.writeLine("<td class=\"resultTableCell\">");
+						this.writeLine("<div class=\"formatButtons\">");
+						this.writeLine("<span class=\"referenceFormatLinkLabel\">Formats:</span>");
 						for (Iterator fit = formats.keySet().iterator(); fit.hasNext();) {
 							String format = ((String) fit.next());
-							this.writeLine("<input" + 
-									" class=\"referenceFormatLink\"" + 
+//							this.writeLine("<input" + 
+//									" class=\"referenceFormatLink format\"" + 
+//									" type=\"button\"" + 
+//									" value=\"" + format + "\"" + 
+//									" title=\"Get this reference formatted as " + format + "\"" + 
+//									" onclick=\"return setFormat('" + format + "');\"" + 
+//									">");
+							this.writeLine("<button" + 
+									" class=\"referenceFormatLink format\"" + 
 									" type=\"button\"" + 
 									" value=\"" + format + "\"" + 
 									" title=\"Get this reference formatted as " + format + "\"" + 
 									" onclick=\"return setFormat('" + format + "');\"" + 
-									">");
+									">" + format + "</button>");
 						}
-						this.writeLine("</td>");
-						this.writeLine("</tr>");
+						this.writeLine("</div>");
+//						this.writeLine("</td>");
+//						this.writeLine("</tr>");
 					}
 					if (styles.length != 0) {
-						this.writeLine("<tr class=\"resultTableRow\">");
-						this.writeLine("<td class=\"resultTableCell\">");
-						this.writeLine("<span class=\"referenceFormatLinkLabel\">Reference Styles:</span>");
+//						this.writeLine("<tr class=\"resultTableRow\">");
+//						this.writeLine("<td class=\"resultTableCell\">");
+						this.writeLine("<div class=\"styleButtons\">");
+						this.writeLine("<span class=\"referenceFormatLinkLabel\">Styles:</span>");
 						for (int s = 0; s < styles.length; s++) {
-							this.writeLine("<input" + 
-									" class=\"referenceFormatLink\"" + 
+//							this.writeLine("<input" + 
+//									" class=\"referenceFormatLink style\"" + 
+//									" type=\"button\"" + 
+//									" value=\"" + styles[s] + "\"" + 
+//									" title=\"Get this reference formatted in " + styles[s] + " style\"" + 
+//									" onclick=\"return setStyle('" + styles[s] + "');\"" + 
+//									">");
+							this.writeLine("<button" + 
+									" class=\"referenceFormatLink style\"" + 
 									" type=\"button\"" + 
 									" value=\"" + styles[s] + "\"" + 
 									" title=\"Get this reference formatted in " + styles[s] + " style\"" + 
 									" onclick=\"return setStyle('" + styles[s] + "');\"" + 
-									">");
+									">" + styles[s] + "</button>");
 						}
-						this.writeLine("</td>");
-						this.writeLine("</tr>");
+						this.writeLine("</div>");
+//						this.writeLine("</td>");
+//						this.writeLine("</tr>");
 					}
-					this.writeLine("<tr class=\"resultTableRow\">");
-					this.writeLine("<td class=\"resultTableCell\">");
-					this.writeLine("<span class=\"referenceFormatLinkLabel\">Export Reference:</span>");
+//					this.writeLine("<tr class=\"resultTableRow\">");
+//					this.writeLine("<td class=\"resultTableCell\">");
+					this.writeLine("<div class=\"actionButtons\">");
+					this.writeLine("<span class=\"referenceFormatLinkLabel\">Actions:</span>");
 					LinkedHashSet exportBasket = getExportBasket(this.request, false);
-					this.writeLine("<input" + 
-							" class=\"referenceFormatLink\"" + 
+//					this.writeLine("<input" + 
+//							" class=\"referenceFormatLink " + (((exportBasket != null) && exportBasket.contains(id)) ? "dontExport" : "export") + "\"" + 
+//							" type=\"button\"" + 
+//							" id=\"ebButton\"" + 
+//							" value=\"" + (((exportBasket != null) && exportBasket.contains(id)) ? "Do Not Export" : "Export") + "\"" + 
+//							" title=\"" + (((exportBasket != null) && exportBasket.contains(id)) ? "Remove this reference from your Export Basket" : "Add this reference to your Export Basket") + "\"" + 
+//							" onclick=\"return updateExportBasket('" + id + "', " + (((exportBasket != null) && exportBasket.contains(id)) ? "true" : "false") + ");\"" +
+//							">");
+					this.writeLine("<button" + 
+							" class=\"referenceFormatLink " + (((exportBasket != null) && exportBasket.contains(id)) ? "dontExport" : "export") + "\"" + 
 							" type=\"button\"" + 
 							" id=\"ebButton\"" + 
 							" value=\"" + (((exportBasket != null) && exportBasket.contains(id)) ? "Do Not Export" : "Export") + "\"" + 
 							" title=\"" + (((exportBasket != null) && exportBasket.contains(id)) ? "Remove this reference from your Export Basket" : "Add this reference to your Export Basket") + "\"" + 
 							" onclick=\"return updateExportBasket('" + id + "', " + (((exportBasket != null) && exportBasket.contains(id)) ? "true" : "false") + ");\"" +
-							">");
-					this.writeLine("</td>");
-					this.writeLine("</tr>");
+							">" + (((exportBasket != null) && exportBasket.contains(id)) ? "Do Not Export" : "Export") + "</button>");
+					this.writeLine("</div>");
+//					this.writeLine("</td>");
+//					this.writeLine("</tr>");
 				}
-				this.writeLine("<tr class=\"resultTableRow\">");
-				this.writeLine("<td class=\"resultTableCell\">");
+//				this.writeLine("<tr class=\"resultTableRow\">");
+//				this.writeLine("<td class=\"resultTableCell\">");
+				this.writeLine("<div class=\"contributeButtons\">");
 				this.writeLine("<span class=\"referenceFormatLinkLabel\">Contribute to Bibliography:</span>");
 				if (refParserUrl != null) {
-					this.writeLine("<input" + 
-							" class=\"referenceFormatLink\"" +
+//					this.writeLine("<input" + 
+//							" class=\"referenceFormatLink parse\"" +
+//							" type=\"button\"" +
+//							" value=\"" + ((ps.getStringParsed() == null) ? "Parse Reference" : "Refine Parsed Reference") + "\"" +
+//							" title=\"" + ((ps.getStringParsed() == null) ? "Parse this bibliographic reference so formatted versions become available" : "Refine or correct the parsed version of this bibliographic reference") + "\"" +
+//							" onclick=\"return parseRef();\"" + 
+//							">");
+					this.writeLine("<button" + 
+							" class=\"referenceFormatLink parse\"" +
 							" type=\"button\"" +
 							" value=\"" + ((ps.getStringParsed() == null) ? "Parse Reference" : "Refine Parsed Reference") + "\"" +
 							" title=\"" + ((ps.getStringParsed() == null) ? "Parse this bibliographic reference so formatted versions become available" : "Refine or correct the parsed version of this bibliographic reference") + "\"" +
 							" onclick=\"return parseRef();\"" + 
-							">");
+							">" + ((ps.getStringParsed() == null) ? "Parse Reference" : "Refine Parsed Reference") + "</button>");
 				}
 				if (refEditorUrl != null) {
-					this.writeLine("<input" + 
-							" class=\"referenceFormatLink\"" +
+//					this.writeLine("<input" + 
+//							" class=\"referenceFormatLink edit\"" +
+//							" type=\"button\"" +
+//							" value=\"Edit Reference\"" +
+//							" title=\"" + "Correct this bibliographic reference string, e.g. to eliminate typos or punctuation errors" + "\"" +
+//							" onclick=\"return editRef();\"" + 
+//							">");
+					this.writeLine("<button" + 
+							" class=\"referenceFormatLink edit\"" +
 							" type=\"button\"" +
 							" value=\"Edit Reference\"" +
 							" title=\"" + "Correct this bibliographic reference string, e.g. to eliminate typos or punctuation errors" + "\"" +
 							" onclick=\"return editRef();\"" + 
-							">");
+							">Edit Reference</button>");
 				}
-				this.writeLine("<input type=\"button\" id=\"delete" + ps.id + "\" class=\"referenceFormatLink\"" + (ps.isDeleted() ? " style=\"display: none;\"" : "") + " onclick=\"return setDeleted('" + ps.id + "', true);\" value=\"Delete\">");
-				this.writeLine("<input type=\"button\" id=\"unDelete" + ps.id + "\" class=\"referenceFormatLink\"" + (ps.isDeleted() ? "" : " style=\"display: none;\"") + " onclick=\"return setDeleted('" + ps.id + "', false);\" value=\"Un-Delete\">");
+//				this.writeLine("<input type=\"button\" id=\"delete" + ps.id + "\" class=\"referenceFormatLink\"" + (ps.isDeleted() ? " style=\"display: none;\"" : "") + " onclick=\"return setDeleted('" + ps.id + "', true);\" value=\"Delete\">");
+//				this.writeLine("<input type=\"button\" id=\"unDelete" + ps.id + "\" class=\"referenceFormatLink\"" + (ps.isDeleted() ? "" : " style=\"display: none;\"") + " onclick=\"return setDeleted('" + ps.id + "', false);\" value=\"Un-Delete\">");
+//				this.writeLine("<input type=\"button\" id=\"dudButton\" class=\"referenceFormatLink remove\" onclick=\"return setDeleted('" + ps.id + "', " + (ps.isDeleted() ? "false" : "true") + ");\" value=\"" + (ps.isDeleted() ? "Un-Delete" : "Delete") + "\">");
+				this.writeLine("<button type=\"button\" id=\"dudButton\" class=\"referenceFormatLink remove\" onclick=\"return setDeleted('" + ps.id + "', " + (ps.isDeleted() ? "false" : "true") + ");\" value=\"" + (ps.isDeleted() ? "Un-Delete" : "Delete") + "\">" + (ps.isDeleted() ? "Un-Delete" : "Delete") + "</button>");
+				this.writeLine("</div>");
 				this.writeLine("</td>");
 				this.writeLine("</tr>");
 				
@@ -1286,6 +1359,12 @@ public class RefBankSearchServlet extends RefBankWiServlet {
 			protected void writePageHeadExtensions() throws IOException {
 				this.writeLine("<script type=\"text/javascript\">");
 				
+				//	TODO instead of modifying display property, add and remove CSS class
+				//	==> layout implementations can decide for themselves what to show and hide and how
+				
+				this.writeLine("var deleteRefId = null;");
+				this.writeLine("var deleteDeleted = null;");
+				this.writeLine("var deleteOverlay = null;");
 				this.writeLine("function setDeleted(refId, deleted) {");
 				this.writeLine("  if (!getUser())");
 				this.writeLine("    return false;");
@@ -1308,9 +1387,59 @@ public class RefBankSearchServlet extends RefBankWiServlet {
 				this.writeLine("    return false;");
 				this.writeLine("  userField.value = user;");
 				this.writeLine("  minorUpdateForm.submit();");
-				this.writeLine("  document.getElementById('delete' + refId).style.display = (deleted ? 'none' : '');");
-				this.writeLine("  document.getElementById('unDelete' + refId).style.display = (deleted ? '' : 'none');");
+//				this.writeLine("  document.getElementById('delete' + refId).style.display = (deleted ? 'none' : '');");
+//				this.writeLine("  document.getElementById('unDelete' + refId).style.display = (deleted ? '' : 'none');");
+				this.writeLine("  deleteOverlay = getOverlay(null, (deleted ? 'deleteOverlay' : 'unDeleteOverlay'), true);");
+				this.writeLine("  deleteRefId = refId;");
+				this.writeLine("  deleteDeleted = deleted;");
+				this.writeLine("  window.setTimeout('waitDeleteServer(0)', 250);");
 				this.writeLine("  return false;");
+				this.writeLine("}");
+				
+				this.writeLine("function waitDeleteServer(round) {");
+				this.writeLine("  if (round > 20) {");
+				this.writeLine("    alert('The server did not reply in time, please try again later.');");
+				this.writeLine("    removeElement(deleteOverlay);");
+				this.writeLine("    deleteOverlay = null;");
+				this.writeLine("    return;");
+				this.writeLine("  }");
+				this.writeLine("  var minorUpdateFrame = getById('" + MINOR_UPDATE_FRAME_ID + "');");
+				this.writeLine("  if (!minorUpdateFrame.contentWindow.getById) {");
+				this.writeLine("    window.setTimeout(('waitDeleteServer(' + (round+1) + ')'), 250);");
+				this.writeLine("    return;");
+				this.writeLine("  }");
+				this.writeLine("  var minorUpdateForm = minorUpdateFrame.contentWindow.getById('" + MINOR_UPDATE_FORM_ID + "');");
+				this.writeLine("  if (minorUpdateForm == null) {");
+				this.writeLine("    window.setTimeout(('waitDeleteServer(' + (round+1) + ')'), 250);");
+				this.writeLine("    return;");
+				this.writeLine("  }");
+				this.writeLine("  var resultField = minorUpdateFrame.contentWindow.getById('" + MINOR_UPDATE_RESULT_ATTRIBUTE + "');");
+				this.writeLine("  if (resultField == null) {");
+				this.writeLine("    window.setTimeout(('waitDeleteServer(' + (round+1) + ')'), 250);");
+				this.writeLine("    return;");
+				this.writeLine("  }");
+				this.writeLine("  if (resultField.value == 'OK')");
+				this.writeLine("    setDeletedClient();");
+				this.writeLine("  else alert('An error occurred on the server, please try again later.');");
+				this.writeLine("  minorUpdateFrame.contentWindow.minorUpdateResultRead();");
+				this.writeLine("  removeElement(deleteOverlay);");
+				this.writeLine("  deleteOverlay = null;");
+				this.writeLine("}");
+				
+				this.writeLine("function setDeletedClient() {");
+				this.writeLine("  var dudButton = document.getElementById('dudButton');");
+				this.writeLine("  while (dudButton.firstChild && (dudButton.firstChild != null))");
+				this.writeLine("    removeElement(dudButton.firstChild);");
+				this.writeLine("  if (deleteDeleted) {");
+				this.writeLine("    dudButton.value = 'Un-Delete';");
+				this.writeLine("    dudButton.appendChild(document.createTextNode('Un-Delete'));");
+				this.writeLine("    dudButton.onclick = function() {setDeleted(deleteRefId, false); return false;};");
+				this.writeLine("  }");
+				this.writeLine("  else {");
+				this.writeLine("    dudButton.value = 'Delete';");
+				this.writeLine("    dudButton.appendChild(document.createTextNode('Delete'));");
+				this.writeLine("    dudButton.onclick = function() {setDeleted(deleteRefId, true); return false;};");
+				this.writeLine("  }");
 				this.writeLine("}");
 				
 				this.writeLine("var currentFormat = '" + (PARSE_REF_FORMAT.equals(format) ? "MODS" : format) + "';");
@@ -1699,13 +1828,17 @@ public class RefBankSearchServlet extends RefBankWiServlet {
 				this.writeLine("function toggleDuplicates(refId) {");
 				this.writeLine("  var duplicates = getById('duplicatesOf' + refId);");
 				this.writeLine("  var dButton = document.getElementById('dButton' + refId);");
+				this.writeLine("  while (dButton.firstChild && (dButton.firstChild != null))");
+				this.writeLine("    removeElement(dButton.firstChild);");
 				this.writeLine("  if (dButton.value == 'Show Duplicates') {");
 				this.writeLine("    duplicates.style.display = '';");
 				this.writeLine("    dButton.value = 'Hide Duplicates';");
+				this.writeLine("    dButton.appendChild(document.createTextNode('Hide Duplicates'));");
 				this.writeLine("  }");
 				this.writeLine("  else {");
 				this.writeLine("    duplicates.style.display = 'none';");
 				this.writeLine("    dButton.value = 'Show Duplicates';");
+				this.writeLine("    dButton.appendChild(document.createTextNode('Show Duplicates'));");
 				this.writeLine("  }");
 				this.writeLine("}");
 				
@@ -1798,10 +1931,13 @@ public class RefBankSearchServlet extends RefBankWiServlet {
 				this.writeLine("function setDeletedBrowser(refId, deleted) {");
 				this.writeLine("  getById('row' + refId).style.display = ((!showingDeleted && deleted) ? 'none' : '');");
 				this.writeLine("  var dudButton = getById('dudButton' + refId);");
+				this.writeLine("  while (dudButton.firstChild && (dudButton.firstChild != null))");
+				this.writeLine("    removeElement(dudButton.firstChild);");
 				this.writeLine("  if (deleted) {");
 				this.writeLine("    deletedRefIDs[deletedRefIDs.length] = refId;");
 				this.writeLine("    deletedRefIdSet[refId] = 'D';");
 				this.writeLine("    dudButton.value = 'Un-Delete';");
+				this.writeLine("    dudButton.appendChild(document.createTextNode('Un-Delete'));");
 				this.writeLine("    dudButton.onclick = function() {setDeleted(refId, false); return false;};");
 				this.writeLine("  }");
 				this.writeLine("  else {");
@@ -1813,6 +1949,7 @@ public class RefBankSearchServlet extends RefBankWiServlet {
 				this.writeLine("    }");
 				this.writeLine("    deletedRefIdSet[refId] = null;");
 				this.writeLine("    dudButton.value = 'Delete';");
+				this.writeLine("    dudButton.appendChild(document.createTextNode('Delete'));");
 				this.writeLine("    dudButton.onclick = function() {setDeleted(refId, true); return false;};");
 				this.writeLine("  }");
 				this.writeLine("  return false;");
@@ -1929,59 +2066,91 @@ public class RefBankSearchServlet extends RefBankWiServlet {
 				this.writeLine("      cRefDupContainer = cRefDupContainer.parentNode;");
 				this.writeLine("    if (cRefDupContainer != null) {");
 				this.writeLine("      options.appendChild(newElement('span', null, 'referenceFormatLinkLabel', 'Contribute to Bibliography:'));");
-				this.writeLine("      var rButton = addFunctionButton(options, 'Make Representative', 'Make this reference the representative of this duplicate cluster', function() {setCanonicalId(cRefDupContainer.id.substring(12), refId, 'MR'); return false;});");
+				this.writeLine("      var rButton = addFunctionButton(options, 'Make Representative', 'Make this reference the representative of this duplicate cluster', function() {setCanonicalId(cRefDupContainer.id.substring(12), refId, 'MR'); return false;}, 'representative');");
 				this.writeLine("      setAttribute(rButton, 'id', ('rButton' + refId));");
-				this.writeLine("      var ndButton = addFunctionButton(options, 'Not a Duplicate', 'Remove this reference from this cluster and make it a top level reference', function() {setCanonicalId(refId, refId, 'ND'); return false;});");
+				this.writeLine("      var ndButton = addFunctionButton(options, 'Not a Duplicate', 'Remove this reference from this cluster and make it a top level reference', function() {setCanonicalId(refId, refId, 'ND'); return false;}, 'nonDuplicate');");
 				this.writeLine("      setAttribute(ndButton, 'id', ('ndButton' + refId));");
 				this.writeLine("    }");
 				this.writeLine("    return;");
 				this.writeLine("  }");
 				this.writeLine("  if (options.className.indexOf('parsed') != -1) {");
-				this.writeLine("    options.appendChild(newElement('span', null, 'referenceFormatLinkLabel', 'Additional Formats & Styles:'));");
+				this.writeLine("    var formatsDiv = newElement('div', null, 'formatButtons', '');");
+//				this.writeLine("    options.appendChild(newElement('span', null, 'referenceFormatLinkLabel', 'Additional Formats & Styles:'));");
+				this.writeLine("    formatsDiv.appendChild(newElement('span', null, 'referenceFormatLinkLabel', 'Formats:'));");
 				this.writeLine("    for (var f = 0; f < formats.length; f++)");
-				this.writeLine("      addOpenWindowButton(options, formats[f], ('Get this reference formatted as ' + formats[f]), (subWindowBaseUrl + '/" + FRAME_PAGE_PATH + "?" + STRING_ID_ATTRIBUTE + "=' + refId + '&" + FORMAT_PARAMETER + "=' + formats[f]), 'Formatted Reference');");
-				this.writeLine("    options.appendChild(document.createTextNode('  '));");
+//				this.writeLine("      addOpenWindowButton(options, formats[f], ('Get this reference formatted as ' + formats[f]), (subWindowBaseUrl + '/" + FRAME_PAGE_PATH + "?" + STRING_ID_ATTRIBUTE + "=' + refId + '&" + FORMAT_PARAMETER + "=' + formats[f]), 'Formatted Reference');");
+				this.writeLine("      addOpenWindowButton(formatsDiv, formats[f], ('Get this reference formatted as ' + formats[f]), (subWindowBaseUrl + '/" + FRAME_PAGE_PATH + "?" + STRING_ID_ATTRIBUTE + "=' + refId + '&" + FORMAT_PARAMETER + "=' + formats[f]), 'Formatted Reference', 'format');");
+//				this.writeLine("    options.appendChild(document.createTextNode('  '));");
+				this.writeLine("    options.appendChild(formatsDiv);");
+				this.writeLine("    var stylesDiv = newElement('div', null, 'styleButtons', '');");
+				this.writeLine("    stylesDiv.appendChild(newElement('span', null, 'referenceFormatLinkLabel', 'Styles:'));");
 				this.writeLine("    for (var s = 0; s < styles.length; s++)");
-				this.writeLine("      addOpenWindowButton(options, styles[s], ('Get this reference formatted in ' + styles[s] + ' style'), (subWindowBaseUrl + '/" + FRAME_PAGE_PATH + "?" + STRING_ID_ATTRIBUTE + "=' + refId + '&" + STYLE_PARAMETER + "=' + styles[s]), 'Styled Reference');");
-				this.writeLine("    options.appendChild(document.createTextNode('  '));");
-				this.writeLine("    var isInEb = (exportBasketRefIDs[refId] == 'E');");
-				this.writeLine("    var ebButton = addFunctionButton(options, (isInEb ? 'Do Not Export' : 'Export'), (isInEb ? 'Remove this reference from your Export Basket' : 'Add this reference to your Export Basket'), function() {updateExportBasket(refId, isInEb); return false;});");
-				this.writeLine("    setAttribute(ebButton, 'id', ('ebButton' + refId));");
-				this.writeLine("    options.appendChild(newElement('br'));");
+//				this.writeLine("      addOpenWindowButton(options, styles[s], ('Get this reference formatted in ' + styles[s] + ' style'), (subWindowBaseUrl + '/" + FRAME_PAGE_PATH + "?" + STRING_ID_ATTRIBUTE + "=' + refId + '&" + STYLE_PARAMETER + "=' + styles[s]), 'Styled Reference');");
+				this.writeLine("      addOpenWindowButton(stylesDiv, styles[s], ('Get this reference formatted in ' + styles[s] + ' style'), (subWindowBaseUrl + '/" + FRAME_PAGE_PATH + "?" + STRING_ID_ATTRIBUTE + "=' + refId + '&" + STYLE_PARAMETER + "=' + styles[s]), 'Styled Reference', 'style');");
+//				this.writeLine("    options.appendChild(document.createTextNode('  '));");
+				this.writeLine("    options.appendChild(stylesDiv);");
+//				this.writeLine("    var isInEb = (exportBasketRefIDs[refId] == 'E');");
+//				this.writeLine("    var ebButton = addFunctionButton(options, (isInEb ? 'Do Not Export' : 'Export'), (isInEb ? 'Remove this reference from your Export Basket' : 'Add this reference to your Export Basket'), function() {updateExportBasket(refId, isInEb); return false;});");
+//				this.writeLine("    setAttribute(ebButton, 'id', ('ebButton' + refId));");
+//				this.writeLine("    options.appendChild(newElement('br'));");
 				this.writeLine("  }");
-				this.writeLine("  options.appendChild(newElement('span', null, 'referenceFormatLinkLabel', 'Contribute to Bibliography:'));");
+				this.writeLine("  var contributeDiv = newElement('div', null, 'contributeButtons', '');");
+//				this.writeLine("  options.appendChild(newElement('span', null, 'referenceFormatLinkLabel', 'Contribute to Bibliography:'));");
+				this.writeLine("  contributeDiv.appendChild(newElement('span', null, 'referenceFormatLinkLabel', 'Contribute to Bibliography:'));");
 				if (refParserUrl != null) {
 					this.writeLine("  if (options.className.indexOf('parsed') != -1)");
-					this.writeLine("    addOpenWindowButton(options, 'Refine Parsed Reference', 'Refine or correct the parsed version of this bibliographic reference', (subWindowBaseUrl + '/" + FRAME_PAGE_PATH + "?" + STRING_ID_ATTRIBUTE + "=' + refId + '&" + FORMAT_PARAMETER + "=" + PARSE_REF_FORMAT + "'), 'Parse Reference');");
-					this.writeLine("  else addOpenWindowButton(options, 'Parse Reference', 'Parse this bibliographic reference so formatted versions become available', (subWindowBaseUrl + '/" + FRAME_PAGE_PATH + "?" + STRING_ID_ATTRIBUTE + "=' + refId + '&" + FORMAT_PARAMETER + "=" + PARSE_REF_FORMAT + "'), 'Parse Reference');");
+//					this.writeLine("    addOpenWindowButton(options, 'Refine Parsed Reference', 'Refine or correct the parsed version of this bibliographic reference', (subWindowBaseUrl + '/" + FRAME_PAGE_PATH + "?" + STRING_ID_ATTRIBUTE + "=' + refId + '&" + FORMAT_PARAMETER + "=" + PARSE_REF_FORMAT + "'), 'Parse Reference');");
+					this.writeLine("    addOpenWindowButton(contributeDiv, 'Refine', 'Refine or correct the parsed version of this bibliographic reference', (subWindowBaseUrl + '/" + FRAME_PAGE_PATH + "?" + STRING_ID_ATTRIBUTE + "=' + refId + '&" + FORMAT_PARAMETER + "=" + PARSE_REF_FORMAT + "'), 'Parse Reference', 'parse');");
+//					this.writeLine("  else addOpenWindowButton(options, 'Parse Reference', 'Parse this bibliographic reference so formatted versions become available', (subWindowBaseUrl + '/" + FRAME_PAGE_PATH + "?" + STRING_ID_ATTRIBUTE + "=' + refId + '&" + FORMAT_PARAMETER + "=" + PARSE_REF_FORMAT + "'), 'Parse Reference');");
+					this.writeLine("  else addOpenWindowButton(contributeDiv, 'Parse', 'Parse this bibliographic reference so formatted versions become available', (subWindowBaseUrl + '/" + FRAME_PAGE_PATH + "?" + STRING_ID_ATTRIBUTE + "=' + refId + '&" + FORMAT_PARAMETER + "=" + PARSE_REF_FORMAT + "'), 'Parse Reference', 'parse');");
 				}
 				if (refEditorUrl != null)
-					this.writeLine("  addOpenWindowButton(options, 'Edit Reference', 'Correct this bibliographic reference string, e.g. to eliminate typos or punctuation errors', (subWindowBaseUrl + '/" + FRAME_PAGE_PATH + "?" + STRING_ID_ATTRIBUTE + "=' + refId + '&" + FORMAT_PARAMETER + "=" + EDIT_REF_FORMAT + "'), 'Edit Reference');");
-				this.writeLine("  var dudButton = addFunctionButton(options, ((deletedRefIdSet[refId] == 'D') ? 'Un-Delete' : 'Delete'), null, function() {setDeleted(refId, (deletedRefIdSet[refId] != 'D')); return false;});");
+//					this.writeLine("  addOpenWindowButton(options, 'Edit Reference', 'Correct this bibliographic reference string, e.g. to eliminate typos or punctuation errors', (subWindowBaseUrl + '/" + FRAME_PAGE_PATH + "?" + STRING_ID_ATTRIBUTE + "=' + refId + '&" + FORMAT_PARAMETER + "=" + EDIT_REF_FORMAT + "'), 'Edit Reference');");
+					this.writeLine("  addOpenWindowButton(contributeDiv, 'Edit', 'Correct this bibliographic reference string, e.g. to eliminate typos or punctuation errors', (subWindowBaseUrl + '/" + FRAME_PAGE_PATH + "?" + STRING_ID_ATTRIBUTE + "=' + refId + '&" + FORMAT_PARAMETER + "=" + EDIT_REF_FORMAT + "'), 'Edit Reference', 'edit');");
+//				this.writeLine("  var dudButton = addFunctionButton(options, ((deletedRefIdSet[refId] == 'D') ? 'Un-Delete' : 'Delete'), null, function() {setDeleted(refId, (deletedRefIdSet[refId] != 'D')); return false;});");
+				this.writeLine("  var dudButton = addFunctionButton(contributeDiv, ((deletedRefIdSet[refId] == 'D') ? 'Un-Delete' : 'Delete'), null, function() {setDeleted(refId, (deletedRefIdSet[refId] != 'D')); return false;}, 'remove');");
 				this.writeLine("  setAttribute(dudButton, 'id', ('dudButton' + refId));");
-				this.writeLine("  var dButton = addFunctionButton(options, 'Show Duplicates', null, function() {toggleDuplicates(refId); return false;});");
+				this.writeLine("  options.appendChild(contributeDiv);");
+				this.writeLine("  var actionsDiv = newElement('div', null, 'actionButtons', '');");
+				this.writeLine("  actionsDiv.appendChild(newElement('span', null, 'referenceFormatLinkLabel', 'Actions:'));");
+//				this.writeLine("  var dButton = addFunctionButton(options, 'Show Duplicates', null, function() {toggleDuplicates(refId); return false;});");
+				this.writeLine("  var dButton = addFunctionButton(actionsDiv, 'Show Duplicates', null, function() {toggleDuplicates(refId); return false;}, 'duplicates');");
 				this.writeLine("  setAttribute(dButton, 'id', ('dButton' + refId));");
+				this.writeLine("  if (options.className.indexOf('parsed') != -1) {");
+				this.writeLine("    var isInEb = (exportBasketRefIDs[refId] == 'E');");
+				this.writeLine("    var ebButton = addFunctionButton(actionsDiv, (isInEb ? 'Do Not Export' : 'Export'), (isInEb ? 'Remove this reference from your Export Basket' : 'Add this reference to your Export Basket'), function() {updateExportBasket(refId, isInEb); return false;}, (isInEb ? 'dontExport' : 'export'));");
+				this.writeLine("    setAttribute(ebButton, 'id', ('ebButton' + refId));");
+				this.writeLine("  }");
+				this.writeLine("  options.appendChild(actionsDiv);");
 				this.writeLine("}");
 				
-				this.writeLine("function addOpenWindowButton(node, text, tooltip, url, title) {");
-				this.writeLine("  var button = newElement('input');");
-				this.writeLine("  setAttribute(button, 'type', 'button');");
-				this.writeLine("  setAttribute(button, 'class', 'referenceFormatLink');");
-				this.writeLine("  setAttribute(button, 'value', text);");
-				this.writeLine("  setAttribute(button, 'title', tooltip);");
-				this.writeLine("  button.onclick = function() {");
+//				this.writeLine("function addOpenWindowButton(node, text, tooltip, url, title) {");
+				this.writeLine("function addOpenWindowButton(node, text, tooltip, url, title, extraCssClass) {");
+//				this.writeLine("  var button = newElement('input');");
+//				this.writeLine("  setAttribute(button, 'type', 'button');");
+//				this.writeLine("  setAttribute(button, 'class', 'referenceFormatLink');");
+//				this.writeLine("  setAttribute(button, 'value', text);");
+//				this.writeLine("  setAttribute(button, 'title', tooltip);");
+//				this.writeLine("  button.onclick = function() {");
+//				this.writeLine("    var w = window.open(url, title, 'width=500,height=400,top=100,left=100,resizable=yes,scrollbar=yes,scrollbars=yes');");
+//				this.writeLine("    w.notifyExportBucketUpdated = window.notifyExportBucketUpdated;");
+//				this.writeLine("    return false;");
+//				this.writeLine("  };");
+//				this.writeLine("  node.appendChild(button);");
+//				this.writeLine("  return button;");
+				this.writeLine("  return addFunctionButton(node, text, tooltip, function() {");
 				this.writeLine("    var w = window.open(url, title, 'width=500,height=400,top=100,left=100,resizable=yes,scrollbar=yes,scrollbars=yes');");
 				this.writeLine("    w.notifyExportBucketUpdated = window.notifyExportBucketUpdated;");
 				this.writeLine("    return false;");
-				this.writeLine("  };");
-				this.writeLine("  node.appendChild(button);");
-				this.writeLine("  return button;");
+				this.writeLine("  }, extraCssClass);");
 				this.writeLine("}");
 				
-				this.writeLine("function addFunctionButton(node, text, tooltip, onclick) {");
-				this.writeLine("  var button = newElement('input');");
+//				this.writeLine("function addFunctionButton(node, text, tooltip, onclick) {");
+				this.writeLine("function addFunctionButton(node, text, tooltip, onclick, extraCssClass) {");
+//				this.writeLine("  var button = newElement('input');");
+				this.writeLine("  var button = newElement('button', null, ((extraCssClass == null) ? 'referenceFormatLink' : ('referenceFormatLink ' + extraCssClass)), text);");
 				this.writeLine("  setAttribute(button, 'type', 'button');");
-				this.writeLine("  setAttribute(button, 'class', 'referenceFormatLink');");
+//				this.writeLine("  setAttribute(button, 'class', 'referenceFormatLink');");
 				this.writeLine("  setAttribute(button, 'value', text);");
 				this.writeLine("  setAttribute(button, 'title', tooltip);");
 				this.writeLine("  button.onclick = onclick;");
@@ -2046,15 +2215,13 @@ public class RefBankSearchServlet extends RefBankWiServlet {
 				this.writeLine("function startDragReference(id) {");
 				this.writeLine("  showDebugMessage('dragging ' + id);");
 				this.writeLine("  draggingId = id;");
-				this.writeLine("  ");
 				this.writeLine("  var bodyRoot = document.getElementsByTagName('body')[0];");
 				this.writeLine("  var dragged = getById('refString' + id);");
-				this.writeLine("  dragging = newElement('div', null, 'referenceString', dragged.innerHTML);");
+				this.writeLine("  dragging = newElement('div', null, 'referenceString draggingReference', dragged.innerHTML);");
 				this.writeLine("  dragging.style.display = '';");
 				this.writeLine("  dragging.style.visibility = 'visible';");
 				this.writeLine("  dragging.style.position = 'absolute';");
 				this.writeLine("  dragging.style.opacity = 0.5;");
-				this.writeLine("  dragging.style.className = 'draggingReference';");
 				this.writeLine("  dragging.style.width = dragged.offsetWidth + 'px';");
 				this.writeLine("  dragging.style.left = dragPosX + 'px';");
 				this.writeLine("  dragging.style.top = dragPosY + 'px';");

@@ -1,0 +1,457 @@
+#pageTopMenu {
+	padding-right: 45px;
+}
+
+#userNameDisplayLabel {
+	font-size: 0px;
+	color: #FFFFFF;
+}
+#userNameDisplayLabel:before {
+    content: "\e001\0020";
+    font-size: 16px;
+	border: medium none;
+	background: none repeat scroll 0% 0% transparent;
+	font-family: 'refBank';
+	color: #888888;
+}
+
+#showExportBasketButton {
+	text-decoration: none;
+}
+#showExportBasketButton:before {
+    content: "\f097\0020";
+    font-size: 16px;
+	border: medium none;
+	background: none repeat scroll 0% 0% transparent;
+	font-family: 'refBank';
+	color: #888888;
+}
+
+#searchFormContent {
+	width: 960px;
+	margin: 0px auto 0px;
+}
+
+#searchFormLogoBox {
+	width: 100%;
+	padding: 0px 320px 0px;
+}
+
+#searchFormLogo {
+	margin: -30px 0px -29px;
+	padding: 0px 20px 0px;
+	background: none repeat scroll 0 0 #FFFFFF;
+}
+
+.searchFieldTable {
+    width: 960px;
+    border: 1px solid #DDDDDD;
+	margin: 0px auto 35px;
+	padding: 45px 47px 30px;
+    -webkit-box-shadow:  0px 15px 10px -15px #BBBBBB;
+	box-shadow: 0px 15px 10px -15px #BBBBBB;
+}
+
+.searchFieldRow {
+}
+
+.searchFieldCell {
+    padding: 5px 0px 5px;
+}
+
+.searchButtonCell {
+    padding: 15px 0px 5px;
+    text-align: right;
+}
+
+.searchButton {
+    padding: 6px 0px 6px;
+    border: 2px solid #888888;
+    -moz-border-radius: 6px;
+    -webkit-border-radius: 6px;
+    border-radius: 6px;
+    width: 213px;
+	font-size: 16px;
+	color: #FFFFFF;
+	background: -webkit-linear-gradient(#4699D9, #008299); /* For Safari */
+	background: -o-linear-gradient(#4699D9, #008299); /* For Opera 11.1 to 12.0 */
+	background: -moz-linear-gradient(#4699D9, #008299); /* For Firefox 3.6 to 15 */
+	background: linear-gradient(#4699D9, #008299); /* Standard syntax */
+}
+.searchButton:hover {
+    cursor: pointer;
+	background: -webkit-linear-gradient(#008299, #4699D9); /* For Safari */
+	background: -o-linear-gradient(#008299, #4699D9); /* For Opera 11.1 to 12.0 */
+	background: -moz-linear-gradient(#008299, #4699D9); /* For Firefox 3.6 to 15 */
+	background: linear-gradient(#008299, #4699D9); /* Standard syntax */
+}
+
+input[type="text"], select {
+	font: 16px "Segoe UI",Arial,Helvetica,sans-serif;
+	margin: 5px 0px 0px 0px;
+    padding: 5px 10px 5px;
+    border: 2px solid #888888;
+    -moz-border-radius: 6px;
+    -webkit-border-radius: 6px;
+    border-radius: 6px;
+}
+
+#queryField {
+    width: 622px;
+}
+#typeField {
+    width: 212px;
+}
+#authorField {
+    width: 188px;
+}
+#titleField {
+    width: 188px;
+}
+#yearField {
+    width: 188px;
+}
+#originField {
+    width: 188px;
+}
+#refCodeFrame {
+    background-color: silver;
+    color: navy;
+    width: 100%;
+    height: 200px;
+}
+
+.resultTable {
+    width: 100%;
+	max-width: 1200px;
+	margin: 0px auto 0px;
+}
+
+#resultTableHeader td {
+	border: none !important;
+	background: #FFFFFF !important;
+}
+
+.resultTableRow {}
+
+.resultTableCell {}
+
+span.referenceString {
+	float: left;
+	display: block;
+	padding: 2px 0px 2px;
+	margin: 2px 0px 2px;
+	clear: both;
+}
+span.referenceString a {
+	text-decoration: none;
+	font-size: 16px;
+}
+
+#showDeleted.referenceFormatLink, #hideDeleted.referenceFormatLink {
+	color: #000000;
+	background: -webkit-linear-gradient(#F2F2F2, #D5D5D5); /* For Safari */
+	background: -o-linear-gradient(#F2F2F2, #D5D5D5); /* For Opera 11.1 to 12.0 */
+	background: -moz-linear-gradient(#F2F2F2, #D5D5D5); /* For Firefox 3.6 to 15 */
+	background: linear-gradient(#F2F2F2, #D5D5D5); /* Standard syntax */
+	border: 1px solid #888888;
+	border-radius: 4px;
+	text-align: center;
+}
+#showDeleted.referenceFormatLink:hover, #hideDeleted.referenceFormatLink:hover {
+	background: -webkit-linear-gradient(#D5D5D5, #F2F2F2); /* For Safari */
+	background: -o-linear-gradient(#D5D5D5, #F2F2F2); /* For Opera 11.1 to 12.0 */
+	background: -moz-linear-gradient(#D5D5D5, #F2F2F2); /* For Firefox 3.6 to 15 */
+	background: linear-gradient(#D5D5D5, #F2F2F2); /* Standard syntax */
+}
+
+.resultTableCell:hover {
+    background: #F8F8F8;
+    border: 1px solid #CCCCCC;
+}
+
+.resultTableCell:hover .referenceStringContainer {
+    margin: -1px;
+}
+
+.resultDuplicates {
+    position: relative;
+    border-top: 1px dashed #DDD;
+}
+
+.resultTableCell:hover .resultDuplicates {
+    margin-top: 2px;
+    background: #FCFCFC;
+}
+
+.resultTableCell:hover .resultOptions {
+	opacity: 1;
+}
+
+.resultTableCell:hover .referenceStringContainer {
+    -webkit-box-shadow:  0px 15px 10px -15px #BBBBBB;
+	box-shadow: 0px 15px 10px -15px #BBBBBB;
+}
+
+.referenceStringContainer {
+	position: relative;
+	padding: 17px;
+	margin: 1px;
+	transition: background 0.2s ease-out 0s;
+	width: 100%;
+	display: block;
+	float: left;
+}
+
+.resultDuplicates {
+    width: 90%;
+    font-size: 80%;
+    margin-left: 5%;
+	float: left;
+	border-top: 1px dashed #CCCCCC;
+}
+
+.referenceString {
+    width: 50%;
+	line-height: 135%;
+	float: left;
+    text-align: justify;
+    display: block;
+    cursor: default;
+}
+
+.referenceString.draggingReference {
+	margin-left: 5px !important;
+	margin-top: -5px !important;
+}
+
+.resultDuplicates .referenceString {
+	font-style: italic;
+}
+
+.referenceStringCredits {
+	display: none;
+}
+
+
+
+.resultOptions {
+	display: block !important;
+	opacity: 0.2;
+	transition: opacity 0.2s ease-out 0s;
+	float: right;
+	margin: 0px;
+	width: 40%;
+}
+
+.resultOptions:hover {
+	opacity: 1 !important;
+}
+
+.formatButtons {
+	margin-left: 15px;
+	float: left;
+	display: inline-block;
+}
+
+.styleButtons {
+	margin-left: 15px;
+	float: left;
+	display: inline-block;
+}
+
+.contributeButtons {
+	margin-left: 15px;
+	margin-top: 20px;
+	float: left;
+	display: inline-block;
+}
+
+.actionButtons {
+	margin-left: 15px;
+	margin-top: 20px;
+	float: left;
+	display: inline-block;
+}
+
+.referenceFormatLink {
+    cursor: pointer;
+    padding: 1px 6px 3px;
+	margin: 0px;
+	font-size: 13px;
+}
+
+.referenceFormatLinkLabel {
+	padding-bottom: 5px;
+	font-size: 10px;
+	font-weight: bold;
+	clear: left;
+	display: block;
+}
+
+.formatButtons .referenceFormatLink, .styleButtons .referenceFormatLink {
+	color: #000000;
+	background: -webkit-linear-gradient(#F2F2F2, #D5D5D5); /* For Safari */
+	background: -o-linear-gradient(#F2F2F2, #D5D5D5); /* For Opera 11.1 to 12.0 */
+	background: -moz-linear-gradient(#F2F2F2, #D5D5D5); /* For Firefox 3.6 to 15 */
+	background: linear-gradient(#F2F2F2, #D5D5D5); /* Standard syntax */
+	border-width: 1px;
+	border-style: solid;
+	border-color: #888888 #888888 #888888 #F1F1F1;
+	-moz-border-top-colors: none;
+	-moz-border-right-colors: none;
+	-moz-border-bottom-colors: none;
+	-moz-border-left-colors: none;
+	text-align: center;
+	transition: background 0.2s ease-out 0s;
+}
+
+.formatButtons .referenceFormatLink:hover, .styleButtons .referenceFormatLink:hover {
+	background: -webkit-linear-gradient(#D5D5D5, #F2F2F2); /* For Safari */
+	background: -o-linear-gradient(#D5D5D5, #F2F2F2); /* For Opera 11.1 to 12.0 */
+	background: -moz-linear-gradient(#D5D5D5, #F2F2F2); /* For Firefox 3.6 to 15 */
+	background: linear-gradient(#D5D5D5, #F2F2F2); /* Standard syntax */
+}
+
+.formatButtons .referenceFormatLink:first-of-type, .styleButtons .referenceFormatLink:first-of-type {
+	margin-left: 5px;
+	border-radius: 4px 0px 0px 4px;
+	border-left: 1px solid #888888;
+}
+
+.formatButtons .referenceFormatLink:last-child, .styleButtons .referenceFormatLink:last-child {
+	border-radius: 0px 4px 4px 0px;
+	border-right: 1px solid #888888;
+}
+
+
+.contributeButtons .referenceFormatLink, .actionButtons .referenceFormatLink {
+	border: medium none !important;
+	background: none repeat scroll 0% 0% transparent !important;
+	font-family: 'refBank' !important;
+	color: #888888 !important;
+}
+
+.resultDuplicates .referenceFormatLink {
+	border: medium none;
+	background: none repeat scroll 0% 0% transparent;
+	font-family: 'refBank';
+	color: #888888;
+}
+
+
+
+.popupPage .resultTableCell {
+	border: none !important;
+	background: #FFFFFF !important;
+}
+.popupPage .referenceString {
+    width: 100%;
+}
+
+.popupPage .referenceFormatLink {
+	color: #000000;
+	background: -webkit-linear-gradient(#F2F2F2, #D5D5D5); /* For Safari */
+	background: -o-linear-gradient(#F2F2F2, #D5D5D5); /* For Opera 11.1 to 12.0 */
+	background: -moz-linear-gradient(#F2F2F2, #D5D5D5); /* For Firefox 3.6 to 15 */
+	background: linear-gradient(#F2F2F2, #D5D5D5); /* Standard syntax */
+	border-width: 1px;
+	border-style: solid;
+	border-color: #888888 #888888 #888888 #F1F1F1;
+	-moz-border-top-colors: none;
+	-moz-border-right-colors: none;
+	-moz-border-bottom-colors: none;
+	-moz-border-left-colors: none;
+	text-align: center;
+	transition: background 0.2s ease-out 0s;
+}
+
+.popupPage .referenceFormatLink:hover {
+	background: -webkit-linear-gradient(#D5D5D5, #F2F2F2); /* For Safari */
+	background: -o-linear-gradient(#D5D5D5, #F2F2F2); /* For Opera 11.1 to 12.0 */
+	background: -moz-linear-gradient(#D5D5D5, #F2F2F2); /* For Firefox 3.6 to 15 */
+	background: linear-gradient(#D5D5D5, #F2F2F2); /* Standard syntax */
+}
+
+.popupPage .referenceFormatLink:first-of-type {
+	margin-left: 5px;
+	border-radius: 4px 0px 0px 4px;
+	border-left: 1px solid #888888;
+}
+
+.popupPage .referenceFormatLink:last-child {
+	border-radius: 0px 4px 4px 0px;
+	border-right: 1px solid #888888;
+}
+
+.popupPage .formatButtons {
+	float: left;
+	clear: left;
+}
+.popupPage .styleButtons {
+	float: left;
+	clear: right;
+}
+.popupPage .actionButtons {
+	float: left;
+	clear: left;
+}
+.popupPage .contributeButtons {
+	float: left;
+	clear: right;
+}
+
+#ebButton {
+	border-radius: 4px 4px 4px 4px;
+	border-right: 1px solid #888888;
+}
+
+#refCodeFrame {
+	border: 2px solid #00AAD0;
+	background: none repeat scroll #FFF8D0;
+}
+
+
+
+.popupPage .referenceFormatLink.dontExport {
+	border: medium none !important;
+	background: none repeat scroll 0% 0% transparent !important;
+	font-family: 'refBank' !important;
+	color: #888888 !important;
+}
+
+
+
+.referenceFormatLink.parse:before {
+    content: "\f044\0020";
+}
+
+.referenceFormatLink.edit:before {
+    content: "\f040\0020";
+    vertical-align: 0;
+}
+
+.referenceFormatLink.remove:before {
+    content: "\f014\0020";
+}
+
+.referenceFormatLink.duplicates:before {
+    content: "\f06e\0020";
+}
+
+.referenceFormatLink.export:before {
+    content: "\f097\0020";
+}
+
+.referenceFormatLink.dontExport:before {
+    content: "\f02e\0020";
+}
+
+.referenceFormatLink.representative:before {
+    content: "\f074\0020";
+    vertical-align: -2px;
+}
+
+.referenceFormatLink.nonDuplicate:before {
+    content: "\f11d\0020";
+}

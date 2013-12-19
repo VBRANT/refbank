@@ -1,0 +1,278 @@
+@font-face {
+    font-family: 'refBank';
+    src:url('/RefBank/fonts/refBank.eot');
+    src:url('/RefBank/fonts/refBank.eot?#iefix') format('embedded-opentype'),
+        url('/RefBank/fonts/refBank.svg#refBank') format('svg'),
+        url('/RefBank/fonts/refBank.woff') format('woff'),
+        url('/RefBank/fonts/refBank.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+body {
+    font: 16px "Segoe UI",Arial,Helvetica,sans-serif;
+}
+
+img {
+    border: 0;
+}
+
+#topbar {
+    background-color: #333333;
+    height: 30px;
+    left: 0px;
+    top: 0px;
+    width: 100%;
+    line-height: 26px;
+    position: fixed;
+    padding: 0px 12px 0px;
+    z-index: 1;
+}
+
+#topbar a {
+	color: #C9C9C9;
+	float: left;
+	font-size: smaller;
+	font-weight: bold;
+	padding: 0px 1em;
+	text-decoration: none;
+}
+
+#topbar a:hover {
+	color: #FFFFFF;
+}
+
+#popupTopbar {
+    background-color: #333333;
+    height: 30px;
+    left: 0px;
+    top: 0px;
+    width: 100%;
+    line-height: 26px;
+    position: fixed;
+    padding: 0px 12px 0px;
+    z-index: 1;
+}
+
+#popupTopbar a {
+	color: #C9C9C9;
+	float: right;
+	font-size: smaller;
+	font-weight: bold;
+	padding: 0px 24px 0px;
+	text-decoration: none;
+}
+
+#popupTopbar a:hover {
+	color: #FFFFFF;
+}
+
+#pageTopMenu {
+	width: 1000px;
+	margin: 50px auto -45px;
+}
+
+#pageTopMenu a {
+    padding: 5px 5px 10px;
+    margin-left: 30px;
+	color: #1F1F1F;
+}
+
+#editUserNameButton {
+	text-decoration: none;
+}
+
+#euro-logos {
+    display: inline;
+    float: right;
+    opacity: 0.7;
+}
+
+#vbrant-img {
+    margin-right: 194px;
+}
+
+#tou-logo {
+    margin-left: 24px;
+}
+
+#your-logo {/*
+    height: 69px;
+    width: 139px;
+*/}
+
+.page {
+	margin: 0px auto 0px;
+	margin-right: auto;
+    clear: both;
+	color: #1F1F1F;
+    width: 1000px;
+    overflow: hidden;
+}
+
+.pageContent {
+    clear: both;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+
+.loginTable {
+    border: 1px solid #DDDDDD;
+	margin: 0px auto 35px;
+	padding: 20px 30px 20px;
+    -webkit-box-shadow:  0px 15px 10px -15px #BBBBBB;
+	box-shadow: 0px 15px 10px -15px #BBBBBB;
+}
+
+.loginTableHead {
+	font-weight: bold;
+}
+
+.loginTableBody {}
+
+.loginTableCell {
+	border: 1px solid #DDDDDD;
+	padding: 3px;
+	text-align: left;
+	font-size: 13px;
+}
+.loginTableBody .loginTableCell {
+	white-space: nowrap;
+}
+.loginTableCell input {
+	font-size: 13px;
+}
+.loginTableCell input[type="button"] {
+	color: #000000;
+	background: -webkit-linear-gradient(#F2F2F2, #D5D5D5); /* For Safari */
+	background: -o-linear-gradient(#F2F2F2, #D5D5D5); /* For Opera 11.1 to 12.0 */
+	background: -moz-linear-gradient(#F2F2F2, #D5D5D5); /* For Firefox 3.6 to 15 */
+	background: linear-gradient(#F2F2F2, #D5D5D5); /* Standard syntax */
+	border-width: 1px;
+	border-style: solid;
+	border-color: #888888;
+	-moz-border-top-colors: none;
+	-moz-border-right-colors: none;
+	-moz-border-bottom-colors: none;
+	-moz-border-left-colors: none;
+	text-align: center;
+	transition: background 0.2s ease-out 0s;
+}
+.loginTableCell input[type="button"]:hover {
+	background: -webkit-linear-gradient(#D5D5D5, #F2F2F2); /* For Safari */
+	background: -o-linear-gradient(#D5D5D5, #F2F2F2); /* For Opera 11.1 to 12.0 */
+	background: -moz-linear-gradient(#D5D5D5, #F2F2F2); /* For Firefox 3.6 to 15 */
+	background: linear-gradient(#D5D5D5, #F2F2F2); /* Standard syntax */
+}
+
+
+.mainTable {
+	border: none;
+	padding: 0px;
+	margin: 0px;
+}
+
+.mainTableCell {
+	border: none;
+	margin: 0px;
+}
+
+.urlInput {
+	size: 25;
+	width: 200px;
+}
+
+.messageTable {
+	border: 2px solid #00AAD0;
+	background: none repeat scroll #FFF8D0;
+	margin: 0px auto 35px;
+	padding: 10px 15px 10px;
+    -webkit-box-shadow:  0px 15px 10px -15px #BBBBBB;
+	box-shadow: 0px 15px 10px -15px #BBBBBB;
+}
+
+.messageTableHead {
+	font-weight: bold;
+}
+
+.messageTableBody  {}
+
+.messageTableCell {
+	font-size: 13px;
+}
+
+.nodesTable {
+    border: 1px solid #DDDDDD;
+	margin: 0px auto 35px;
+	padding: 20px 30px 20px;
+    -webkit-box-shadow:  0px 15px 10px -15px #BBBBBB;
+	box-shadow: 0px 15px 10px -15px #BBBBBB;
+	float: left;
+}
+
+.nodesTableHead {
+	font-weight: bold;
+}
+
+.nodesTableBody {}
+
+.nodesTableCell {
+	border: 1px solid #DDDDDD;
+	padding: 3px;
+	text-align: left;
+	font-size: 13px;
+}
+.nodesTableBody .nodesTableCell {
+	white-space: nowrap;
+}
+.nodesTableCell input {
+	font-size: 13px;
+}
+.nodesTableCell input[type="button"] {
+	color: #000000;
+	background: -webkit-linear-gradient(#F2F2F2, #D5D5D5); /* For Safari */
+	background: -o-linear-gradient(#F2F2F2, #D5D5D5); /* For Opera 11.1 to 12.0 */
+	background: -moz-linear-gradient(#F2F2F2, #D5D5D5); /* For Firefox 3.6 to 15 */
+	background: linear-gradient(#F2F2F2, #D5D5D5); /* Standard syntax */
+	border-width: 1px;
+	border-style: solid;
+	border-color: #888888;
+	-moz-border-top-colors: none;
+	-moz-border-right-colors: none;
+	-moz-border-bottom-colors: none;
+	-moz-border-left-colors: none;
+	text-align: center;
+	transition: background 0.2s ease-out 0s;
+}
+.nodesTableCell input[type="button"]:hover {
+	background: -webkit-linear-gradient(#D5D5D5, #F2F2F2); /* For Safari */
+	background: -o-linear-gradient(#D5D5D5, #F2F2F2); /* For Opera 11.1 to 12.0 */
+	background: -moz-linear-gradient(#D5D5D5, #F2F2F2); /* For Firefox 3.6 to 15 */
+	background: linear-gradient(#D5D5D5, #F2F2F2); /* Standard syntax */
+}
+
+.footer {
+	padding: 60px 0px;
+	height: 245px;
+}
+
+.footer p {
+    margin: 10px 0px 16px;
+    font-size: 12px;
+}
+
+.footerBig {
+	margin-bottom: 40px;
+	text-align: center;
+	width: 100%;
+	clear: left;
+}
+
+.footerSmall {
+	float: left;
+	width: 33.3%;
+	text-align: center;
+	color: #888888;
+	float: left;
+}

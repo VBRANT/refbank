@@ -1,5 +1,9 @@
 <html>
 <body>
+	<div id="uploadFormContent">
+	<div id="uploadFormLogoBox">
+	<a href="/RefBank/search"><img id="uploadFormLogo" src="images/logo.png" /></a>
+	</div>
 	<includeUploadFormScript/>
 	<table class="uploadTable">
 		<tr class="uploadTableHead">
@@ -12,11 +16,11 @@
 			<td class="uploadTableCell" colspan="3">
 				<input type="hidden" name="action" value="update" />
 				<input type="hidden" name="responseFormat" value="html" />
-				<textarea name="refStrings" rows="14" cols="80"></textarea>
+				<textarea name="refStrings" class="uploadField" id="refStringField" rows="14" cols="80"></textarea>
 			</td>
 		</tr>
 		<tr class="uploadTableBody">
-			<td class="uploadTableCell" rowspan="2">
+			<td class="uploadTableCell" id="reCaptchaCell" rowspan="2">
 				<includeReCAPTCHA/>
 			</td>
 			<td class="uploadTableCell">
@@ -25,7 +29,7 @@
 			</td>
 			<td class="uploadTableCell">
 				Upload File:<br>
-				<input type="file" class="uploadField" name="refFile" />
+				<input type="file" class="uploadField" id="refFileField" name="refFile" />
 			</td>
 		</tr>
 		<tr class="uploadTableBody">
@@ -34,9 +38,10 @@
 				<input type="text" class="uploadField" name="user" id="userNameField" value="" />
 			</td>
 			<td class="uploadTableCell">
-				<input type="submit" class="uploadButton" value="Upload References" />
+				<input type="submit" class="uploadButton" id="refUploadButton" value="Upload References" />
 			</td>
 		</tr>
 	</table>
+	</div>
 </body>
 </html>

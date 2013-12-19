@@ -1,0 +1,139 @@
+#pageTopMenu {
+	padding-right: 45px;
+}
+#userNameDisplayLabel {
+	font-size: 0px;
+	color: #FFFFFF;
+}
+#userNameDisplayLabel:before {
+    content: "\e001\0020";
+    font-size: 16px;
+	border: medium none;
+	background: none repeat scroll 0% 0% transparent;
+	font-family: 'refBank';
+	color: #888888;
+}
+
+#uploadFormContent {
+	width: 960px;
+	margin: 0px auto;
+}
+
+#uploadFormLogoBox {
+	width: 100%;
+	padding: 0px 320px 0px;
+}
+
+#uploadFormLogo {
+	margin: -30px 0px -29px;
+	padding: 0px 20px 0px;
+	background: none repeat scroll 0 0 #FFFFFF;
+}
+
+.uploadTable {
+    width: 960px;
+    border: 1px solid #DDDDDD;
+	margin: 0px auto 35px;
+	padding: 60px 60px 30px;
+	box-shadow: 0px 15px 10px -15px #BBBBBB;
+}
+
+.uploadTableRow {}
+
+.uploadTableCell {
+    padding: 5px auto 5px;
+}
+
+.uploadField {
+	font: 16px "Segoe UI",Arial,Helvetica,sans-serif;
+	margin: 5px 0px 0px 0px;
+    padding: 5px 10px 5px;
+    border: 2px solid #888888;
+    -moz-border-radius: 6px;
+    -webkit-border-radius: 6px;
+    border-radius: 6px;
+}
+
+#refStringField {
+	width: 785px;
+}
+
+#reCaptchaCell {
+	padding-top: 15px;
+}
+
+#dataFormatSelector {
+	width: 212px;
+}
+
+#refFileField {
+	font-size: 12px;
+	width: 188px;
+}
+
+#userNameField {
+	width: 188px;
+}
+
+.uploadButton {
+    margin-top: 25px;
+    padding: 6px 0px 6px;
+    border: 2px solid #888888;
+    -moz-border-radius: 6px;
+    -webkit-border-radius: 6px;
+    border-radius: 6px;
+    width: 213px;
+	font-size: 16px;
+	color: #FFFFFF;
+	background: -webkit-linear-gradient(#4699D9, #008299); /* For Safari */
+	background: -o-linear-gradient(#4699D9, #008299); /* For Opera 11.1 to 12.0 */
+	background: -moz-linear-gradient(#4699D9, #008299); /* For Firefox 3.6 to 15 */
+	background: linear-gradient(#4699D9, #008299); /* Standard syntax */
+}
+.uploadButton:hover {
+    cursor: pointer;
+	background: -webkit-linear-gradient(#008299, #4699D9); /* For Safari */
+	background: -o-linear-gradient(#008299, #4699D9); /* For Opera 11.1 to 12.0 */
+	background: -moz-linear-gradient(#008299, #4699D9); /* For Firefox 3.6 to 15 */
+	background: linear-gradient(#008299, #4699D9); /* Standard syntax */
+}
+
+#refUploadButton {
+	width: 213px;
+}
+
+#statusDisplayProgressBar {
+	background: none repeat scroll #FFF8D0;
+    border: 2px solid #00AAD0;
+    -moz-border-radius: 4px;
+    -webkit-border-radius: 4px;
+    border-radius: 4px;
+}
+
+#statusDisplayProgressIndicator {
+    background-color: #00AAD0;
+    -moz-border-radius: 2px;
+    -webkit-border-radius: 2px;
+    border-radius: 2px;
+}
+
+.resultTable {
+    width: 960px;
+	margin: 0px auto 10px;
+    padding: 4px;
+    border: 1px solid #CCCCCC;
+    -webkit-box-shadow:  0px 15px 10px -15px #BBBBBB;
+	box-shadow: 0px 15px 10px -15px #BBBBBB;
+}
+
+.resultTableRow {}
+
+.resultTableCell {
+	background: none repeat scroll #FFF8D0;
+	text-align: center;
+}
+
+.resultString {
+	padding: 5px 10px 5px;
+    font-weight: bold;
+}

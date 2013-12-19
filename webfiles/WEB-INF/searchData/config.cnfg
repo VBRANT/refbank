@@ -3,7 +3,7 @@ refParserUrl = "/RefBank/parser";
 refEditorUrl = "/RefBank/editor";
 
 // Stylesheet file required for search results
-cssNames = "refBankSearch.3.css";
+cssNames = "refBankSearch.bol.css";
 
 // JavaScript file required for search results (none for now)
 javaScriptNames = "";

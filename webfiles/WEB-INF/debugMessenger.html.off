@@ -1,0 +1,8 @@
+<html>
+<body>
+<input type="text" id="debugMessage" style="width: 100%; position: fixed; left: 0px; bottom: 0px;"/>
+<script type="text/javascript">
+debugMessage = document.getElementById('debugMessage');
+</script>
+</body>
+</html>
