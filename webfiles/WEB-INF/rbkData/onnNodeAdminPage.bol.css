@@ -223,6 +223,10 @@ img {
 	text-align: left;
 	font-size: 13px;
 }
+.elusiveNode {
+	background-color: #E0E0E0 !important;
+	color: #808080 !important;
+}
 .nodesTableBody .nodesTableCell {
 	white-space: nowrap;
 }
