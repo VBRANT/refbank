@@ -8,7 +8,7 @@
 <project name="config">
 	
 	<!-- first of all the name of this project -->
-	<property name="app.name" value="RefBank" />
+	<property name="app.name" value="TnuBank" />
 	
 	<!-- =================================================================== -->
 	<!-- DIRECTORY CONFIGURATION -->
@@ -18,9 +18,6 @@
 	
 	<!-- directory that contains all libraries that are required in the .war -->
 	<property name="lib.home" value="lib" />
-	
-	<!-- directory that contains all resources to be handles before integration in the .war -->
-	<property name="res.home" value="res" />
 	
 	<!-- directory of all the static content -->
 	<property name="web.home" value="webfiles" />
@@ -33,12 +30,6 @@
 	
 	<!-- path to the .jar file that shall be created -->
 	<property name="jar.file" value="${build.home}/WEB-INF/lib/${app.name}.jar" />
-	
-	<!-- path to the .jar file that shall be created -->
-	<property name="jar.dataparsers.file" value="${build.home}/WEB-INF/refDataFormats/BibRefDataParsers.jar" />
-	
-	<!-- path to the .jar file that shall be created -->
-	<property name="jar.dataformats.file" value="${build.home}/WEB-INF/refDataFormats/DataFormats.jar" />
 	
 	<!-- path to the .zip file that shall be created -->
 	<property name="zip.file" value="${dist.home}/${app.name}.zip" />
