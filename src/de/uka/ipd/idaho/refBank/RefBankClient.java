@@ -17,9 +17,11 @@
  */
 package de.uka.ipd.idaho.refBank;
 
+import java.io.IOException;
 import java.util.Properties;
 
 import de.uka.ipd.idaho.onn.stringPool.StringPoolClient;
+import de.uka.ipd.idaho.plugins.bibRefs.BibRefUtils.RefData;
 
 /**
  * RefBank specific client object, adding detail search for bibliographic
@@ -71,4 +73,21 @@ public interface RefBankClient extends StringPoolClient {
 	 * @return an iterator over the references matching the query
 	 */
 	public abstract PooledStringIterator findReferences(String[] textPredicates, boolean disjunctive, String type, String user, String author, String title, int year, String origin, Properties externalIDsByType, boolean concise, int limit, boolean selfCanonicalOnly);
+	
+	/**
+	 * Upload a bibliographic reference.
+	 * @param bibRef the reference to upload
+	 * @param user the name of the user contributing the reference
+	 * @return the uploaded reference
+	 * @throws IOException
+	 */
+	public abstract PooledString updateReference(RefData bibRef, String user) throws IOException;
+	
+	/**
+	 * Upload a series of bibliographic references.
+	 * @param bibRefs an array holding the references to upload
+	 * @param user the name of the user contributing the references
+	 * @return an iterator over the uploaded references
+	 */
+	public abstract PooledStringIterator updateReferences(RefData[] bibRefs, String user);
 }

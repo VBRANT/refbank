@@ -23,6 +23,8 @@ import java.util.Iterator;
 import java.util.Properties;
 
 import de.uka.ipd.idaho.onn.stringPool.StringPoolRestClient;
+import de.uka.ipd.idaho.plugins.bibRefs.BibRefUtils;
+import de.uka.ipd.idaho.plugins.bibRefs.BibRefUtils.RefData;
 
 /**
  * RefBank specific rest client, adding detail search for bibliographic
@@ -107,5 +109,28 @@ public class RefBankRestClient extends StringPoolRestClient implements RefBankCo
 		catch (IOException ioe) {
 			return new ExceptionPSI(ioe);
 		}
+	}
+	
+	/**
+	 * This implementation uses the <code>BibRefUtils.toRefString()</code> and
+	 * <code>BibRefUtils.toModsXML()</code> methods to create a pair of plain
+	 * and parsed string from the argument bibliographic reference object.
+	 * @see de.uka.ipd.idaho.refBank.RefBankClient#updateReference(de.uka.ipd.idaho.plugins.bibRefs.BibRefUtils.RefData, java.lang.String)
+	 */
+	public PooledString updateReference(RefData bibRef, String user) throws IOException {
+		return this.updateString(BibRefUtils.toRefString(bibRef), BibRefUtils.toModsXML(bibRef), user);
+	}
+
+	/**
+	 * This implementation uses the <code>BibRefUtils.toRefString()</code> and
+	 * <code>BibRefUtils.toModsXML()</code> methods to create pairs of plain
+	 * and parsed strings from the argument bibliographic reference objects.
+	 * @see de.uka.ipd.idaho.refBank.RefBankClient#updateReferences(de.uka.ipd.idaho.plugins.bibRefs.BibRefUtils.RefData[], java.lang.String)
+	 */
+	public PooledStringIterator updateReferences(RefData[] bibRefs, String user) {
+		UploadString[] bibRefStrings = new UploadString[bibRefs.length];
+		for (int r = 0; r < bibRefs.length; r++)
+			bibRefStrings[r] = new UploadString(BibRefUtils.toRefString(bibRefs[r]), BibRefUtils.toModsXML(bibRefs[r]));
+		return this.updateStrings(bibRefStrings, user);
 	}
 }

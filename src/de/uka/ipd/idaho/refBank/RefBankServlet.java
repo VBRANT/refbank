@@ -18,6 +18,7 @@
 package de.uka.ipd.idaho.refBank;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Iterator;
 import java.util.Properties;
 
@@ -113,6 +114,13 @@ public class RefBankServlet extends StringPoolServlet implements RefBankClient, 
 		itd.addColumn(TITLE_COLUMN_NAME, TableDefinition.VARCHAR_DATATYPE, TITLE_COLUMN_LENGTH);
 		itd.addColumn(ORIGIN_COLUMN_NAME, TableDefinition.VARCHAR_DATATYPE, ORIGIN_COLUMN_LENGTH);
 		return true;
+	}
+	
+	/* (non-Javadoc)
+	 * @see de.uka.ipd.idaho.onn.stringPool.StringPoolServlet#getXmlNamespaceUriBindings()
+	 */
+	protected String getXmlNamespaceUriBindings() {
+		return "xmlns:mods=\"http://www.loc.gov/mods/v3\"";
 	}
 	
 	/* (non-Javadoc)
@@ -326,6 +334,29 @@ public class RefBankServlet extends StringPoolServlet implements RefBankClient, 
 				detailPredicates.setProperty(("ID-" + idType), id);
 			}
 		return this.findStrings(textPredicates, disjunctive, type, user, concise, limit, selfCanonicalOnly, detailPredicates);
+	}
+	
+	/**
+	 * This implementation uses the <code>BibRefUtils.toRefString()</code> and
+	 * <code>BibRefUtils.toModsXML()</code> methods to create a pair of plain
+	 * and parsed string from the argument bibliographic reference object.
+	 * @see de.uka.ipd.idaho.refBank.RefBankClient#updateReference(de.uka.ipd.idaho.plugins.bibRefs.BibRefUtils.RefData, java.lang.String)
+	 */
+	public PooledString updateReference(RefData bibRef, String user) throws IOException {
+		return this.updateString(BibRefUtils.toRefString(bibRef), BibRefUtils.toModsXML(bibRef), user);
+	}
+
+	/**
+	 * This implementation uses the <code>BibRefUtils.toRefString()</code> and
+	 * <code>BibRefUtils.toModsXML()</code> methods to create pairs of plain
+	 * and parsed strings from the argument bibliographic reference objects.
+	 * @see de.uka.ipd.idaho.refBank.RefBankClient#updateReferences(de.uka.ipd.idaho.plugins.bibRefs.BibRefUtils.RefData[], java.lang.String)
+	 */
+	public PooledStringIterator updateReferences(RefData[] bibRefs, String user) {
+		UploadString[] bibRefStrings = new UploadString[bibRefs.length];
+		for (int r = 0; r < bibRefs.length; r++)
+			bibRefStrings[r] = new UploadString(BibRefUtils.toRefString(bibRefs[r]), BibRefUtils.toModsXML(bibRefs[r]));
+		return this.updateStrings(bibRefStrings, user);
 	}
 //	
 //	public static void main(String[] args) throws Exception {
