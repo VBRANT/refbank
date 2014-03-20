@@ -8,7 +8,7 @@
 <project name="config">
 	
 	<!-- first of all the name of this project -->
-	<property name="app.name" value="TnuBank" />
+	<property name="app.name" value="RefBank" />
 	
 	<!-- =================================================================== -->
 	<!-- DIRECTORY CONFIGURATION -->
