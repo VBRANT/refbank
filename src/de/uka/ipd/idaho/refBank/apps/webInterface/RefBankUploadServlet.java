@@ -32,12 +32,9 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import net.tanesha.recaptcha.ReCaptcha;
-import net.tanesha.recaptcha.ReCaptchaFactory;
-import net.tanesha.recaptcha.ReCaptchaImpl;
-import net.tanesha.recaptcha.ReCaptchaResponse;
 import de.uka.ipd.idaho.easyIO.web.FormDataReceiver;
 import de.uka.ipd.idaho.easyIO.web.FormDataReceiver.FieldValueInputStream;
+import de.uka.ipd.idaho.easyIO.web.ReCAPTCHA;
 import de.uka.ipd.idaho.gamta.util.feedback.html.AsynchronousRequestHandler;
 import de.uka.ipd.idaho.gamta.util.feedback.html.AsynchronousRequestHandler.AsynchronousRequest;
 import de.uka.ipd.idaho.htmlXmlUtil.TreeNodeAttributeSet;
@@ -55,9 +52,10 @@ import de.uka.ipd.idaho.refBank.apps.webInterface.RefDataFormat.UploadStringIter
 public class RefBankUploadServlet extends RefBankWiServlet {
 	private static final int uploadMaxLength = (4 * 1024 * 1024); // 4MB for starters
 	
-	private String reCaptchaPublicKey;
-	private String reCaptchaPrivateKey;
-	private boolean useReCaptcha = false;
+//	private String reCaptchaPublicKey;
+//	private String reCaptchaPrivateKey;
+//	private boolean useReCaptcha = false;
+	private ReCAPTCHA reCaptcha;
 	
 	private File uploadCacheFolder = null;
 	
@@ -86,9 +84,12 @@ public class RefBankUploadServlet extends RefBankWiServlet {
 		super.reInit();
 		
 		//	load reCAPTCHA keys
-		this.reCaptchaPublicKey = this.getSetting("reCaptchaPublicKey", this.reCaptchaPublicKey);
-		this.reCaptchaPrivateKey = this.getSetting("reCaptchaPrivateKey", this.reCaptchaPrivateKey);
-		this.useReCaptcha = ((this.reCaptchaPublicKey != null) && (this.reCaptchaPrivateKey != null));
+//		this.reCaptchaPublicKey = this.getSetting("reCaptchaPublicKey", this.reCaptchaPublicKey);
+//		this.reCaptchaPrivateKey = this.getSetting("reCaptchaPrivateKey", this.reCaptchaPrivateKey);
+//		this.useReCaptcha = ((this.reCaptchaPublicKey != null) && (this.reCaptchaPrivateKey != null));
+		String reCaptchaPublicKey = this.getSetting("reCaptchaPublicKey");
+		String reCaptchaPrivateKey = this.getSetting("reCaptchaPrivateKey");
+		this.reCaptcha = (((reCaptchaPublicKey != null) && (reCaptchaPrivateKey != null)) ? new ReCAPTCHA(reCaptchaPublicKey, reCaptchaPrivateKey, true) : null);
 		
 		//	read access key for PUT uploads
 		this.putAccessKey = this.getSetting("putAccessKey", this.putAccessKey);
@@ -128,14 +129,20 @@ public class RefBankUploadServlet extends RefBankWiServlet {
 			FormDataReceiver data = FormDataReceiver.receive(request, uploadMaxLength, this.uploadCacheFolder, 1024, fileFieldSet);
 			
 			//	check ReCAPTCHA
-			if ((message == null) && this.useReCaptcha) {
-				String remoteAddr = request.getRemoteAddr();
-				ReCaptchaImpl reCaptcha = new ReCaptchaImpl();
-				reCaptcha.setPrivateKey(this.reCaptchaPrivateKey);
+//			if ((message == null) && this.useReCaptcha) {
+			if ((message == null) && (this.reCaptcha != null)) {
+				String clientAddr = request.getHeader("x-forwarded-for");
+				if (clientAddr == null)
+					clientAddr = request.getRemoteAddr();
+//				String remoteAddr = request.getRemoteAddr(); // TODO_ne via 'x-forwarded-for' header: get actual remote address, not that of proxy
+//				ReCaptchaImpl reCaptcha = new ReCaptchaImpl();
+//				reCaptcha.setPrivateKey(this.reCaptchaPrivateKey);
+//				ReCaptcha reCaptcha = ReCaptchaFactory.newReCaptcha(this.reCaptchaPublicKey, this.reCaptchaPrivateKey, false);
 				
-				String challenge = data.getFieldValue("recaptcha_challenge_field");
-				String uresponse = data.getFieldValue("recaptcha_response_field");
-				ReCaptchaResponse reCaptchaResponse = reCaptcha.checkAnswer(remoteAddr, challenge, uresponse);
+				String rcChallenge = data.getFieldValue("recaptcha_challenge_field");
+				String rcResponse = data.getFieldValue("recaptcha_response_field");
+//				ReCaptchaResponse reCaptchaResponse = reCaptcha.checkAnswer(clientAddr, rcChallenge, rcResponse);
+				ReCAPTCHA.Response reCaptchaResponse = this.reCaptcha.checkAnswer(clientAddr, rcChallenge, rcResponse);
 				
 				if (!reCaptchaResponse.isValid()) {
 					message = "RefBank could not process your upload because your CAPTCHA response is not valid.";
@@ -379,10 +386,12 @@ public class RefBankUploadServlet extends RefBankWiServlet {
 				this.writeLine("</form>");
 			}
 			private void includeReCAPTCHA() throws IOException {
-				if (useReCaptcha) {
-					ReCaptcha reCaptcha = ReCaptchaFactory.newReCaptcha(reCaptchaPublicKey, reCaptchaPrivateKey, true);
-					this.write(reCaptcha.createRecaptchaHtml(null, null));
-				}
+//				if (useReCaptcha) {
+//					ReCaptcha reCaptcha = ReCaptchaFactory.newReCaptcha(reCaptchaPublicKey, reCaptchaPrivateKey, true);
+//					this.write(reCaptcha.createRecaptchaHtml(null, null));
+//				}
+				if (reCaptcha != null)
+					reCaptcha.writeRecaptchaHtml(null, null, this);
 				else this.write("<!-- ReCAPTCHA not in use -->");
 			}
 			private void includeUploadFormatSelector() throws IOException {
