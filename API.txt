@@ -9,7 +9,7 @@ RefBank data servlet (/RefBank/rbk):
             response (MIME type text/xml, encoding UTF-8):
 
             <nodes>
-              <node name="name of RefBank node" accessUrl="prefered access URL of node" />
+              <node name="name of RefBank node" accessUrl="preferred access URL of node" />
               <node ... />
             </nodes>
 
@@ -24,7 +24,7 @@ RefBank data servlet (/RefBank/rbk):
             response (MIME type text/xml, encoding UTF-8):
 
             <nodes>
-              <node name=&qout;<name of RefBank node>&qout; accessUrl="prefered access URL of node" />
+              <node name=&qout;<name of RefBank node>&qout; accessUrl="preferred access URL of node" />
             </nodes>
 
         action=feed: retrieve the reference update feed, ordered by increasing update time
@@ -54,7 +54,7 @@ RefBank data servlet (/RefBank/rbk):
             additional parameters:
                 id: the identifier(s) to resolve, can be multi-valued
                 format: the format to represent the parsed versions of references in (optional, defaults to the native MODS XML representation if omitted)
-            response: the reference(s) with the speciefied identifier(s) (MIME type text/xml, encoding UTF-8)
+            response: the reference(s) with the specified identifier(s) (MIME type text/xml, encoding UTF-8)
 
             <refSet>
               <ref id="reference ID" canonicalId="ID of canonical reference" deleted="deleted flag, true or false" createTime="UTC timestamp reference was first added to RefBank" createUser="name of the user to first add reference to RefBank" createDomain="name of RefBank node reference was first added to" updateTime="UTC timestamp reference was last updated" updateUser="name of the user to last update reference" updateDomain="name of RefBank node reference was last updated at">
@@ -74,8 +74,8 @@ RefBank data servlet (/RefBank/rbk):
                 title: query against title attribute of references, only finds references with parsed version available
                 date: query against year of publication attribute of references, only finds references with parsed version available
                 origin: query against origin of references (journal + volume number, publisher or location, as well as volume title), only finds references with parsed version available
-                format=concise: exclude parsed verion of references from response
-                format: the name of the format for representing the parsed verion of the references (defaults to the native MODS XML if not specified)
+                format=concise: exclude parsed version of references from response
+                format: the name of the format for representing the parsed version of the references (defaults to the native MODS XML if not specified)
                 limit: the maximum number of references to include in the search result (0, the default, means no limit)
                 sco: set to sco to restrict search results to references not marked as duplicates of others
             response: the reference matching the specified search criteria (MIME type text/xml, encoding UTF-8)
@@ -95,7 +95,7 @@ RefBank data servlet (/RefBank/rbk):
 
             <apiStats total="total number of API calls" feed="number of calls to feed action" rss="number of calls to RSS feed action" find="number of calls to find action" get="number of calls to get action" update="number of calls to update action" count="number of calls to count action" stats="number of calls to API statistics"/>
 
-    POST: requests from RefBank node adminstration HTML page, infrastructure replication, or meta data updates for existing references:
+    POST: requests from RefBank node administration HTML page, infrastructure replication, or meta data updates for existing references:
 
         /RefBank/rbk/update: for deleting or un-deleting existing references or updating canonical reference ID
             request headers to set:
@@ -121,7 +121,7 @@ RefBank data servlet (/RefBank/rbk):
             response (MIME type text/xml, encoding UTF-8):
 
             <nodes>
-              <node name="name of RefBank node" accessUrl="prefered access URL of node" />
+              <node name="name of RefBank node" accessUrl="preferred access URL of node" />
               <node ... />
             </nodes>
 
@@ -136,17 +136,17 @@ RefBank data servlet (/RefBank/rbk):
             response (MIME type text/xml, encoding UTF-8):
 
             <nodes>
-              <node name="name of RefBank node" accessUrl="prefered access URL of node" />
+              <node name="name of RefBank node" accessUrl="preferred access URL of node" />
             </nodes>
 
         /RefBank/rbk/introduce: introduce a new RefBank node to this one, retrieve list of other known RefBank nodes
             request body (parameters):
                 name: the name of the RefBank node introducing itself
-                accessUrl: the prefered access URL of the RefBank node introducing itself
+                accessUrl: the preferred access URL of the RefBank node introducing itself
             response (MIME type text/xml, encoding UTF-8):
 
             <nodes>
-              <node name="name of RefBank node" accessUrl="prefered access URL of node" />
+              <node name="name of RefBank node" accessUrl="preferred access URL of node" />
               <node ... />
             </nodes>
 
@@ -183,11 +183,11 @@ RefBank search servlet (/RefBank/search):
         id: identifier of reference, yields reference specific response if set, depending on several other parameters:
             format: reference format, for use with other software
             style: reference string style, for use in bibliography of a publication
-            isFramePage: send reference specific pupup page instead of reference proper?
+            isFramePage: send reference specific popup page instead of reference proper?
             combinations of the id and style and format parameters return different results:
                 id + format=PaRsEtHeReF + isFramePage=true: reference specific popup page, with reference opened for manual parsing in embedded IFrame (used in browser, not part of API)
                 id + format=EdItReFsTrInG + isFramePage=true: reference specific popup page, with reference string opened for manual editing in embedded IFrame (used in browser, not part of API)
-                id + style or format + isFramePage=true: reference specific popup page, with reference in speciefied style or format showing in embedded IFrame (used in browser, not part of API)
+                id + style or format + isFramePage=true: reference specific popup page, with reference in specified style or format showing in embedded IFrame (used in browser, not part of API)
                 id + style: return the reference with specified ID in the specified style (MIME type text/html, encoding UTF-8)
                 id + format: return the reference with specified ID in the specified data format (MIME type text/plain, encoding UTF-8)
                 id=MiNoRuPdATe, no style or format: return HTML form for POST callbacks from search result page (used in browser, not part of API)
@@ -230,7 +230,7 @@ RefBank upload servlet (/RefBank/upload):
                 "RIS" for EndNote / RIS2
             User-Name: the name of the user to credit for the contributed references
             Access-Key: the upload access key; needs to match configured key for servlet to accept the upload, ignored if no key is configured
-        request body: references in format inidcated in header
+        request body: references in format indicated in header
         response: upload result statistics (MIME type text/plain, encoding UTF-8)
 
         RECEIVED: <number of references received>

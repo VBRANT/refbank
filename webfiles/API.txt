@@ -155,6 +155,7 @@ RefBank data servlet (/RefBank/rbk):
         request headers to set:
             Data-Format: the upload data format, xml or txt (tried to auto-detect if not specified)
             User-Name: the user to credit for uploaded references (defaults to 'Anonymous' if not specified)
+            Access-Key: the upload access key; needs to match configured key for servlet to accept the upload, ignored if no key is configured
         request body: the references as plain text or wrapped in XML, corresponding to the format specified in the header; to be encoded in UTF-8
             Data-Format=txt: one plain reference string per line, adds new references, un-deletes ones that are re-added and were flagged as deleted
             Data-Format=xml:

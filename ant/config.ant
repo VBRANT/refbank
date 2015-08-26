@@ -16,6 +16,9 @@
 	<!-- root directory of the common source tree -->
 	<property name="src.home" value="src" />
 	
+	<!-- root directory of the common source tree -->
+	<property name="res.home" value="res" />
+	
 	<!-- directory that contains all libraries that are required in the .war -->
 	<property name="lib.home" value="lib" />
 	
@@ -30,6 +33,12 @@
 	
 	<!-- path to the .jar file that shall be created -->
 	<property name="jar.file" value="${build.home}/WEB-INF/lib/${app.name}.jar" />
+	
+	<!-- path to the .jar file that shall be created -->
+	<property name="jar.dataparsers.file" value="${build.home}/WEB-INF/refDataFormats/BibRefDataParsers.jar" />
+	
+	<!-- path to the .jar file that shall be created -->
+	<property name="jar.dataformats.file" value="${build.home}/WEB-INF/refDataFormats/DataFormats.jar" />
 	
 	<!-- path to the .zip file that shall be created -->
 	<property name="zip.file" value="${dist.home}/${app.name}.zip" />
