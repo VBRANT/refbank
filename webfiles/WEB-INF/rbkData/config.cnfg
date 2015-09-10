@@ -8,6 +8,9 @@ domainName = "<yourRefBankDomainName>";
 //accessUrl = "http://plazi2.cs.umb.edu:8080/RefBank/rbk";
 //adminPasscode = "<noneOfYourBusiness>";
 
+// storage location for parsed strings (relative or absolute, defaults to sub folder of webapp data folder)
+//parsedStringFolder = "./BibRefs";
+
 // HTML template file for admin page
 basePage = "onnNodeAdminPage.html";
 
