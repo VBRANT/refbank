@@ -52,9 +52,6 @@ import de.uka.ipd.idaho.refBank.apps.webInterface.RefDataFormat.UploadStringIter
 public class RefBankUploadServlet extends RefBankWiServlet {
 	private static final int uploadMaxLength = (4 * 1024 * 1024); // 4MB for starters
 	
-//	private String reCaptchaPublicKey;
-//	private String reCaptchaPrivateKey;
-//	private boolean useReCaptcha = false;
 	private ReCAPTCHA reCaptcha;
 	
 	private File uploadCacheFolder = null;
@@ -84,9 +81,6 @@ public class RefBankUploadServlet extends RefBankWiServlet {
 		super.reInit();
 		
 		//	load reCAPTCHA keys
-//		this.reCaptchaPublicKey = this.getSetting("reCaptchaPublicKey", this.reCaptchaPublicKey);
-//		this.reCaptchaPrivateKey = this.getSetting("reCaptchaPrivateKey", this.reCaptchaPrivateKey);
-//		this.useReCaptcha = ((this.reCaptchaPublicKey != null) && (this.reCaptchaPrivateKey != null));
 		String reCaptchaPublicKey = this.getSetting("reCaptchaPublicKey");
 		String reCaptchaPrivateKey = this.getSetting("reCaptchaPrivateKey");
 		this.reCaptcha = (((reCaptchaPublicKey != null) && (reCaptchaPrivateKey != null)) ? new ReCAPTCHA(reCaptchaPublicKey, reCaptchaPrivateKey, true) : null);
@@ -129,19 +123,13 @@ public class RefBankUploadServlet extends RefBankWiServlet {
 			FormDataReceiver data = FormDataReceiver.receive(request, uploadMaxLength, this.uploadCacheFolder, 1024, fileFieldSet);
 			
 			//	check ReCAPTCHA
-//			if ((message == null) && this.useReCaptcha) {
 			if ((message == null) && (this.reCaptcha != null)) {
 				String clientAddr = request.getHeader("x-forwarded-for");
 				if (clientAddr == null)
 					clientAddr = request.getRemoteAddr();
-//				String remoteAddr = request.getRemoteAddr(); // TODO_ne via 'x-forwarded-for' header: get actual remote address, not that of proxy
-//				ReCaptchaImpl reCaptcha = new ReCaptchaImpl();
-//				reCaptcha.setPrivateKey(this.reCaptchaPrivateKey);
-//				ReCaptcha reCaptcha = ReCaptchaFactory.newReCaptcha(this.reCaptchaPublicKey, this.reCaptchaPrivateKey, false);
 				
 				String rcChallenge = data.getFieldValue("recaptcha_challenge_field");
 				String rcResponse = data.getFieldValue("recaptcha_response_field");
-//				ReCaptchaResponse reCaptchaResponse = reCaptcha.checkAnswer(clientAddr, rcChallenge, rcResponse);
 				ReCAPTCHA.Response reCaptchaResponse = this.reCaptcha.checkAnswer(clientAddr, rcChallenge, rcResponse);
 				
 				if (!reCaptchaResponse.isValid()) {
@@ -153,12 +141,14 @@ public class RefBankUploadServlet extends RefBankWiServlet {
 					};
 					reCapchaErrorInputTransfer.setProperty("dataFormat", data.getFieldValue("dataFormat"));
 					FieldValueInputStream refStringIn = data.getFieldByteStream("refStrings");
-					String encoding = refStringIn.getEncoding();
-					if (encoding == null)
-						encoding = "ISO-8859-1";
-					System.out.println("IMPORT DATA ENCODING IS " + encoding);
+					String refStringEncoding = request.getCharacterEncoding();
+					if (refStringEncoding == null)
+						refStringEncoding = refStringIn.getEncoding();
+					if (refStringEncoding == null)
+						refStringEncoding = "ISO-8859-1";
+					System.out.println("IMPORT DATA ENCODING IS " + refStringEncoding);
 					StringWriter refStringWriter = new StringWriter();
-					BufferedReader refStringReader = new BufferedReader(new InputStreamReader(refStringIn));
+					BufferedReader refStringReader = new BufferedReader(new InputStreamReader(refStringIn, refStringEncoding));
 					char[] refStringBuffer = new char[1024];
 					int r;
 					while ((r = refStringReader.read(refStringBuffer, 0, refStringBuffer.length)) != -1)
@@ -175,11 +165,14 @@ public class RefBankUploadServlet extends RefBankWiServlet {
 				String dataFormatName = data.getFieldValue("dataFormat");
 				String userName = data.getFieldValue(USER_PARAMETER);
 				FieldValueInputStream refDataStream = data.getFieldByteStream("refFile");
-				if ((refDataStream == null) || (refDataStream.fieldLength == 0))
+				String refDataEncoding = null;
+				if ((refDataStream == null) || (refDataStream.fieldLength == 0)) {
 					refDataStream = data.getFieldByteStream("refStrings");
+					refDataEncoding = request.getCharacterEncoding();
+				}
 				RefDataFormat dataFormat = this.getDataFormat(dataFormatName);
 				if ((refDataStream != null) && (dataFormat != null) && (userName != null)) {
-					AsynchronousUpload au = new AsynchronousUpload(data.id, refDataStream, dataFormat, data, userName);
+					AsynchronousUpload au = new AsynchronousUpload(data.id, refDataStream, refDataEncoding, dataFormat, data, userName);
 					this.uploadHandler.enqueueRequest(au, userName);
 					message = ("Thank you for your contribution to RefBank. Your references are being imported, you can monitor the import above.");
 					HtmlPageBuilder pageBuilder = this.getUploadStatusPageBuilder(request, au.id, message, response);
@@ -324,6 +317,7 @@ public class RefBankUploadServlet extends RefBankWiServlet {
 	
 	private HtmlPageBuilder getUploadPageBuilder(HttpServletRequest request, final String message, final Properties reCapchaErrorInputTransfer, HttpServletResponse response) throws IOException {
 		response.setContentType("text/html");
+		response.setCharacterEncoding("UTF-8");
 		final RefDataFormat[] dataFormats = this.getInputDataFormats();
 		final String dataFormatName = ((reCapchaErrorInputTransfer == null) ? ((dataFormats.length == 0) ? "" : dataFormats[0].name) : reCapchaErrorInputTransfer.getProperty("dataFormat", ((dataFormats.length == 0) ? "" : dataFormats[0].name)));
 		return new HtmlPageBuilder(this, request, response) {
@@ -386,10 +380,6 @@ public class RefBankUploadServlet extends RefBankWiServlet {
 				this.writeLine("</form>");
 			}
 			private void includeReCAPTCHA() throws IOException {
-//				if (useReCaptcha) {
-//					ReCaptcha reCaptcha = ReCaptchaFactory.newReCaptcha(reCaptchaPublicKey, reCaptchaPrivateKey, true);
-//					this.write(reCaptcha.createRecaptchaHtml(null, null));
-//				}
 				if (reCaptcha != null)
 					reCaptcha.writeRecaptchaHtml(null, null, this);
 				else this.write("<!-- ReCAPTCHA not in use -->");
@@ -561,6 +551,7 @@ public class RefBankUploadServlet extends RefBankWiServlet {
 	
 	private class AsynchronousUpload extends AsynchronousRequest {
 		private FieldValueInputStream refDataStream;
+		private String refDataEncoding;
 		private RefDataFormat dataFormat;
 		private FormDataReceiver refData;
 		UploadStringIterator usit;
@@ -569,9 +560,10 @@ public class RefBankUploadServlet extends RefBankWiServlet {
 		int updated = 0;
 		int total = 0;
 		UploadStringError[] errors = null;
-		AsynchronousUpload(String name, FieldValueInputStream refDataStream, RefDataFormat dataFormat, FormDataReceiver data, String userName) {
+		AsynchronousUpload(String name, FieldValueInputStream refDataStream, String refDataEncoding, RefDataFormat dataFormat, FormDataReceiver data, String userName) {
 			super(name);
 			this.refDataStream = refDataStream;
+			this.refDataEncoding = refDataEncoding;
 			this.dataFormat = dataFormat;
 			this.refData = data;
 			this.userName = userName;
@@ -582,7 +574,9 @@ public class RefBankUploadServlet extends RefBankWiServlet {
 			this.setStatus("Setting up data import.");
 			
 			//	create iterator
-			String encoding = this.refDataStream.getEncoding();
+			String encoding = this.refDataEncoding;
+			if (encoding == null)
+				encoding = this.refDataStream.getEncoding();
 			if (encoding == null)
 				encoding = "ISO-8859-1";
 			System.out.println("IMPORT DATA ENCODING IS " + encoding);

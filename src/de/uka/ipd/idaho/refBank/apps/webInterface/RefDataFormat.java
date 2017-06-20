@@ -123,7 +123,7 @@ public abstract class RefDataFormat extends BibRefDataParser implements BibRefCo
 
 		/**
 		 * Constructor
-		 * @param name a custom name for the data format
+		 * @param varName a custom name for the data format
 		 * @param parser the reference data parser to wrap
 		 * @param fileExtension the file extensions of input files (separate
 		 *            with spaces if multiple)

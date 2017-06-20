@@ -33,6 +33,7 @@ import de.uka.ipd.idaho.onn.stringPool.StringPoolServlet;
 import de.uka.ipd.idaho.plugins.bibRefs.BibRefTypeSystem;
 import de.uka.ipd.idaho.plugins.bibRefs.BibRefUtils;
 import de.uka.ipd.idaho.plugins.bibRefs.BibRefUtils.RefData;
+import de.uka.ipd.idaho.stringUtils.StringUtils;
 import de.uka.ipd.idaho.stringUtils.StringVector;
 
 /**
@@ -124,6 +125,28 @@ public class RefBankServlet extends StringPoolServlet implements RefBankClient, 
 	}
 	
 	/* (non-Javadoc)
+	 * @see de.uka.ipd.idaho.onn.stringPool.StringPoolServlet#getClusteringString(java.lang.String)
+	 */
+	protected String getClusteringString(String str) {
+		StringBuffer sb = new StringBuffer();
+		char lastCh = ((char) 0);
+		for (int c = 0; c < str.length(); c++) {
+			char ch = str.charAt(c);
+			if (Character.isLetterOrDigit(ch)) {
+				ch = StringUtils.getBaseChar(Character.toLowerCase(ch));
+				sb.append(ch);
+				lastCh = ch;
+			}
+			else {
+				if (lastCh != ' ')
+					sb.append(' ');
+				lastCh = ' ';
+			}
+		}
+		return sb.toString();
+	}
+	
+	/* (non-Javadoc)
 	 * @see de.uka.ipd.idaho.onn.stringPool.StringPoolServlet#addIndexPredicates(javax.servlet.http.HttpServletRequest, java.util.Properties)
 	 */
 	protected void addIndexPredicates(HttpServletRequest request, Properties detailPredicates) {
@@ -140,7 +163,7 @@ public class RefBankServlet extends StringPoolServlet implements RefBankClient, 
 		if (originQueryPredicate != null)
 			detailPredicates.setProperty(ORIGIN_COLUMN_NAME, originQueryPredicate);
 	}
-
+	
 	/* (non-Javadoc)
 	 * @see de.uka.ipd.idaho.onn.stringPool.StringPoolServlet#extendIndexData(de.uka.ipd.idaho.onn.stringPool.StringPoolServlet.ParsedStringIndexData, de.uka.ipd.idaho.gamta.MutableAnnotation)
 	 */
@@ -358,6 +381,16 @@ public class RefBankServlet extends StringPoolServlet implements RefBankClient, 
 			bibRefStrings[r] = new UploadString(BibRefUtils.toRefString(bibRefs[r]), BibRefUtils.toModsXML(bibRefs[r]));
 		return this.updateStrings(bibRefStrings, user);
 	}
+//	
+//	public static void main(String[] args) {
+//		RefBankServlet rbs = new RefBankServlet();
+//		String string;
+//		string = "Lintott,C.J., Schawinski, K., Slosar, A., Land, K., Bamford, S., Thomas, D., Raddick, M. J., Nichol, R. C., Szalay, A., Andreescu, D., Murray, P. and Vandenberg, J. Galaxy Zoo: morphologies derived from visual inspection of galaxies from the Sloan Digital Sky Survey. Monthly Notices of the Royal Astronomical Society, 389, 2008. doi: 10.1111/j.1365-2966.2008.13689.x";
+////		string = "The Amazon Mechanical Turk, http://www.mturk.com";
+////		string = "Snow, R., O’Connor, B., Jurafsky, D., Ng, A. Y. Cheap and fast—but is it good?: evaluating non-expert annotations for natural language tasks. In EMNLP 2008, Morristown, NJ, USA, 2008.";
+//		String cString = rbs.getClusteringString(string);
+//		System.out.println(cString);
+//	}
 //	
 //	public static void main(String[] args) throws Exception {
 //		long time = System.currentTimeMillis();
