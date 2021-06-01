@@ -153,6 +153,7 @@ public class ParsingPlainTextDataFormat extends RefDataFormat {
 				this.setAttributes(ref, refAnnot, RefParse.TITLE_ANNOTATION_TYPE);
 				this.setAttributes(ref, refAnnot, RefParse.VOLUME_TITLE_ANNOTATION_TYPE);
 				this.setAttributes(ref, refAnnot, RefParse.JOURNAL_NAME_OR_PUBLISHER_ANNOTATION_TYPE);
+				this.setAttributes(ref, refAnnot, RefParse.SERIES_IN_JOURNAL_ANNOTATION_TYPE);
 				this.setAttributes(ref, refAnnot, RefParse.YEAR_ANNOTATION_TYPE);
 				this.setAttributes(ref, refAnnot, RefParse.PAGINATION_ANNOTATION_TYPE);
 				this.setAttributes(ref, refAnnot, RefParse.PART_DESIGNATOR_ANNOTATION_TYPE);
@@ -174,7 +175,6 @@ public class ParsingPlainTextDataFormat extends RefDataFormat {
 			private void setAttributes(RefData refData, MutableAnnotation refAnnot, String attributeName) {
 				Annotation[] annots = refAnnot.getAnnotations(attributeName);
 				for (int a = 0; a < annots.length; a++)
-//					refData.addAttribute(attributeName, TokenSequenceUtils.concatTokens(annots[a], true, true));
 					refData.addAttribute(attributeName, this.concatTokens(annots[a]));
 			}
 			private String concatTokens(TokenSequence tokens) {

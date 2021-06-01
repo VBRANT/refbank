@@ -154,7 +154,8 @@ public class BibTeXParser extends BibRefDataParser {
 					BibRefUtils.checkPaginationAndType(ref);
 				
 				//	journal data
-				ref.renameAttribute("journal", JOURNAL_NAME_ANNOTATION_TYPE);
+				if (ref.renameAttribute("journal", JOURNAL_NAME_ANNOTATION_TYPE))
+					ref.renameAttribute("series", SERIES_IN_JOURNAL_ANNOTATION_TYPE);
 				ref.renameAttribute("volume", VOLUME_DESIGNATOR_ANNOTATION_TYPE);
 				ref.renameAttribute("number", NUMERO_DESIGNATOR_ANNOTATION_TYPE);
 				
